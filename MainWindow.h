@@ -38,6 +38,9 @@ public:
     ~MainWindow();
 
 private slots:
+    void on_actionExit_triggered();
+    void on_actionSaveSource_triggered();
+    void on_actionOpenSource_triggered();
     void on_actionToggleGrid_triggered();
     void slotUpdateView();
 

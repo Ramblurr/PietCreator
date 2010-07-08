@@ -26,6 +26,8 @@
 #include <QTableView>
 #include <QHeaderView>
 #include <QImage>
+#include <QFileDialog>
+#include <QDesktopServices>
 
 MainWindow::MainWindow( QWidget *parent ) :
         QMainWindow( parent ),
@@ -48,7 +50,6 @@ MainWindow::MainWindow( QWidget *parent ) :
     PixelDelegate* delegate = new PixelDelegate( this );
     delegate->setPixelSize( 12 );
     ui->mView->setItemDelegate( delegate );
-    mModel->setImage( QImage( "../nhello.ppm" ) );
 
     connect( ui->mSpinBox, SIGNAL( valueChanged( int ) ), delegate, SLOT( setPixelSize( int ) ) );
     connect( ui->mSpinBox, SIGNAL( valueChanged( int ) ), SLOT( slotUpdateView() ) );
@@ -73,3 +74,25 @@ void MainWindow::slotUpdateView()
 
 
 #include "MainWindow.moc"
+
+void MainWindow::on_actionOpenSource_triggered()
+{
+
+  QString fileName = QFileDialog::getOpenFileName(this, tr("Open Image File"),
+                                                 QDesktopServices::storageLocation( QDesktopServices::HomeLocation ),
+                                                 tr("Images (*.png *.bmp *.ppm *.gif)"));
+  QImage image( fileName );
+  if( !image.isNull() )
+    mModel->setImage( image );
+  
+}
+
+void MainWindow::on_actionSaveSource_triggered()
+{
+
+}
+
+void MainWindow::on_actionExit_triggered()
+{
+  qApp->quit();
+}
