@@ -42,7 +42,7 @@ void PixelDelegate::paint( QPainter* painter, const QStyleOptionViewItem& option
     else
         painter->setBrush( QBrush( c ) );
 
-    painter->drawRect(option.rect);
+    painter->drawRect( option.rect );
     painter->restore();
 }
 

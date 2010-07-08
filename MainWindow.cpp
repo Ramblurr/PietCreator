@@ -27,19 +27,19 @@
 #include <QHeaderView>
 #include <QImage>
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+MainWindow::MainWindow( QWidget *parent ) :
+        QMainWindow( parent ),
+        ui( new Ui::MainWindow )
 {
-    ui->setupUi(this);
+    ui->setupUi( this );
     mModel = new ImageModel;
 
     ui->mView->horizontalHeader()->hide();
     ui->mView->verticalHeader()->hide();
     ui->mView->horizontalHeader()->setMinimumSectionSize( 1 );
     ui->mView->verticalHeader()->setMinimumSectionSize( 1 );
-    ui->mView->verticalHeader()->setResizeMode(QHeaderView::Fixed);
-    ui->mView->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+    ui->mView->verticalHeader()->setResizeMode( QHeaderView::Fixed );
+    ui->mView->horizontalHeader()->setResizeMode( QHeaderView::Fixed );
     ui->mView->horizontalHeader()->setDefaultSectionSize( 12 );
     ui->mView->verticalHeader()->setDefaultSectionSize( 12 );
     ui->mView->setModel( mModel );
@@ -48,10 +48,10 @@ MainWindow::MainWindow(QWidget *parent) :
     PixelDelegate* delegate = new PixelDelegate( this );
     delegate->setPixelSize( 12 );
     ui->mView->setItemDelegate( delegate );
-    mModel->setImage( QImage("../nhello.ppm") );
+    mModel->setImage( QImage( "../nhello.ppm" ) );
 
-    connect( ui->mSpinBox, SIGNAL( valueChanged(int)), delegate, SLOT( setPixelSize(int)));
-    connect( ui->mSpinBox, SIGNAL( valueChanged(int)), SLOT( slotUpdateView()));
+    connect( ui->mSpinBox, SIGNAL( valueChanged( int ) ), delegate, SLOT( setPixelSize( int ) ) );
+    connect( ui->mSpinBox, SIGNAL( valueChanged( int ) ), SLOT( slotUpdateView() ) );
 
 }
 
@@ -62,13 +62,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionToggleGrid_triggered()
 {
-  mView->setShowGrid( !mView->showGrid() );
+    mView->setShowGrid( !mView->showGrid() );
 }
 
 void MainWindow::slotUpdateView()
 {
-  ui->mView->resizeColumnsToContents();
-  ui->mView->resizeRowsToContents();
+    ui->mView->resizeColumnsToContents();
+    ui->mView->resizeRowsToContents();
 }
 
 

@@ -64,8 +64,8 @@ QVariant ImageModel::headerData( int section, Qt::Orientation orientation, int r
 {
     Q_UNUSED( section )
     Q_UNUSED( orientation )
-    if( role == Qt::SizeHintRole )
-      return QSize(1,1);
+    if ( role == Qt::SizeHintRole )
+        return QSize( 1, 1 );
     return QVariant();
 }
 
