@@ -45,8 +45,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->mView->setModel( mModel );
 
 
-    asdgadsfh
-
     PixelDelegate* delegate = new PixelDelegate( this );
     delegate->setPixelSize( 12 );
     ui->mView->setItemDelegate( delegate );
