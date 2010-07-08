@@ -6,7 +6,11 @@ include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory( npiet )
 
-set(pietcreator_SRCS MainWindow.cpp main.cpp)
+set( pietcreator_SRCS
+    main.cpp
+    MainWindow.cpp
+    ImageModel.cpp
+    PixelDelegate.cpp )
 
 qt4_automoc(${pietcreator_SRCS})
 

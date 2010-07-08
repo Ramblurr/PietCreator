@@ -17,35 +17,30 @@
     02110-1301, USA.
 */
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef PIXELDELEGATE_H
+#define PIXELDELEGATE_H
 
-#include <QMainWindow>
+#include <QAbstractItemDelegate>
 
-namespace Ui {
-    class MainWindow;
-}
-
-class ImageModel;
-class QTableView;
-
-class MainWindow : public QMainWindow
+class PixelDelegate : public QAbstractItemDelegate
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    PixelDelegate( QObject *parent = 0 );
+    virtual ~PixelDelegate() {}
 
-private slots:
-    void on_actionToggleGrid_triggered();
-    void slotUpdateView();
+    void paint( QPainter *painter, const QStyleOptionViewItem &option,
+                const QModelIndex &index ) const;
+
+    QSize sizeHint( const QStyleOptionViewItem &option,
+                    const QModelIndex &index ) const;
+
+public slots:
+    void setPixelSize( int size );
 
 private:
-    Ui::MainWindow *ui;
-
-    ImageModel* mModel;
-    QTableView* mView;
+    int pixelSize;
 };
 
-#endif // MAINWINDOW_H
+#endif

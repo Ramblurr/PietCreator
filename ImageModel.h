@@ -16,36 +16,29 @@
     Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
     02110-1301, USA.
 */
+#ifndef IMAGEMODEL_H
+#define IMAGEMODEL_H
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#include <QAbstractTableModel>
+#include <QImage>
 
-#include <QMainWindow>
-
-namespace Ui {
-    class MainWindow;
-}
-
-class ImageModel;
-class QTableView;
-
-class MainWindow : public QMainWindow
+class ImageModel : public QAbstractTableModel
 {
     Q_OBJECT
-
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    explicit ImageModel(QObject *parent = 0);
+    virtual ~ImageModel();
 
-private slots:
-    void on_actionToggleGrid_triggered();
-    void slotUpdateView();
+    void setImage(const QImage &image);
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const;
+
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
 private:
-    Ui::MainWindow *ui;
-
-    ImageModel* mModel;
-    QTableView* mView;
+    QImage mImage;
 };
 
-#endif // MAINWINDOW_H
+#endif // IMAGEMODEL_H
