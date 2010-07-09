@@ -30,6 +30,8 @@
 #include <QDesktopServices>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QWheelEvent>
+#include <QDebug>
 
 MainWindow::MainWindow( QWidget *parent ) :
         QMainWindow( parent ),
@@ -47,6 +49,7 @@ MainWindow::MainWindow( QWidget *parent ) :
     ui->mView->horizontalHeader()->setDefaultSectionSize( 12 );
     ui->mView->verticalHeader()->setDefaultSectionSize( 12 );
     ui->mView->setModel( mModel );
+    ui->mView->viewport()->installEventFilter( this );
 
 
     PixelDelegate* delegate = new PixelDelegate( this );
@@ -75,9 +78,26 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+bool MainWindow::eventFilter(QObject* obj, QEvent* event)
+{
+    if ( obj == ui->mView->viewport() && event->type() == QEvent::Wheel ) {
+        QWheelEvent * wevent = static_cast<QWheelEvent*>( event );
+        // Ctrl + Wheel : change codel size
+        if ( wevent->modifiers() == Qt::ControlModifier ) {
+            const int numDegrees = wevent->delta() / 8;
+            const int numSteps = numDegrees / 15;
+            if ( wevent->orientation() == Qt::Vertical ) {
+                ui->mSpinBox->setValue( ui->mSpinBox->value() + numSteps );
+            }
+            return true;
+        }
+    }
+    return QObject::eventFilter(obj, event);
+}
+
 void MainWindow::on_actionToggleGrid_triggered()
 {
-    mView->setShowGrid( !mView->showGrid() );
+    ui->mView->setShowGrid( !ui->mView->showGrid() );
 }
 
 void MainWindow::slotUpdateView()
@@ -85,9 +105,6 @@ void MainWindow::slotUpdateView()
     ui->mView->resizeColumnsToContents();
     ui->mView->resizeRowsToContents();
 }
-
-
-#include "MainWindow.moc"
 
 void MainWindow::on_actionOpenSource_triggered()
 {
@@ -127,3 +144,5 @@ void MainWindow::on_actionExit_triggered()
 {
     qApp->quit();
 }
+
+#include "MainWindow.moc"

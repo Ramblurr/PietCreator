@@ -39,6 +39,8 @@ public:
     explicit MainWindow( QWidget *parent = 0 );
     ~MainWindow();
 
+    virtual bool eventFilter(QObject* , QEvent* );
+
 private slots:
     void on_actionExit_triggered();
     void on_actionSaveSource_triggered();
@@ -53,7 +55,6 @@ private:
     QHash<QString, QString> mExtensions;
 
     ImageModel* mModel;
-    QTableView* mView;
 };
 
 #endif // MAINWINDOW_H
