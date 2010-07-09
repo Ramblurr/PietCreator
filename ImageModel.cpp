@@ -20,9 +20,10 @@
 #include "ImageModel.h"
 
 #include <QtGui>
+#include <QDebug>
 
 ImageModel::ImageModel( QObject *parent ) :
-        QAbstractTableModel( parent )
+        QAbstractTableModel( parent ), mPixelSize( 1 )
 {
 }
 
@@ -67,11 +68,21 @@ QVariant ImageModel::data( const QModelIndex& index, int role ) const
 
 QVariant ImageModel::headerData( int section, Qt::Orientation orientation, int role ) const
 {
-    Q_UNUSED( section )
     Q_UNUSED( orientation )
-    if ( role == Qt::SizeHintRole )
-        return QSize( 1, 1 );
-    return QVariant();
+    switch( role ) {
+      case Qt::SizeHintRole:
+        return QSize(mPixelSize, mPixelSize);
+      case Qt::DisplayRole:
+        return QString::number( section );
+      default: 
+        return QVariant();
+    }
 }
+
+void ImageModel::slotPixelSizeChange(int size)
+{
+  mPixelSize = size;
+}
+
 
 #include "ImageModel.moc"

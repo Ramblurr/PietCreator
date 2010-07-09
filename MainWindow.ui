@@ -16,7 +16,20 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QTableView" name="mView"/>
+     <widget class="QTableView" name="mView">
+      <attribute name="horizontalHeaderVisible">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="horizontalHeaderVisible">
+       <bool>true</bool>
+      </attribute>
+     </widget>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0">
@@ -68,23 +81,25 @@
    </property>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
-     <string>Edit</string>
+     <string>&amp;Edit</string>
     </property>
-   </widget>
-   <widget class="QMenu" name="menuView">
-    <property name="title">
-     <string>View</string>
-    </property>
-    <addaction name="actionToggleGrid"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
+    <addaction name="actionNew"/>
     <addaction name="actionOpenSource"/>
     <addaction name="actionSaveSource"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionToggleGrid"/>
+    <addaction name="actionToggleHeaders"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -104,22 +119,32 @@
   </widget>
   <action name="actionToggleGrid">
    <property name="text">
-    <string>Toggle Grid</string>
+    <string>Toggle &amp;Grid</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="text">
+    <string>&amp;New</string>
    </property>
   </action>
   <action name="actionOpenSource">
    <property name="text">
-    <string>Open Source</string>
+    <string>&amp;Open…</string>
    </property>
   </action>
   <action name="actionSaveSource">
    <property name="text">
-    <string>Save Source</string>
+    <string>&amp;Save…</string>
    </property>
   </action>
   <action name="actionExit">
    <property name="text">
-    <string>Exit</string>
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionToggleHeaders">
+   <property name="text">
+    <string>Toggle &amp;Headers</string>
    </property>
   </action>
  </widget>

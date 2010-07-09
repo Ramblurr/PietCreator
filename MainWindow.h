@@ -28,6 +28,7 @@ namespace Ui
 class MainWindow;
 }
 
+class PixelDelegate;
 class ImageModel;
 class QTableView;
 
@@ -46,7 +47,9 @@ private slots:
     void on_actionSaveSource_triggered();
     void on_actionOpenSource_triggered();
     void on_actionToggleGrid_triggered();
-    void slotUpdateView();
+    void on_actionToggleHeaders_triggered();
+    void on_actionNew_triggered();
+    void slotUpdateView( int pixelSize );
 
 private:
     Ui::MainWindow *ui;
@@ -55,6 +58,7 @@ private:
     QHash<QString, QString> mExtensions;
 
     ImageModel* mModel;
+    PixelDelegate* mDelegate;
 };
 
 #endif // MAINWINDOW_H

@@ -23,11 +23,12 @@
 
 PixelDelegate::PixelDelegate( QObject* parent ): QAbstractItemDelegate( parent )
 {
-    pixelSize = 4;
+    mPixelSize = 4;
 }
 
 void PixelDelegate::paint( QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index ) const
 {
+
     if ( option.state & QStyle::State_Selected )
         painter->fillRect( option.rect, option.palette.highlight() );
 
@@ -49,12 +50,18 @@ void PixelDelegate::paint( QPainter* painter, const QStyleOptionViewItem& option
 QSize PixelDelegate::sizeHint( const QStyleOptionViewItem & /* option */,
                                const QModelIndex & /* index */ ) const
 {
-    return QSize( pixelSize, pixelSize );
+    return QSize( mPixelSize, mPixelSize );
 }
+
+int PixelDelegate::pixelSize()
+{
+  return mPixelSize;
+}
+
 
 void PixelDelegate::setPixelSize( int size )
 {
-    pixelSize = size;
+    mPixelSize = size;
 }
 
 #include "PixelDelegate.moc"

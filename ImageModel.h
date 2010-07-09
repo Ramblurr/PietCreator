@@ -38,8 +38,17 @@ public:
     QVariant data( const QModelIndex &index, int role = Qt::DisplayRole ) const;
     QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 
+public slots:
+    /*! This is a very bad hack.
+        headerData() needs to know the current pixel size (IN THE VIEW!) in order
+        to return a correct SizeHint, otherwise things get screwy.
+        Note: this pixel information is only used by headerData to return a SizeHint
+        It does not affect the backend image data at all
+        */
+    void slotPixelSizeChange( int size );
 private:
     QImage mImage;
+    int mPixelSize; 
 };
 
 #endif // IMAGEMODEL_H

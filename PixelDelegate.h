@@ -36,11 +36,13 @@ public:
     QSize sizeHint( const QStyleOptionViewItem &option,
                     const QModelIndex &index ) const;
 
+   int pixelSize();
+
 public slots:
     void setPixelSize( int size );
 
 private:
-    int pixelSize;
+    int mPixelSize;
 };
 
 #endif

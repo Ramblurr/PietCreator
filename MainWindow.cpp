@@ -39,6 +39,7 @@ MainWindow::MainWindow( QWidget *parent ) :
 {
     ui->setupUi( this );
     mModel = new ImageModel;
+    ui->mView->setModel( mModel );
 
     ui->mView->horizontalHeader()->hide();
     ui->mView->verticalHeader()->hide();
@@ -48,13 +49,12 @@ MainWindow::MainWindow( QWidget *parent ) :
     ui->mView->horizontalHeader()->setResizeMode( QHeaderView::Fixed );
     ui->mView->horizontalHeader()->setDefaultSectionSize( 12 );
     ui->mView->verticalHeader()->setDefaultSectionSize( 12 );
-    ui->mView->setModel( mModel );
     ui->mView->viewport()->installEventFilter( this );
 
 
-    PixelDelegate* delegate = new PixelDelegate( this );
-    delegate->setPixelSize( 12 );
-    ui->mView->setItemDelegate( delegate );
+    mDelegate = new PixelDelegate( this );
+    mDelegate->setPixelSize( 12 );
+    ui->mView->setItemDelegate( mDelegate );
 
     mExtensions[ tr( "PNG (*.png)" )] = ".png";
     mExtensions[ tr( "GIF (*.gif)" )] = ".gif";
@@ -68,8 +68,8 @@ MainWindow::MainWindow( QWidget *parent ) :
             mSaveMessage += ";;";
     }
 
-    connect( ui->mSpinBox, SIGNAL( valueChanged( int ) ), delegate, SLOT( setPixelSize( int ) ) );
-    connect( ui->mSpinBox, SIGNAL( valueChanged( int ) ), SLOT( slotUpdateView() ) );
+    connect( ui->mSpinBox, SIGNAL( valueChanged( int ) ), mDelegate, SLOT( setPixelSize( int ) ) );
+    connect( ui->mSpinBox, SIGNAL( valueChanged( int ) ), SLOT( slotUpdateView( int ) ) );
 
 }
 
@@ -100,10 +100,12 @@ void MainWindow::on_actionToggleGrid_triggered()
     ui->mView->setShowGrid( !ui->mView->showGrid() );
 }
 
-void MainWindow::slotUpdateView()
+void MainWindow::slotUpdateView( int pixelSize )
 {
     ui->mView->resizeColumnsToContents();
     ui->mView->resizeRowsToContents();
+    if( ui->mView->horizontalHeader()->isVisible() )
+      mModel->slotPixelSizeChange( pixelSize );
 }
 
 void MainWindow::on_actionOpenSource_triggered()
@@ -140,9 +142,53 @@ void MainWindow::on_actionSaveSource_triggered()
         QMessageBox::critical( this, tr( "Error saving image" ), tr( "An error occured when trying to save the image." ) );
 }
 
+void MainWindow::on_actionNew_triggered()
+{
+    QImage image( 50, 50, QImage::Format_RGB32 );
+    image.fill( QColor( Qt::white ).rgb() );
+    mModel->setImage(image);
+}
+
+
 void MainWindow::on_actionExit_triggered()
 {
     qApp->quit();
 }
+
+void MainWindow::on_actionToggleHeaders_triggered()
+{
+    if ( ui->mView->horizontalHeader()->isVisible() ) { //hide
+        ui->mView->horizontalHeader()->hide();
+        ui->mView->verticalHeader()->hide();
+        ui->mView->horizontalHeader()->setMinimumSectionSize( 1 );
+        ui->mView->verticalHeader()->setMinimumSectionSize( 1 );
+        ui->mView->verticalHeader()->setResizeMode( QHeaderView::Fixed );
+        ui->mView->horizontalHeader()->setResizeMode( QHeaderView::Fixed );
+        ui->mView->horizontalHeader()->setDefaultSectionSize( mDelegate->pixelSize() );
+        ui->mView->verticalHeader()->setDefaultSectionSize( mDelegate->pixelSize() );
+        ui->mSpinBox->setMinimum( 4 );
+        mModel->slotPixelSizeChange( 1 );
+    }  else { //show
+        ui->mView->horizontalHeader()->show();
+        ui->mView->verticalHeader()->show();
+        ui->mView->verticalHeader()->setResizeMode( QHeaderView::Fixed );
+        ui->mView->horizontalHeader()->setResizeMode( QHeaderView::Fixed );
+
+        int rows = mModel->rowCount();
+        if ( rows == 0 )
+            return;
+        int num_digits;
+        while ( rows > 0 ) {
+            ++num_digits;
+            rows /= 10;
+        }
+        int largest_index = num_digits * 10; // not the largest index, but one of the largest (most digits)
+        ui->mSpinBox->setValue( ui->mView->horizontalHeader()->sectionSize( largest_index ) );
+        ui->mSpinBox->setMinimum( ui->mView->horizontalHeader()->sectionSize( largest_index ) );
+        ui->mView->horizontalHeader()->setMinimumSectionSize( largest_index );
+        ui->mView->verticalHeader()->setMinimumSectionSize( largest_index );
+    }
+}
+
 
 #include "MainWindow.moc"
