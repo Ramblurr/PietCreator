@@ -39,6 +39,7 @@ void ImageModel::setImage( const QImage& image )
 {
     int codel_size;
     /* Begin: part taken from npiet.c, cleanup_input () */
+    // (C) 2010 Erik Schoenfelder <schoenfr@web.de>
     int i, j, last_c, last_p;
     int min_w = image.width() + 1;
     int *o_cells;
@@ -79,7 +80,6 @@ QImage ImageModel::image() const
 {
     return mImage;
 }
-
 
 int ImageModel::columnCount( const QModelIndex& parent ) const
 {

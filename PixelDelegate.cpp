@@ -46,12 +46,12 @@ void PixelDelegate::paint( QPainter* painter, const QStyleOptionViewItem& option
     // shorten the rectangle a little to provide some spacing
     QRect shortRect;
     QPoint pt = option.rect.topLeft();
-    pt.setX( pt.x() + 2 );
-    pt.setY( pt.y() + 2 );
+    pt.setX( pt.x() + 1 );
+    pt.setY( pt.y() + 1 );
     shortRect.setTopLeft( pt );
     pt = option.rect.bottomRight();
-    pt.setX( pt.x() - 2 );
-    pt.setY( pt.y() - 2 );
+    pt.setX( pt.x() - 1 );
+    pt.setY( pt.y() - 1 );
     shortRect.setBottomRight( pt );
     painter->drawRect( shortRect );
     painter->restore();
