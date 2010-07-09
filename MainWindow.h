@@ -21,9 +21,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QHash>
 
-namespace Ui {
-    class MainWindow;
+namespace Ui
+{
+class MainWindow;
 }
 
 class ImageModel;
@@ -34,7 +36,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow( QWidget *parent = 0 );
     ~MainWindow();
 
 private slots:
@@ -46,6 +48,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    QString mSaveMessage;
+    QHash<QString, QString> mExtensions;
 
     ImageModel* mModel;
     QTableView* mView;

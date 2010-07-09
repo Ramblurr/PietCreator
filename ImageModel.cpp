@@ -37,6 +37,11 @@ void ImageModel::setImage( const QImage& image )
     reset();
 }
 
+QImage ImageModel::image() const
+{
+    return mImage;
+}
+
 
 int ImageModel::columnCount( const QModelIndex& parent ) const
 {

@@ -28,6 +28,8 @@
 #include <QImage>
 #include <QFileDialog>
 #include <QDesktopServices>
+#include <QFileInfo>
+#include <QMessageBox>
 
 MainWindow::MainWindow( QWidget *parent ) :
         QMainWindow( parent ),
@@ -50,6 +52,18 @@ MainWindow::MainWindow( QWidget *parent ) :
     PixelDelegate* delegate = new PixelDelegate( this );
     delegate->setPixelSize( 12 );
     ui->mView->setItemDelegate( delegate );
+
+    mExtensions[ tr( "PNG (*.png)" )] = ".png";
+    mExtensions[ tr( "GIF (*.gif)" )] = ".gif";
+    mExtensions[ tr( "Portable Pixmap (*.ppm)" )] = ".ppm";
+
+    QHashIterator<QString, QString> it( mExtensions );
+    while ( it.hasNext() ) {
+        it.next();
+        mSaveMessage += it.key();
+        if ( it.hasNext() )
+            mSaveMessage += ";;";
+    }
 
     connect( ui->mSpinBox, SIGNAL( valueChanged( int ) ), delegate, SLOT( setPixelSize( int ) ) );
     connect( ui->mSpinBox, SIGNAL( valueChanged( int ) ), SLOT( slotUpdateView() ) );
@@ -78,21 +92,38 @@ void MainWindow::slotUpdateView()
 void MainWindow::on_actionOpenSource_triggered()
 {
 
-  QString fileName = QFileDialog::getOpenFileName(this, tr("Open Image File"),
-                                                 QDesktopServices::storageLocation( QDesktopServices::HomeLocation ),
-                                                 tr("Images (*.png *.bmp *.ppm *.gif)"));
-  QImage image( fileName );
-  if( !image.isNull() )
-    mModel->setImage( image );
-  
+    QString file_name = QFileDialog::getOpenFileName( this, tr( "Open Image File" ),
+                        QDesktopServices::storageLocation( QDesktopServices::HomeLocation ),
+                        tr( "Images (*.png *.bmp *.ppm *.gif)" ) );
+    QImage image( file_name );
+    if ( !image.isNull() )
+        mModel->setImage( image );
+
 }
 
 void MainWindow::on_actionSaveSource_triggered()
 {
+    QImage image = mModel->image();
 
+    if ( image.isNull() )
+        return;
+
+    QString selected_filter;
+    QString file_name = QFileDialog::getSaveFileName( this, tr( "Choose a file to save to" ),
+                        QDesktopServices::storageLocation( QDesktopServices::HomeLocation ),
+                        mSaveMessage,
+                        &selected_filter );
+    if ( file_name.isEmpty() )
+        return;
+    QFileInfo file_info( file_name );
+    if ( file_info.suffix().isEmpty() )
+        file_name.append( mExtensions[selected_filter] );
+
+    if ( !image.save( file_name, 0 ) )
+        QMessageBox::critical( this, tr( "Error saving image" ), tr( "An error occured when trying to save the image." ) );
 }
 
 void MainWindow::on_actionExit_triggered()
 {
-  qApp->quit();
+    qApp->quit();
 }
