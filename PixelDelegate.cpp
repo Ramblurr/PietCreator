@@ -69,8 +69,6 @@ bool PixelDelegate::editorEvent( QEvent* event, QAbstractItemModel* model, const
         return false;
     switch ( event->type() ) {
     case QEvent::MouseButtonPress:
-        model->setData( index, mMonitor->currentColor(), Qt::DisplayRole );
-        return true;
     case QEvent::MouseMove: {
         QMouseEvent *mev = static_cast<QMouseEvent*>( event );
         if ( mev->buttons() & Qt::LeftButton ) {
@@ -78,7 +76,6 @@ bool PixelDelegate::editorEvent( QEvent* event, QAbstractItemModel* model, const
             return true;
         }
     }
-    return false;
     default:
         return false;
     }
