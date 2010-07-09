@@ -30,6 +30,8 @@ class MainWindow;
 
 class PixelDelegate;
 class ImageModel;
+class KColorCells;
+class KColorPatch;
 class QTableView;
 
 class MainWindow : public QMainWindow
@@ -50,8 +52,12 @@ private slots:
     void on_actionToggleHeaders_triggered();
     void on_actionNew_triggered();
     void slotUpdateView( int pixelSize );
+    void slotColorSelected( int index , const QColor& color );
 
 private:
+    void setupDock();
+    void setupColors();
+
     Ui::MainWindow *ui;
 
     QString mSaveMessage;
@@ -59,6 +65,8 @@ private:
 
     ImageModel* mModel;
     PixelDelegate* mDelegate;
+    KColorCells* mPalette;
+    KColorPatch* mPatch;
 };
 
 #endif // MAINWINDOW_H

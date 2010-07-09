@@ -2,7 +2,7 @@ project(pietcreator)
 cmake_minimum_required(VERSION 2.6)
 find_package(Qt4 REQUIRED)
 
-include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR} .)
 
 add_subdirectory( npiet )
 
@@ -10,7 +10,10 @@ set( pietcreator_SRCS
     main.cpp
     MainWindow.cpp
     ImageModel.cpp
-    PixelDelegate.cpp )
+    PixelDelegate.cpp
+    KColorCells.cpp
+    KColorMimeData.cpp
+    KColorPatch.cpp )
 
 qt4_automoc(${pietcreator_SRCS})
 

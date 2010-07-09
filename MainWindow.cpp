@@ -22,7 +22,10 @@
 
 #include "PixelDelegate.h"
 #include "ImageModel.h"
+#include "KColorCells.h"
+#include "KColorPatch.h"
 
+#include <QHBoxLayout>
 #include <QTableView>
 #include <QHeaderView>
 #include <QImage>
@@ -51,11 +54,13 @@ MainWindow::MainWindow( QWidget *parent ) :
     ui->mView->verticalHeader()->setDefaultSectionSize( 12 );
     ui->mView->viewport()->installEventFilter( this );
 
-
     mDelegate = new PixelDelegate( this );
     mDelegate->setPixelSize( 12 );
     ui->mView->setItemDelegate( mDelegate );
 
+    setupDock();
+
+    // setup save message
     mExtensions[ tr( "PNG (*.png)" )] = ".png";
     mExtensions[ tr( "GIF (*.gif)" )] = ".gif";
     mExtensions[ tr( "Portable Pixmap (*.ppm)" )] = ".ppm";
@@ -77,6 +82,55 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::setupDock()
+{
+    QHBoxLayout *layout = new QHBoxLayout( ui->mColorBox );
+    mPalette = new KColorCells( this, 6, 3 );
+    mPalette->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    mPalette->setFixedSize( 25*3, 25*6 );
+
+    mPatch = new KColorPatch(this);
+    mPatch->setFixedSize( 48, 48 );
+    mPatch->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    connect( mPalette, SIGNAL( colorSelected(int,QColor)), this, SLOT( slotColorSelected(int,QColor)));
+
+    layout->addWidget(mPatch);
+    layout->addWidget(mPalette);
+    layout->setSpacing(0);
+    ui->mColorBox->setLayout( layout );
+    setupColors();
+}
+
+void MainWindow::setupColors()
+{
+    if ( !mPalette )
+        return;
+    mPalette->setColor( 0, QColor("#FFC0C0") );
+    mPalette->setColor( 1, QColor("#FF0000") );
+    mPalette->setColor( 2, QColor("#C00000") );
+
+    mPalette->setColor( 3, QColor("#FFFFC0") );
+    mPalette->setColor( 4, QColor("#FFFF00") );
+    mPalette->setColor( 5, QColor("#C0C000") );
+
+    mPalette->setColor( 6, QColor("#C0FFC0") );
+    mPalette->setColor( 7, QColor("#00FF00") );
+    mPalette->setColor( 8, QColor("#00C000") );
+
+    mPalette->setColor( 9, QColor("#C0FFFF") );
+    mPalette->setColor( 10, QColor("#00FFFF") );
+    mPalette->setColor( 11, QColor("#00C0C0") );
+
+    mPalette->setColor( 12, QColor("#C0C0FF") );
+    mPalette->setColor( 13, QColor("#0000FF") );
+    mPalette->setColor( 14, QColor("#0000C0") );
+
+    mPalette->setColor( 15, QColor("#FFC0FF") );
+    mPalette->setColor( 16, QColor("#FF00FF") );
+    mPalette->setColor( 17, QColor("#C000C0") );
+}
+
 
 bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 {
@@ -104,8 +158,8 @@ void MainWindow::slotUpdateView( int pixelSize )
 {
     ui->mView->resizeColumnsToContents();
     ui->mView->resizeRowsToContents();
-    if( ui->mView->horizontalHeader()->isVisible() )
-      mModel->slotPixelSizeChange( pixelSize );
+    if ( ui->mView->horizontalHeader()->isVisible() )
+        mModel->slotPixelSizeChange( pixelSize );
 }
 
 void MainWindow::on_actionOpenSource_triggered()
@@ -189,6 +243,12 @@ void MainWindow::on_actionToggleHeaders_triggered()
         ui->mView->verticalHeader()->setMinimumSectionSize( largest_index );
     }
 }
+
+void MainWindow::slotColorSelected(int index, const QColor& color)
+{
+    mPatch->setColor( color );
+}
+
 
 
 #include "MainWindow.moc"
