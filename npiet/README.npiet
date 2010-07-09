@@ -1,0 +1,66 @@
+
+
+	README.npiet:					Jun 2004
+      (schoenfr@web.de)					Nov 2009
+
+
+
+npiet is an interperter for the piet programming language and
+
+npietedit is a very simple editor for small piet programs.
+
+npietedit-foogol is a ``foogol to piet'' compiler.
+
+
+about the piet programming language please look at:
+
+	http://www.dangermouse.net/esoteric/piet.html
+
+
+and you find more about npiet at:
+
+	http://bertnase.de/npiet
+
+
+and a copy of the foogol (and cfoogol) postings, about a ``ALGOL-like
+language'' definition is avail here:
+
+	http://bertnase.de/html/foogol.html
+
+
+to compile and install npiet and the additional programs and files run 
+
+	./configure
+	make
+	make install
+
+this installes the binaries npiet, npietedit and npiet-foogol,
+together with the manpages npiet.1, npietedit.1 and npiet-foogol.1 .
+
+
+if compiled with gd-lib and png-lib support (if avail), graphical
+trace output can be created by npiet - great fun ;-)
+
+
+npietedit is a Tk/Tcl program, so you need Tk/Tcl installed to run it.
+
+npiet-foogil needs libgd to compile and run.
+
+
+a quick npiet-foogol and npiet test would be:
+
+	echo 'begin prints ("Yo\n") end' | ./npiet-foogol -
+	./npiet npiet-foogol.png
+
+     or additionally to create a trace picture named npiet-trace.png:
+
+	./npiet -tpic npiet-foogol.png
+
+
+Have fun!
+
+
+--
+Sun Nov 15 21:54:08 CET 2009
+
+
