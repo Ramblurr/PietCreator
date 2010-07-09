@@ -37,7 +37,8 @@ ImageModel::~ImageModel()
 
 void ImageModel::setImage( const QImage& image )
 {
-  /* Begin: part taken from npiet.c, cleanup_input () */
+    int codel_size;
+    /* Begin: part taken from npiet.c, cleanup_input () */
     int i, j, last_c, last_p;
     int min_w = image.width() + 1;
     int *o_cells;
@@ -59,11 +60,18 @@ void ImageModel::setImage( const QImage& image )
         }
         c_check (j, c_mark_index, &last_c, &last_p, &min_w);
     }
+    codel_size = min_w;
     /* End: part taken from npiet.c, cleanup_input () */
 
-    qDebug() << "Guessed codel size: " << min_w;
+    qDebug() << "Guessed codel size: " << codel_size;
 
-    mImage = image;
+    // scale image so 1 codel == 1 pixel
+    if( codel_size > 1 ) {
+      int width = image.width() / codel_size;
+      int height = image.height() / codel_size;
+      mImage = image.scaled( width, height );
+    } else
+      mImage = image;
     reset();
 }
 
