@@ -62,6 +62,8 @@ char *version = "v1.2a";
 #include <signal.h>
 #include <errno.h>
 
+#include "npiet.h"
+
 // #ifdef HAVE_CONFIG_H
 # include "config.h"
 // #endif
@@ -298,8 +300,6 @@ static int width = 0, height = 0;
 #define c_white		(n_hue * n_light)
 #define c_black		(c_white + 1)
 #define n_colors	(c_black + 1)
-/* internal used index for filling areas: */
-#define c_mark_index	9999
 
 #define adv_col(c, h, l)  (((((c) % 6) + (h)) % 6) \
 				+ (6 * ((((c) / 6) + (l)) % 3)))
@@ -2688,7 +2688,7 @@ do_signal ()
 /*
  * main entry:
  */
-int
+/*int
 main (int argc, char *argv[])
 {
   int rc;
@@ -2721,7 +2721,7 @@ main (int argc, char *argv[])
   if (do_gdtrace) {
     gd_init ();
 
-    /* save a pic on ctrl-c: */
+    /* save a pic on ctrl-c: * /
     signal (SIGINT, do_signal);
   }
 
@@ -2732,4 +2732,4 @@ main (int argc, char *argv[])
   }
   
   return rc;
-}
+}*/

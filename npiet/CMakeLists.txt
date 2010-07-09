@@ -25,3 +25,8 @@ set(npiet_SRCS npiet.c )
 # add_executable(npiet ${npiet_SRCS} )
 # target_link_libraries( npiet ${GD_LIBRARIES} ${GIF_LIBRARIES} ${PNG_LIBRARIES})
 add_library( npiet ${npiet_SRCS} )
+
+target_link_libraries( npiet
+                       ${GD_LIBRARIES}
+                       ${GIF_LIBRARIES}
+                       ${PNG_LIBRARIES} )
