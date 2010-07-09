@@ -32,6 +32,7 @@ class PixelDelegate;
 class ImageModel;
 class KColorCells;
 class KColorPatch;
+class ViewMonitor;
 class QTableView;
 
 class MainWindow : public QMainWindow
@@ -67,6 +68,7 @@ private:
     PixelDelegate* mDelegate;
     KColorCells* mPalette;
     KColorPatch* mPatch;
+    ViewMonitor* mMonitor;
 };
 
 #endif // MAINWINDOW_H

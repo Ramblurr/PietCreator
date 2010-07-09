@@ -24,6 +24,7 @@
 #include "ImageModel.h"
 #include "KColorCells.h"
 #include "KColorPatch.h"
+#include "ViewMonitor.h"
 
 #include <QHBoxLayout>
 #include <QTableView>
@@ -36,6 +37,8 @@
 #include <QWheelEvent>
 #include <QDebug>
 
+static const int INITIAL_CODEL_SIZE = 12;
+
 MainWindow::MainWindow( QWidget *parent ) :
         QMainWindow( parent ),
         ui( new Ui::MainWindow )
@@ -44,6 +47,7 @@ MainWindow::MainWindow( QWidget *parent ) :
     mModel = new ImageModel;
     ui->mView->setModel( mModel );
 
+    ui->mView->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->mView->horizontalHeader()->hide();
     ui->mView->verticalHeader()->hide();
     ui->mView->horizontalHeader()->setMinimumSectionSize( 1 );
@@ -54,10 +58,11 @@ MainWindow::MainWindow( QWidget *parent ) :
     ui->mView->verticalHeader()->setDefaultSectionSize( 12 );
     ui->mView->viewport()->installEventFilter( this );
 
-    mDelegate = new PixelDelegate( this );
-    mDelegate->setPixelSize( 12 );
-    ui->mView->setItemDelegate( mDelegate );
+    mMonitor = new ViewMonitor( this );
+    mMonitor->setPixelSize( INITIAL_CODEL_SIZE );
 
+    mDelegate = new PixelDelegate( mMonitor, this );
+    ui->mView->setItemDelegate( mDelegate );
     setupDock();
 
     // setup save message
@@ -73,8 +78,8 @@ MainWindow::MainWindow( QWidget *parent ) :
             mSaveMessage += ";;";
     }
 
-    connect( ui->mSpinBox, SIGNAL( valueChanged( int ) ), mDelegate, SLOT( setPixelSize( int ) ) );
-    connect( ui->mSpinBox, SIGNAL( valueChanged( int ) ), SLOT( slotUpdateView( int ) ) );
+    connect( ui->mSpinBox, SIGNAL( valueChanged( int ) ), mMonitor, SLOT( setPixelSize( int ) ) );
+    connect( mMonitor, SIGNAL( pixelSizeChanged( int ) ), SLOT( slotUpdateView( int ) ) );
 
 }
 
@@ -87,52 +92,54 @@ void MainWindow::setupDock()
 {
     QHBoxLayout *layout = new QHBoxLayout( ui->mColorBox );
     mPalette = new KColorCells( this, 6, 3 );
-    mPalette->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    mPalette->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
     mPalette->setFixedSize( 25*3, 25*6 );
 
-    mPatch = new KColorPatch(this);
+    mPatch = new KColorPatch( this );
     mPatch->setFixedSize( 48, 48 );
-    mPatch->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-    connect( mPalette, SIGNAL( colorSelected(int,QColor)), this, SLOT( slotColorSelected(int,QColor)));
+    mPatch->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
 
-    layout->addWidget(mPatch);
-    layout->addWidget(mPalette);
-    layout->setSpacing(0);
+    layout->addWidget( mPatch );
+    layout->addWidget( mPalette );
+    layout->setSpacing( 0 );
     ui->mColorBox->setLayout( layout );
     setupColors();
+
+    connect( mPalette, SIGNAL( colorSelected( int, QColor ) ), this, SLOT( slotColorSelected( int, QColor ) ) );
+    connect( mPatch, SIGNAL( colorChanged( QColor ) ), mMonitor, SLOT( setCurrentColor( QColor ) ) );
 }
 
 void MainWindow::setupColors()
 {
     if ( !mPalette )
         return;
-    mPalette->setColor( 0, QColor("#FFC0C0") );
-    mPalette->setColor( 1, QColor("#FF0000") );
-    mPalette->setColor( 2, QColor("#C00000") );
+    mPalette->setColor( 0, QColor( "#FFC0C0" ) );
+    mPalette->setColor( 1, QColor( "#FF0000" ) );
+    mPalette->setColor( 2, QColor( "#C00000" ) );
 
-    mPalette->setColor( 3, QColor("#FFFFC0") );
-    mPalette->setColor( 4, QColor("#FFFF00") );
-    mPalette->setColor( 5, QColor("#C0C000") );
+    mPalette->setColor( 3, QColor( "#FFFFC0" ) );
+    mPalette->setColor( 4, QColor( "#FFFF00" ) );
+    mPalette->setColor( 5, QColor( "#C0C000" ) );
 
-    mPalette->setColor( 6, QColor("#C0FFC0") );
-    mPalette->setColor( 7, QColor("#00FF00") );
-    mPalette->setColor( 8, QColor("#00C000") );
+    mPalette->setColor( 6, QColor( "#C0FFC0" ) );
+    mPalette->setColor( 7, QColor( "#00FF00" ) );
+    mPalette->setColor( 8, QColor( "#00C000" ) );
 
-    mPalette->setColor( 9, QColor("#C0FFFF") );
-    mPalette->setColor( 10, QColor("#00FFFF") );
-    mPalette->setColor( 11, QColor("#00C0C0") );
+    mPalette->setColor( 9, QColor( "#C0FFFF" ) );
+    mPalette->setColor( 10, QColor( "#00FFFF" ) );
+    mPalette->setColor( 11, QColor( "#00C0C0" ) );
 
-    mPalette->setColor( 12, QColor("#C0C0FF") );
-    mPalette->setColor( 13, QColor("#0000FF") );
-    mPalette->setColor( 14, QColor("#0000C0") );
+    mPalette->setColor( 12, QColor( "#C0C0FF" ) );
+    mPalette->setColor( 13, QColor( "#0000FF" ) );
+    mPalette->setColor( 14, QColor( "#0000C0" ) );
 
-    mPalette->setColor( 15, QColor("#FFC0FF") );
-    mPalette->setColor( 16, QColor("#FF00FF") );
-    mPalette->setColor( 17, QColor("#C000C0") );
+    mPalette->setColor( 15, QColor( "#FFC0FF" ) );
+    mPalette->setColor( 16, QColor( "#FF00FF" ) );
+    mPalette->setColor( 17, QColor( "#C000C0" ) );
 }
 
 
-bool MainWindow::eventFilter(QObject* obj, QEvent* event)
+bool MainWindow::eventFilter( QObject* obj, QEvent* event )
 {
     if ( obj == ui->mView->viewport() && event->type() == QEvent::Wheel ) {
         QWheelEvent * wevent = static_cast<QWheelEvent*>( event );
@@ -146,7 +153,7 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
             return true;
         }
     }
-    return QObject::eventFilter(obj, event);
+    return QObject::eventFilter( obj, event );
 }
 
 void MainWindow::on_actionToggleGrid_triggered()
@@ -200,7 +207,7 @@ void MainWindow::on_actionNew_triggered()
 {
     QImage image( 50, 50, QImage::Format_RGB32 );
     image.fill( QColor( Qt::white ).rgb() );
-    mModel->setImage(image);
+    mModel->setImage( image );
 }
 
 
@@ -218,8 +225,8 @@ void MainWindow::on_actionToggleHeaders_triggered()
         ui->mView->verticalHeader()->setMinimumSectionSize( 1 );
         ui->mView->verticalHeader()->setResizeMode( QHeaderView::Fixed );
         ui->mView->horizontalHeader()->setResizeMode( QHeaderView::Fixed );
-        ui->mView->horizontalHeader()->setDefaultSectionSize( mDelegate->pixelSize() );
-        ui->mView->verticalHeader()->setDefaultSectionSize( mDelegate->pixelSize() );
+        ui->mView->horizontalHeader()->setDefaultSectionSize( mMonitor->pixelSize() );
+        ui->mView->verticalHeader()->setDefaultSectionSize( mMonitor->pixelSize() );
         ui->mSpinBox->setMinimum( 4 );
         mModel->slotPixelSizeChange( 1 );
     }  else { //show
@@ -244,7 +251,7 @@ void MainWindow::on_actionToggleHeaders_triggered()
     }
 }
 
-void MainWindow::slotColorSelected(int index, const QColor& color)
+void MainWindow::slotColorSelected( int index, const QColor& color )
 {
     mPatch->setColor( color );
 }

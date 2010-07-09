@@ -17,31 +17,39 @@
     02110-1301, USA.
 */
 
-#ifndef PIXELDELEGATE_H
-#define PIXELDELEGATE_H
-
-#include <QAbstractItemDelegate>
-
-class ViewMonitor;
-
-class PixelDelegate : public QAbstractItemDelegate
+#include "ViewMonitor.h"
+#include <QDebug>
+ViewMonitor::ViewMonitor( QObject* parent ): QObject( parent )
 {
-    Q_OBJECT
 
-public:
-    PixelDelegate( ViewMonitor* monitor, QObject *parent = 0 );
-    virtual ~PixelDelegate() {}
+}
 
-    void paint( QPainter *painter, const QStyleOptionViewItem &option,
-                const QModelIndex &index ) const;
+QColor ViewMonitor::currentColor() const
+{
+    return mCurrentColor;
+}
 
-    QSize sizeHint( const QStyleOptionViewItem &option,
-                    const QModelIndex &index ) const;
+void ViewMonitor::setCurrentColor( const QColor& color )
+{
+    qDebug() << "OMG HI";
+    qDebug() << color.rgb();
+    mCurrentColor = color;
+    emit currentColorChanged( color );
+}
 
-    bool editorEvent( QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& index );
+int ViewMonitor::pixelSize() const
+{
+    return mPixelSize;
+}
 
-private:
-    ViewMonitor* mMonitor;
-};
+void ViewMonitor::setPixelSize( int size )
+{
+    mPixelSize = size;
+    emit pixelSizeChanged( size );
+}
 
-#endif
+
+
+#include "ViewMonitor.moc"
+
+

@@ -17,31 +17,34 @@
     02110-1301, USA.
 */
 
-#ifndef PIXELDELEGATE_H
-#define PIXELDELEGATE_H
+#ifndef VIEWMONITOR_H
+#define VIEWMONITOR_H
 
-#include <QAbstractItemDelegate>
+#include <QObject>
+#include <QColor>
 
-class ViewMonitor;
-
-class PixelDelegate : public QAbstractItemDelegate
+class ViewMonitor : public QObject
 {
     Q_OBJECT
-
+    Q_PROPERTY( int pixelsize READ pixelSize WRITE setPixelSize NOTIFY pixelSizeChanged )
+    Q_PROPERTY( QColor currentcolor READ currentColor WRITE setCurrentColor NOTIFY currentColorChanged )
 public:
-    PixelDelegate( ViewMonitor* monitor, QObject *parent = 0 );
-    virtual ~PixelDelegate() {}
+    explicit ViewMonitor( QObject * parent );
 
-    void paint( QPainter *painter, const QStyleOptionViewItem &option,
-                const QModelIndex &index ) const;
+    int pixelSize() const;
+    QColor currentColor() const;
 
-    QSize sizeHint( const QStyleOptionViewItem &option,
-                    const QModelIndex &index ) const;
+signals:
+    void pixelSizeChanged( int );
+    void currentColorChanged( const QColor & );
 
-    bool editorEvent( QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& index );
+public slots:
+    void setCurrentColor( const QColor &color );
+    void setPixelSize( int );
 
 private:
-    ViewMonitor* mMonitor;
+    QColor mCurrentColor;
+    int mPixelSize;
 };
 
-#endif
+#endif // VIEWMONITOR_H

@@ -69,19 +69,32 @@ QVariant ImageModel::data( const QModelIndex& index, int role ) const
 QVariant ImageModel::headerData( int section, Qt::Orientation orientation, int role ) const
 {
     Q_UNUSED( orientation )
-    switch( role ) {
-      case Qt::SizeHintRole:
-        return QSize(mPixelSize, mPixelSize);
-      case Qt::DisplayRole:
+    switch ( role ) {
+    case Qt::SizeHintRole:
+        return QSize( mPixelSize, mPixelSize );
+    case Qt::DisplayRole:
         return QString::number( section );
-      default: 
+    default:
         return QVariant();
     }
 }
 
-void ImageModel::slotPixelSizeChange(int size)
+bool ImageModel::setData( const QModelIndex& index, const QVariant& value, int role )
 {
-  mPixelSize = size;
+    if ( role != Qt::DisplayRole )
+        return false;
+    if ( !value.canConvert<QColor>() )
+        return false;
+    QColor c = value.value<QColor>();
+    mImage.setPixel( index.column(), index.row(), c.rgb() );
+    emit dataChanged( index, index );
+    return true;
+}
+
+
+void ImageModel::slotPixelSizeChange( int size )
+{
+    mPixelSize = size;
 }
 
 

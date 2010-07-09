@@ -19,11 +19,14 @@
 
 #include "PixelDelegate.h"
 
-#include <QPainter>
+#include "ViewMonitor.h"
 
-PixelDelegate::PixelDelegate( QObject* parent ): QAbstractItemDelegate( parent )
+#include <QPainter>
+#include <QMouseEvent>
+#include <QDebug>
+
+PixelDelegate::PixelDelegate( ViewMonitor* monitor, QObject *parent ) : QAbstractItemDelegate( parent ), mMonitor( monitor )
 {
-    mPixelSize = 4;
 }
 
 void PixelDelegate::paint( QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index ) const
@@ -38,30 +41,47 @@ void PixelDelegate::paint( QPainter* painter, const QStyleOptionViewItem& option
     painter->save();
     painter->setRenderHint( QPainter::Antialiasing, true );
     painter->setPen( Qt::NoPen );
-    if ( option.state & QStyle::State_Selected )
-        painter->setBrush( option.palette.highlightedText() );
-    else
-        painter->setBrush( QBrush( c ) );
+    painter->setBrush( QBrush( c ) );
 
-    painter->drawRect( option.rect );
+    // shorten the rectangle a little to provide some spacing
+    QRect shortRect;
+    QPoint pt = option.rect.topLeft();
+    pt.setX( pt.x() + 2 );
+    pt.setY( pt.y() + 2 );
+    shortRect.setTopLeft( pt );
+    pt = option.rect.bottomRight();
+    pt.setX( pt.x() - 2 );
+    pt.setY( pt.y() - 2 );
+    shortRect.setBottomRight( pt );
+    painter->drawRect( shortRect );
     painter->restore();
 }
 
 QSize PixelDelegate::sizeHint( const QStyleOptionViewItem & /* option */,
                                const QModelIndex & /* index */ ) const
 {
-    return QSize( mPixelSize, mPixelSize );
+    return QSize( mMonitor->pixelSize(), mMonitor->pixelSize() );
 }
 
-int PixelDelegate::pixelSize()
+bool PixelDelegate::editorEvent( QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& index )
 {
-  return mPixelSize;
-}
-
-
-void PixelDelegate::setPixelSize( int size )
-{
-    mPixelSize = size;
+    if ( !index.isValid() )
+        return false;
+    switch ( event->type() ) {
+    case QEvent::MouseButtonPress:
+        model->setData( index, mMonitor->currentColor(), Qt::DisplayRole );
+        return true;
+    case QEvent::MouseMove: {
+        QMouseEvent *mev = static_cast<QMouseEvent*>( event );
+        if ( mev->buttons() & Qt::LeftButton ) {
+            model->setData( index, mMonitor->currentColor(), Qt::DisplayRole );
+            return true;
+        }
+    }
+    return false;
+    default:
+        return false;
+    }
 }
 
 #include "PixelDelegate.moc"

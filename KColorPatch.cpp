@@ -54,6 +54,7 @@ void KColorPatch::setColor(const QColor &col)
     d->color = col.toRgb();
 
     update();
+    emit colorChanged( d->color );
 }
 
 void KColorPatch::paintEvent(QPaintEvent* pe)

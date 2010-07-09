@@ -6,14 +6,15 @@ include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR} .)
 
 add_subdirectory( npiet )
 
-set( pietcreator_SRCS
+set( pietcreator_SRCS 
     main.cpp
     MainWindow.cpp
     ImageModel.cpp
     PixelDelegate.cpp
     KColorCells.cpp
     KColorMimeData.cpp
-    KColorPatch.cpp )
+    KColorPatch.cpp
+    ViewMonitor.cpp )
 
 qt4_automoc(${pietcreator_SRCS})
 
