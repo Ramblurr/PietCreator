@@ -96,11 +96,20 @@ int ImageModel::rowCount( const QModelIndex& parent ) const
 
 QVariant ImageModel::data( const QModelIndex& index, int role ) const
 {
-    if ( !index.isValid() || role != Qt::DisplayRole )
+    if ( !index.isValid() )
         return QVariant();
-    QColor c;
-    c.setRgb( mImage.pixel( index.column(), index.row() ) );
-    return c;
+
+    switch( role ) {
+      case Qt::DisplayRole: {
+        QColor c;
+        c.setRgb( mImage.pixel( index.column(), index.row() ) );
+        return c;
+      }
+      case Qt::StatusTipRole:
+        return QString( "X: %1 Y: %2" ).arg( index.column(), 3 ).arg( index.row(), 3 );
+      default:
+        return QVariant();
+    }
 }
 
 QVariant ImageModel::headerData( int section, Qt::Orientation orientation, int role ) const

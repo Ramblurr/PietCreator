@@ -61,6 +61,7 @@ MainWindow::MainWindow( QWidget *parent ) :
     ui->mView->horizontalHeader()->setResizeMode( QHeaderView::Fixed );
     ui->mView->horizontalHeader()->setDefaultSectionSize( 12 );
     ui->mView->verticalHeader()->setDefaultSectionSize( 12 );
+    ui->mView->viewport()->setMouseTracking( true ); // to enable Qt::StatusTipRole
     ui->mView->viewport()->installEventFilter( this );
 
     mMonitor = new ViewMonitor( this );
