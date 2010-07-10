@@ -48,6 +48,7 @@ MainWindow::MainWindow( QWidget *parent ) :
         ui( new Ui::MainWindow )
 {
     ui->setupUi( this );
+    setWindowIcon( QIcon(":/piet-16x16.png"));
 
     mModel = new ImageModel;
     ui->mView->setModel( mModel );

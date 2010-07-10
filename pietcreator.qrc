@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>piet.ico</file>
+        <file>piet-16x16.png</file>
+    </qresource>
+</RCC>
