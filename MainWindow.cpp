@@ -64,6 +64,7 @@ MainWindow::MainWindow( QWidget *parent ) :
 
     mMonitor = new ViewMonitor( this );
     mMonitor->setPixelSize( INITIAL_CODEL_SIZE );
+    ui->mZoomSlider->setValue( INITIAL_CODEL_SIZE );
 
     mDelegate = new PixelDelegate( mMonitor, this );
     ui->mView->setItemDelegate( mDelegate );
@@ -81,8 +82,7 @@ MainWindow::MainWindow( QWidget *parent ) :
         if ( it.hasNext() )
             mSaveMessage += ";;";
     }
-
-    connect( ui->mSpinBox, SIGNAL( valueChanged( int ) ), mMonitor, SLOT( setPixelSize( int ) ) );
+    connect( ui->mZoomSlider, SIGNAL( valueChanged( int ) ), mMonitor, SLOT( setPixelSize( int ) ) );
     connect( mMonitor, SIGNAL( pixelSizeChanged( int ) ), SLOT( slotUpdateView( int ) ) );
 
 }
@@ -148,7 +148,7 @@ bool MainWindow::eventFilter( QObject* obj, QEvent* event )
             const int numDegrees = wevent->delta() / 8;
             const int numSteps = numDegrees / 15;
             if ( wevent->orientation() == Qt::Vertical ) {
-                ui->mSpinBox->setValue( ui->mSpinBox->value() + numSteps );
+                ui->mZoomSlider->setValue( ui->mZoomSlider->value() + numSteps );
             }
             return true;
         }
@@ -227,7 +227,7 @@ void MainWindow::on_actionToggleHeaders_triggered()
         ui->mView->horizontalHeader()->setResizeMode( QHeaderView::Fixed );
         ui->mView->horizontalHeader()->setDefaultSectionSize( mMonitor->pixelSize() );
         ui->mView->verticalHeader()->setDefaultSectionSize( mMonitor->pixelSize() );
-        ui->mSpinBox->setMinimum( 4 );
+        ui->mZoomSlider->setMinimum( 4 );
         mModel->slotPixelSizeChange( 1 );
     }  else { //show
         ui->mView->horizontalHeader()->show();
@@ -244,8 +244,8 @@ void MainWindow::on_actionToggleHeaders_triggered()
             rows /= 10;
         }
         int largest_index = num_digits * 10; // not the largest index, but one of the largest (most digits)
-        ui->mSpinBox->setValue( ui->mView->horizontalHeader()->sectionSize( largest_index ) );
-        ui->mSpinBox->setMinimum( ui->mView->horizontalHeader()->sectionSize( largest_index ) );
+        ui->mZoomSlider->setValue( ui->mView->horizontalHeader()->sectionSize( largest_index ) );
+        ui->mZoomSlider->setMinimum( ui->mView->horizontalHeader()->sectionSize( largest_index ) );
         ui->mView->horizontalHeader()->setMinimumSectionSize( largest_index );
         ui->mView->verticalHeader()->setMinimumSectionSize( largest_index );
     }
