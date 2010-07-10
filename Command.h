@@ -21,13 +21,40 @@
 #define COMMAND_H
 
 #include <QString>
+#include <QColor>
+#include <QMetaType>
+
+class QColor;
 
 struct Command
 {
     Command(){}
     Command( const QString &_name, const QString &_desc ) : name( _name ), desc( _desc ) {}
+    Command( const QString &_name, const QString &_desc, const QColor &_color, int _index ) : name( _name ), desc( _desc ), color( _color ), index( _index ) {}
+
+    Command( const Command &other ) {
+      name = other.name;
+      desc = other.desc;
+      color = other.color;
+      index = other.index;
+    }
+
+    Command &operator=( const Command &other ) {
+        if( &other != this ) {
+          name = other.name;
+          desc = other.desc;
+          color = other.color;
+          index = other.index;
+        }
+        return *this;
+    }
+
     QString name;
     QString desc;
+    QColor  color;
+    int     index;
 };
+
+Q_DECLARE_METATYPE(Command)
 
 #endif // COMMAND_H

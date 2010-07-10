@@ -20,9 +20,12 @@
 #include <QtGui/QApplication>
 #include "MainWindow.h"
 
+#include "Command.h"
+
 
 int main(int argc, char** argv)
 {
+    qRegisterMetaType<Command>( "Command" );
     QApplication app(argc, argv);
     MainWindow foo;
     foo.show();
