@@ -22,6 +22,7 @@
 
 #include <QMainWindow>
 #include <QHash>
+#include <QUrl>
 
 namespace Ui
 {
@@ -51,12 +52,13 @@ public:
     virtual bool eventFilter(QObject* , QEvent* );
 
 private slots:
-    void on_actionExit_triggered();
-    void on_actionSaveSource_triggered();
-    void on_actionOpenSource_triggered();
-    void on_actionToggleGrid_triggered();
-    void on_actionToggleHeaders_triggered();
-    void on_actionNew_triggered();
+    void slotActionExit();
+    void slotActionSaveAs();
+    void slotActionSave();
+    void slotActionOpen();
+    void slotActionToggleGrid();
+    void slotActionToggleHeaders();
+    void slotActionNew();
     void slotUpdateView( int pixelSize );
     void slotCommandClicked( const QModelIndex &index );
     void slotCurrentCommandChanged( const Command & newCommand, const Command & oldCommand );
@@ -66,6 +68,7 @@ private:
     void setupDock();
     void setupToolbar();
     void setModified( bool flag );
+    bool promptSave();
 
     Ui::MainWindow *ui;
 
@@ -83,6 +86,7 @@ private:
     QLabel *mSecondaryCommandLabel;
     ViewMonitor* mMonitor;
 
+    QUrl mCurrentFile;
     bool mModified;
 };
 

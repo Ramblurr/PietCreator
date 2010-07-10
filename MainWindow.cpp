@@ -103,26 +103,29 @@ MainWindow::~MainWindow()
 void MainWindow::setupToolbar()
 {
     QMenu* fileMenu = ui->mMenubar->addMenu( tr( "File" ) );
-    QAction* newAct = ui->mToolBar->addAction( QIcon::fromTheme("document-new"), tr("&New..."), this, SLOT( on_actionNew_triggered() ) );
+    QAction* newAct = ui->mToolBar->addAction( QIcon::fromTheme("document-new"), tr("&New..."), this, SLOT( slotActionNew() ) );
     newAct->setShortcut( QKeySequence::New );
     fileMenu->addAction( newAct );
-    QAction* openAct = ui->mToolBar->addAction( QIcon::fromTheme("document-open"), tr("&Open..."), this, SLOT( on_actionOpenSource_triggered() ) );
+    QAction* openAct = ui->mToolBar->addAction( QIcon::fromTheme("document-open"), tr("&Open..."), this, SLOT( slotActionOpen() ) );
     openAct->setShortcut( QKeySequence::Open );
     fileMenu->addAction( openAct );
-    QAction* saveAct = ui->mToolBar->addAction( QIcon::fromTheme("document-save-as"), tr("&Save as..."), this, SLOT( on_actionSaveSource_triggered() ) );
-    saveAct->setShortcut( QKeySequence::SaveAs );
+    QAction* saveAct = ui->mToolBar->addAction( QIcon::fromTheme("document-save"), tr("&Save"), this, SLOT( slotActionSave() ) );
+    saveAct->setShortcut( QKeySequence::Save );
     fileMenu->addAction( saveAct );
+    QAction* saveAsAct = ui->mToolBar->addAction( QIcon::fromTheme("document-save-as"), tr("&Save as..."), this, SLOT( slotActionSaveAs() ) );
+    saveAsAct->setShortcut( QKeySequence::SaveAs );
+    fileMenu->addAction( saveAsAct );
 
     fileMenu->addSeparator();
 
-    fileMenu->addAction( QIcon::fromTheme( "application-exit" ), tr("&Quit"), this, SLOT( on_actionExit_triggered() ) )->setShortcut( QKeySequence::Quit );
+    fileMenu->addAction( QIcon::fromTheme( "application-exit" ), tr("&Quit"), this, SLOT( slotActionExit() ) )->setShortcut( QKeySequence::Quit );
 
     QMenu* viewMenu = ui->mMenubar->addMenu( tr( "View" ) );
-    QAction* gridAct = ui->mToolBar->addAction( QIcon::fromTheme("format-justify-fill"), tr("Toggle &Grid"), this, SLOT( on_actionToggleGrid_triggered() ) );
+    QAction* gridAct = ui->mToolBar->addAction( QIcon::fromTheme("format-justify-fill"), tr("Toggle &Grid"), this, SLOT( slotActionToggleGrid() ) );
     gridAct->setShortcut( QKeySequence::New );
     viewMenu->addAction( gridAct );
 
-    QAction* headersAct = ui->mToolBar->addAction( QIcon::fromTheme("view-form-table"), tr("Toggle &Headers"), this, SLOT( on_actionToggleHeaders_triggered() ) );
+    QAction* headersAct = ui->mToolBar->addAction( QIcon::fromTheme("view-form-table"), tr("Toggle &Headers"), this, SLOT( slotActionToggleHeaders() ) );
     headersAct->setShortcut( QKeySequence::New );
     viewMenu->addAction( headersAct );
 }
@@ -238,7 +241,7 @@ bool MainWindow::eventFilter( QObject* obj, QEvent* event )
     return QObject::eventFilter( obj, event );
 }
 
-void MainWindow::on_actionToggleGrid_triggered()
+void MainWindow::slotActionToggleGrid()
 {
     ui->mView->setShowGrid( !ui->mView->showGrid() );
 }
@@ -251,24 +254,10 @@ void MainWindow::slotUpdateView( int pixelSize )
         mModel->slotPixelSizeChange( pixelSize );
 }
 
-void MainWindow::on_actionOpenSource_triggered()
+void MainWindow::slotActionOpen()
 {
-    if( mModified ) {
-        int but = QMessageBox::warning( this,
-                              tr( "Modifed" ),
-                              tr( "The current source image has been modified. Opening a new image will discard the current changes." ),
-                              QMessageBox::Discard  | QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save );
-        switch( but ) {
-          case QMessageBox::Save:
-            on_actionSaveSource_triggered();
-            break;
-          case QMessageBox::Cancel:
-            return;
-          case QMessageBox::Discard:
-          default:
-            break;
-        }
-    }
+    if( !promptSave() )
+      return;
     QString file_name = QFileDialog::getOpenFileName( this, tr( "Open Image File" ),
                         QDesktopServices::storageLocation( QDesktopServices::HomeLocation ),
                         tr( "Images (*.png *.bmp *.ppm *.gif)" ) );
@@ -278,10 +267,11 @@ void MainWindow::on_actionOpenSource_triggered()
 
     setWindowTitle( QString("Piet Creator - %1 [*]").arg(file_name) );
     setModified( false );
+    mCurrentFile = file_name;
 
 }
 
-void MainWindow::on_actionSaveSource_triggered()
+void MainWindow::slotActionSaveAs()
 {
     QImage image = mModel->image();
 
@@ -301,42 +291,63 @@ void MainWindow::on_actionSaveSource_triggered()
 
     if ( !image.save( file_name, 0 ) ) {
         QMessageBox::critical( this, tr( "Error saving image" ), tr( "An error occured when trying to save the image." ) );
-    } else
+    } else {
+      setWindowTitle( QString("Piet Creator - %1 [*]").arg(file_name) );
       setModified( false );
+      mCurrentFile = file_name;
+    }
 }
 
-void MainWindow::on_actionNew_triggered()
+void MainWindow::slotActionSave()
 {
-    if( mModified ) {
-        int but = QMessageBox::warning( this,
-                              tr( "Modifed" ),
-                              tr( "The current source image has been modified. Creating a new image will discard the current changes." ),
-                              QMessageBox::Discard  | QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save );
-        switch( but ) {
-          case QMessageBox::Save:
-            on_actionSaveSource_triggered();
-            break;
-          case QMessageBox::Cancel:
-            return;
-          case QMessageBox::Discard:
-          default:
-            break;
-        }
+    if( mCurrentFile.isEmpty()  )
+      return slotActionSaveAs();
+
+    QImage image = mModel->image();
+
+    if ( image.isNull() )
+        return;
+
+    QString selected_filter;
+    QString file_name = mCurrentFile.toLocalFile();
+    QFileInfo file_info( file_name );
+    if( !file_info.isWritable() )
+        return slotActionSaveAs();
+
+    if ( file_info.suffix().isEmpty() )
+        file_name.append( mExtensions[selected_filter] );
+
+    if ( !image.save( file_name, 0 ) ) {
+        QMessageBox::critical( this, tr( "Error saving image" ), tr( "An error occured when trying to save the image." ) );
+    } else {
+      setWindowTitle( QString("Piet Creator - %1 [*]").arg(file_name) );
+      setModified( false );
+      mCurrentFile = file_name;
     }
+}
+
+
+void MainWindow::slotActionNew()
+{
+    if( !promptSave() )
+      return;
     QImage image( 50, 50, QImage::Format_RGB32 );
     image.fill( QColor( Qt::white ).rgb() );
     mModel->setImage( image, 1 );
     setWindowTitle( "Piet Creator - new source [*]" );
     setModified( false );
+    mCurrentFile.clear();
 }
 
 
-void MainWindow::on_actionExit_triggered()
+void MainWindow::slotActionExit()
 {
+    if( !promptSave() )
+      return;
     qApp->quit();
 }
 
-void MainWindow::on_actionToggleHeaders_triggered()
+void MainWindow::slotActionToggleHeaders()
 {
     if ( ui->mView->horizontalHeader()->isVisible() ) { //hide
         ui->mView->horizontalHeader()->hide();
@@ -393,6 +404,26 @@ void MainWindow::slotImageEdited()
         setModified( true );
 }
 
+bool MainWindow::promptSave()
+{
+    if( mModified ) {
+        int but = QMessageBox::warning( this,
+                              tr( "Modifed" ),
+                              tr( "The current source image has been modified. Opening a new image will discard the current changes." ),
+                              QMessageBox::Discard  | QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save );
+        switch( but ) {
+          case QMessageBox::Save:
+            slotActionSaveAs();
+            return true;
+          case QMessageBox::Cancel:
+            return false;
+          case QMessageBox::Discard:
+          default:
+            return true;
+        }
+    }
+    return true;
+}
 
 
 #include "MainWindow.moc"
