@@ -1,0 +1,47 @@
+Piet Creator
+-------------------------------------------------------------------------------
+
+Piet Creator is a cross platform GUI IDE for the Piet esoteric programming
+language. It includes a graphical editor, embedded interpreter, and integrated
+debugger.
+
+"Piet is a programming language in which programs look like abstract
+paintings. The language is named after Piet Mondrian, who pioneered the
+field of geometric abstract art. " - David Morgan-Mar. dmm@dangermouse.net (Piet Author)
+
+The interpreter backend is provided by npiet, a piet interpreter written in C by
+Erik Schoenfelder.
+
+piet, the language: http://www.dangermouse.net/esoteric/piet.html
+npiet: http://www.bertnase.de/npiet/
+
+
+Piet Creator is licensed under the GPL v3, and is written in C++ with Qt.
+
+Compiling / Running
+----------------
+Prerequisites for Linux/Mac OS X/Windows:
+
+* Qt >= 4.6
+* libPNG  - http://www.libpng.org/pub/png/libpng.html
+* GIFLIB
+* GD Graphics Library - http://www.boutell.com/gd/
+* CMake - http://www.cmake.org
+
+Piet Creator uses the cmake build system, which is supported on all major
+operating systems.
+
+On Linux/Mac OS X
+
+From the source directory:
+$ mkdir build
+$ cd build
+$ cmake ../   # This will attempt and find all the dependencies
+$ make
+$ ./pietcreator
+
+
+On Windows
+
+No idea, but you will need the Qt SDK for windows that includes mingw from:
+http://qt.nokia.com/downloads/sdk-windows-cpp
