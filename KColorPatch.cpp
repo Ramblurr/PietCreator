@@ -1,4 +1,6 @@
-/* This file is part of the KDE libraries
+/*
+    Copyright (C) 2010 Casey Link <unnamedrambler@gmail.com>
+    This file was part of the KDE libraries
     Copyright (C) 1997 Martin Jones (mjones@kde.org)
     Copyright (C) 2007 Roberto Raggi (roberto@kdevelop.org)
 
@@ -51,10 +53,11 @@ QColor KColorPatch::color() const
 
 void KColorPatch::setColor(const QColor &col)
 {
+    QColor old = d->color;
     d->color = col.toRgb();
 
     update();
-    emit colorChanged( d->color );
+    emit colorChanged( d->color, old );
 }
 
 void KColorPatch::paintEvent(QPaintEvent* pe)
@@ -82,8 +85,9 @@ void KColorPatch::dropEvent(QDropEvent *event)
 {
     QColor c = KColorMimeData::fromMimeData(event->mimeData());
     if (c.isValid()) {
+        QColor old = d->color;
         setColor(c);
-        emit colorChanged(c);
+        emit colorChanged( c, old );
     }
 }
 

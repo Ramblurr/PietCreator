@@ -64,9 +64,21 @@ QColor ViewMonitor::currentColor() const
 
 void ViewMonitor::setCurrentColor( int index, const QColor& color )
 {
-    mCurrentColor = color;
-    mColorIndex = index;
-    emit currentColorChanged( index, color );
+  if( mColorIndex != index ) {
+      mCurrentColor = color;
+      mColorIndex = index;
+      emit currentColorChanged( color );
+  }
+}
+
+void ViewMonitor::setCurrentColor( int index )
+{
+  if( mColorIndex != index ) {
+      Q_ASSERT( index < mColors.size() );
+      mCurrentColor = mColors.at( index );
+      mColorIndex = index;
+      emit currentColorChanged( mCurrentColor );
+  }
 }
 
 int ViewMonitor::pixelSize() const

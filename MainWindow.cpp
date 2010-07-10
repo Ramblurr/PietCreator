@@ -101,11 +101,23 @@ void MainWindow::setupDock()
     mPalette->setFixedSize( 25*3, 25*6 );
     mMonitor->populateCells( mPalette );
 
-//     mPatch = new KColorPatch( this );
-//     mPatch->setFixedSize( 48, 48 );
-//     mPatch->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
+    QWidget *patchWidget = new QWidget( colorsWidget );
 
-//     layout->addWidget( mPatch );
+
+    mSecondaryPatch = new KColorPatch( patchWidget );
+    mSecondaryPatch->setFixedSize( 48, 48 );
+    mSecondaryPatch->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
+
+    mPrimaryPatch = new KColorPatch( patchWidget );
+    mPrimaryPatch->setFixedSize( 48, 48 );
+    mPrimaryPatch->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
+
+    const int spacing = 15;
+    QRect secRect = mPrimaryPatch->geometry();
+    secRect.setTopLeft( QPoint( secRect.topLeft().x()+spacing,  secRect.topLeft().y()+spacing ) );
+    mSecondaryPatch->setGeometry( secRect );
+
+    layout->addWidget( patchWidget );
     layout->addWidget( mPalette );
     layout->setSpacing( 0 );
     colorsWidget->setLayout( layout );
@@ -131,7 +143,10 @@ void MainWindow::setupDock()
     boxLayout->insertWidget(1, commandsView);
 
     connect( mPalette, SIGNAL( colorSelected( int, QColor ) ), mMonitor, SLOT( setCurrentColor( int, QColor ) ) );
-    connect( mMonitor, SIGNAL( currentColorChanged( int , QColor ) ), commandsView, SLOT( reset() ) );
+    connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), commandsView, SLOT( reset() ) );
+    connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), mPrimaryPatch, SLOT( setColor( QColor ) ) );
+    connect( commandsView, SIGNAL( clicked( QModelIndex ) ), this, SLOT( slotCommandClicked( QModelIndex ) ) );
+    connect( mPrimaryPatch, SIGNAL( colorChanged(QColor,QColor)), this, SLOT( slotHandlePatchChange( QColor, QColor ) ) );
 }
 
 bool MainWindow::eventFilter( QObject* obj, QEvent* event )
@@ -245,5 +260,19 @@ void MainWindow::on_actionToggleHeaders_triggered()
         ui->mView->verticalHeader()->setMinimumSectionSize( largest_index );
     }
 }
+
+void MainWindow::slotCommandClicked( const QModelIndex &index )
+{
+    int colorIdx = index.data( CommandsModel::ColorIndexRole ).toInt();
+    mMonitor->setCurrentColor( colorIdx );
+}
+
+void MainWindow::slotHandlePatchChange( const QColor &newColor, const QColor &oldColor )
+{
+    Q_UNUSED( newColor );
+    mSecondaryPatch->setColor( oldColor );
+}
+
+
 
 #include "MainWindow.moc"

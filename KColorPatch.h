@@ -1,4 +1,6 @@
-/* This file is part of the KDE libraries
+/*
+    Copyright (C) 2010 Casey Link <unnamedrambler@gmail.com>
+    This file was part of the KDE libraries
     Copyright (C) 1997 Martin Jones (mjones@kde.org)
 
     This library is free software; you can redistribute it and/or
@@ -49,6 +51,7 @@ public:
      */
     QColor color() const;
 
+public slots:
     /**
      * Set the color to display and update the display
      *
@@ -61,7 +64,7 @@ Q_SIGNALS:
      * This signal is emitted whenever the current color
      * changes due to a drop event
      */
-    void colorChanged(const QColor&);
+    void colorChanged( const QColor& newColor, const QColor& oldColor );
 
 protected:
     virtual void paintEvent    ( QPaintEvent * pe );

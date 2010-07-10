@@ -28,8 +28,11 @@
 class ViewMonitor;
 class CommandsModel : public QAbstractTableModel
 {
-
+  Q_ENUMS( CommandRoles )
 public:
+    enum CommandRoles {
+        ColorIndexRole = Qt::UserRole
+    };
     explicit CommandsModel( ViewMonitor* monitor, QObject* parent );
     virtual ~CommandsModel() {}
 
@@ -38,6 +41,7 @@ public:
     int columnCount( const QModelIndex& parent = QModelIndex() ) const;
 
 private:
+    inline int colorIndex( const QModelIndex& index ) const;
     QVector<Command> mCommands;
     ViewMonitor *mMonitor;
 };

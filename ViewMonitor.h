@@ -42,10 +42,11 @@ public:
 
 signals:
     void pixelSizeChanged( int );
-    void currentColorChanged( int index, const QColor & );
+    void currentColorChanged( const QColor & );
 
 public slots:
     void setCurrentColor( int index, const QColor &color );
+    void setCurrentColor( int index );
     void setPixelSize( int );
 
 private:

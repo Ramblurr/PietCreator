@@ -72,20 +72,27 @@ QVariant CommandsModel::data( const QModelIndex& index, int role ) const
     switch ( role ) {
     case Qt::DisplayRole:
         return mCommands.at( index.row() + index.column() * 6 ).name;
-    case Qt::BackgroundRole: {
-        int cmdIdx = index.row() + index.column() * 6;
-        int cmdHue = cmdIdx % 6;
-        int cmdLight = ( ( cmdIdx / 6 ) + 3 ) % 3;
-        int curColorIdx = mMonitor->currentColorIndex();
-        int newColorY = ( ( curColorIdx % 6 ) + cmdHue ) % 6;
-        int newColorX = ( ( curColorIdx / 6 ) + cmdLight ) % 3;
-        int newColorIdx = newColorX + ( 3 * newColorY );
-        return mMonitor->colorForIndex( newColorIdx );
-    }
+    case Qt::BackgroundRole:
+        return mMonitor->colorForIndex( colorIndex( index ) );
+    case CommandsModel::ColorIndexRole:
+        return colorIndex( index );
     default:
         return QVariant();
     }
 }
+
+int CommandsModel::colorIndex(const QModelIndex& index) const
+{
+    int cmdIdx = index.row() + index.column() * 6;
+    int cmdHue = cmdIdx % 6;
+    int cmdLight = ( ( cmdIdx / 6 ) + 3 ) % 3;
+    int curColorIdx = mMonitor->currentColorIndex();
+    int newColorY = ( ( curColorIdx % 6 ) + cmdHue ) % 6;
+    int newColorX = ( ( curColorIdx / 6 ) + cmdLight ) % 3;
+    int newColorIdx = newColorX + ( 3 * newColorY );
+    return newColorIdx;
+}
+
 
 int CommandsModel::rowCount( const QModelIndex& parent ) const
 {

@@ -35,6 +35,7 @@ class KColorCells;
 class KColorPatch;
 class ViewMonitor;
 class QTableView;
+class QModelIndex;
 
 class MainWindow : public QMainWindow
 {
@@ -54,6 +55,8 @@ private slots:
     void on_actionToggleHeaders_triggered();
     void on_actionNew_triggered();
     void slotUpdateView( int pixelSize );
+    void slotCommandClicked( const QModelIndex &index );
+    void slotHandlePatchChange( const QColor &newColor, const QColor &oldColor );
 
 private:
     void setupDock();
@@ -67,7 +70,8 @@ private:
     PixelDelegate* mDelegate;
     CommandDelegate* mCommandDelegate;
     KColorCells* mPalette;
-    KColorPatch* mPatch;
+    KColorPatch* mPrimaryPatch;
+    KColorPatch* mSecondaryPatch;
     ViewMonitor* mMonitor;
 };
 
