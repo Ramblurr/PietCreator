@@ -57,7 +57,6 @@ private slots:
 
 private:
     void setupDock();
-    void setupInstructions();
 
     Ui::MainWindow *ui;
 

@@ -134,11 +134,6 @@ void MainWindow::setupDock()
     connect( mMonitor, SIGNAL( currentColorChanged( int , QColor ) ), commandsView, SLOT( reset() ) );
 }
 
-void MainWindow::setupInstructions()
-{
-
-}
-
 bool MainWindow::eventFilter( QObject* obj, QEvent* event )
 {
     if ( obj == ui->mView->viewport() && event->type() == QEvent::Wheel ) {
