@@ -110,6 +110,7 @@ void MainWindow::setupDock()
     mSecondaryPatch = new KColorPatch( patchWidget );
     mSecondaryPatch->setFixedSize( 48, 48 );
     mSecondaryPatch->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
+    mSecondaryPatch->installEventFilter( this );
 
     mPrimaryPatch = new KColorPatch( patchWidget );
     mPrimaryPatch->setFixedSize( 48, 48 );
@@ -183,6 +184,14 @@ bool MainWindow::eventFilter( QObject* obj, QEvent* event )
             }
             return true;
         }
+    }
+    if( obj == mSecondaryPatch && event->type() == QEvent::MouseButtonRelease) {
+      QMouseEvent * mevent = static_cast<QMouseEvent*>( event );
+      if( mevent->button() == Qt::LeftButton ) {
+          mMonitor->takeCommand();
+          return true;
+      }
+
     }
     return QObject::eventFilter( obj, event );
 }

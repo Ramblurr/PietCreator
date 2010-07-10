@@ -117,13 +117,19 @@ Command ViewMonitor::currentCommand() const
     return mStack.top();
 }
 
-Command ViewMonitor::takeCommand()
-{
-    return mStack.pop();
-}
 
 static inline int secondToLastIndex( int size ) {
   return (size > 1) ? size - 2 : size - 1;
+}
+
+
+Command ViewMonitor::takeCommand()
+{
+    Command c = mStack.pop();
+    emit currentCommandChanged( mStack.top(), mStack.at( secondToLastIndex( mStack.size() ) ) );
+    if( mStack.last().color != c.color )
+        emit currentColorChanged( c.color );
+    return c;
 }
 
 void ViewMonitor::setCurrentCommand( const Command& command )
