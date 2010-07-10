@@ -23,6 +23,9 @@ qt4_automoc(${pietcreator_SRCS})
 
 qt4_wrap_ui( pietcreator_SRCS MainWindow.ui )
 
+set( CMAKE_BUILD_TYPE Debug)
+set( DEBUG_BUILD_TYPE ON )
+
 add_executable(pietcreator ${pietcreator_SRCS})
 
 target_link_libraries( pietcreator
