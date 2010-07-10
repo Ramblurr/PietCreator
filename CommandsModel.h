@@ -31,7 +31,8 @@ class CommandsModel : public QAbstractTableModel
   Q_ENUMS( CommandRoles )
 public:
     enum CommandRoles {
-        ColorIndexRole = Qt::UserRole
+        ColorIndexRole = Qt::UserRole,
+        CommandRole
     };
     explicit CommandsModel( ViewMonitor* monitor, QObject* parent );
     virtual ~CommandsModel() {}

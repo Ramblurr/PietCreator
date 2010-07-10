@@ -76,6 +76,12 @@ QVariant CommandsModel::data( const QModelIndex& index, int role ) const
         return mMonitor->colorForIndex( colorIndex( index ) );
     case CommandsModel::ColorIndexRole:
         return colorIndex( index );
+    case CommandsModel::CommandRole: {
+          Command command = mCommands.at( index.row() + index.column() * 6 );
+          command.index = colorIndex( index );
+          command.color = mMonitor->colorForIndex( colorIndex( index ) );
+          return QVariant::fromValue<Command>(command);
+        }
     default:
         return QVariant();
     }
