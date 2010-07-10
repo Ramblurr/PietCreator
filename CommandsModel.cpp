@@ -86,10 +86,14 @@ int CommandsModel::colorIndex(const QModelIndex& index) const
     int cmdIdx = index.row() + index.column() * 6;
     int cmdHue = cmdIdx % 6;
     int cmdLight = ( ( cmdIdx / 6 ) + 3 ) % 3;
+
     int curColorIdx = mMonitor->currentColorIndex();
-    int newColorY = ( ( curColorIdx % 6 ) + cmdHue ) % 6;
-    int newColorX = ( ( curColorIdx / 6 ) + cmdLight ) % 3;
-    int newColorIdx = newColorX + ( 3 * newColorY );
+    int newColorY = (( curColorIdx / 3 ) + cmdHue) %6;
+    int newColorX = ( ( curColorIdx % 3 ) + cmdLight )%3;
+    int newColorIdx = (newColorX) + (newColorY*3 );
+//     if( mCommands.at( index.row() + index.column() * 6 ).name == "add" ) {
+//          qDebug()  << curColorIdx<< "(" << newColorX << "," << newColorY << ")" << newColorIdx;
+//     }
     return newColorIdx;
 }
 
