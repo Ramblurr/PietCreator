@@ -16,7 +16,8 @@ set( pietcreator_SRCS
     KColorPatch.cpp
     ViewMonitor.cpp
     Command.cpp
-    CommandsModel.cpp )
+    CommandsModel.cpp
+    CommandDelegate.cpp )
 
 qt4_automoc(${pietcreator_SRCS})
 

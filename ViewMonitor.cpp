@@ -18,10 +18,43 @@
 */
 
 #include "ViewMonitor.h"
+
+#include "KColorCells.h"
+
 #include <QDebug>
+
 ViewMonitor::ViewMonitor( QObject* parent ): QObject( parent )
 {
 
+    // 3 shades of red
+    mColors.insert( 0, QColor( "#FFC0C0" ) );
+    mColors.insert( 1, QColor( "#FF0000" ) );
+    mColors.insert( 2, QColor( "#C00000" ) );
+
+    // 3 shades of yellow
+    mColors.insert( 3, QColor( "#FFFFC0" ) );
+    mColors.insert( 4, QColor( "#FFFF00" ) );
+    mColors.insert( 5, QColor( "#C0C000" ) );
+
+    // 3 shades of green
+    mColors.insert( 6, QColor( "#C0FFC0" ) );
+    mColors.insert( 7, QColor( "#00FF00" ) );
+    mColors.insert( 8, QColor( "#00C000" ) );
+
+    // 3 shades of cyan
+    mColors.insert( 9, QColor( "#C0FFFF" ) );
+    mColors.insert( 10, QColor( "#00FFFF" ) );
+    mColors.insert( 11, QColor( "#00C0C0" ) );
+
+    // 3 shades of blue
+    mColors.insert( 12, QColor( "#C0C0FF" ) );
+    mColors.insert( 13, QColor( "#0000FF" ) );
+    mColors.insert( 14, QColor( "#0000C0" ) );
+
+    // 3 shades of magenta
+    mColors.insert( 15, QColor( "#FFC0FF" ) );
+    mColors.insert( 16, QColor( "#FF00FF" ) );
+    mColors.insert( 17, QColor( "#C000C0" ) );
 }
 
 QColor ViewMonitor::currentColor() const
@@ -29,12 +62,11 @@ QColor ViewMonitor::currentColor() const
     return mCurrentColor;
 }
 
-void ViewMonitor::setCurrentColor( const QColor& color )
+void ViewMonitor::setCurrentColor( int index, const QColor& color )
 {
-    qDebug() << "OMG HI";
-    qDebug() << color.rgb();
     mCurrentColor = color;
-    emit currentColorChanged( color );
+    mColorIndex = index;
+    emit currentColorChanged( index, color );
 }
 
 int ViewMonitor::pixelSize() const
@@ -46,6 +78,26 @@ void ViewMonitor::setPixelSize( int size )
 {
     mPixelSize = size;
     emit pixelSizeChanged( size );
+}
+
+int ViewMonitor::currentColorIndex() const
+{
+    return mColorIndex;
+}
+
+QColor ViewMonitor::colorForIndex( int index ) const
+{
+    if( index < mColors.size() )
+        return mColors.at( index );
+    return Qt::black;
+}
+
+void ViewMonitor::populateCells( KColorCells* cells )
+{
+    for( int i = 0; i < mColors.size(); ++i )
+        cells->setColor( i, mColors.at( i ) );
+
+    cells->setSelected( 0 );
 }
 
 

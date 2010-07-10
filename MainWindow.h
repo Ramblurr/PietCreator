@@ -29,6 +29,7 @@ class MainWindow;
 }
 
 class PixelDelegate;
+class CommandDelegate;
 class ImageModel;
 class KColorCells;
 class KColorPatch;
@@ -53,11 +54,9 @@ private slots:
     void on_actionToggleHeaders_triggered();
     void on_actionNew_triggered();
     void slotUpdateView( int pixelSize );
-    void slotColorSelected( int index , const QColor& color );
 
 private:
     void setupDock();
-    void setupColors();
     void setupInstructions();
 
     Ui::MainWindow *ui;
@@ -67,6 +66,7 @@ private:
 
     ImageModel* mModel;
     PixelDelegate* mDelegate;
+    CommandDelegate* mCommandDelegate;
     KColorCells* mPalette;
     KColorPatch* mPatch;
     ViewMonitor* mMonitor;

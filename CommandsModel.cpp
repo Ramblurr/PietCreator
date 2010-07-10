@@ -19,6 +19,10 @@
 
 #include "CommandsModel.h"
 
+#include "ViewMonitor.h"
+
+#include <QDebug>
+
 /*
 the commands based on the color changes:
 
@@ -33,49 +37,64 @@ the commands based on the color changes:
      4 Steps duplicate        roll in(number)
      5 Steps  in(char) out(number)  out(char)
 */
-CommandsModel::CommandsModel(QObject* parent): QAbstractListModel(parent)
+CommandsModel::CommandsModel( ViewMonitor* monitor, QObject* parent ): QAbstractTableModel( parent ), mMonitor( monitor )
 {
-  mCommands.insert( 0, Command( "nop", "Null" ) );
-  mCommands.insert( 1, Command( "add", "" ) );
-  mCommands.insert( 2, Command( "divide", "" ) );
-  mCommands.insert( 3, Command( "greater", "" ) );
-  mCommands.insert( 4, Command( "duplicate", "" ) );
-  mCommands.insert( 5, Command( "in(char)", "" ) );
+    mCommands.insert( 0, Command( "nop", "Null" ) );
+    mCommands.insert( 1, Command( "add", "" ) );
+    mCommands.insert( 2, Command( "divide", "" ) );
+    mCommands.insert( 3, Command( "greater", "" ) );
+    mCommands.insert( 4, Command( "duplicate", "" ) );
+    mCommands.insert( 5, Command( "in(char)", "" ) );
 
-  mCommands.insert( 6, Command( "push", "" ) );
-  mCommands.insert( 7, Command( "subtract", "" ) );
-  mCommands.insert( 8, Command( "mod", "" ) );
-  mCommands.insert( 9, Command( "pointer", "" ) );
-  mCommands.insert( 10, Command( "roll", "" ) );
-  mCommands.insert( 11, Command( "out(number)", "" ) );
+    mCommands.insert( 6, Command( "push", "" ) );
+    mCommands.insert( 7, Command( "subtract", "" ) );
+    mCommands.insert( 8, Command( "mod", "" ) );
+    mCommands.insert( 9, Command( "pointer", "" ) );
+    mCommands.insert( 10, Command( "roll", "" ) );
+    mCommands.insert( 11, Command( "out(number)", "" ) );
 
-  mCommands.insert( 12, Command( "pop", "" ) );
-  mCommands.insert( 13, Command( "multiply", "" ) );
-  mCommands.insert( 14, Command( "not", "" ) );
-  mCommands.insert( 15, Command( "switch", "" ) );
-  mCommands.insert( 16, Command( "in(number)", "" ) );
-  mCommands.insert( 17, Command( "out(char)", "" ) );
+    mCommands.insert( 12, Command( "pop", "" ) );
+    mCommands.insert( 13, Command( "multiply", "" ) );
+    mCommands.insert( 14, Command( "not", "" ) );
+    mCommands.insert( 15, Command( "switch", "" ) );
+    mCommands.insert( 16, Command( "in(number)", "" ) );
+    mCommands.insert( 17, Command( "out(char)", "" ) );
 
 }
 
-
-QVariant CommandsModel::data(const QModelIndex& index, int role) const
+QVariant CommandsModel::data( const QModelIndex& index, int role ) const
 {
-  if( !index.isValid() )
-    return QVariant();
+    if ( !index.isValid() )
+        return QVariant();
 
-  Q_ASSERT( index.row() < mCommands.size() );
+    Q_ASSERT( index.row() < 7 && index.column() < 4 );
 
-  switch( role ) {
+    switch ( role ) {
     case Qt::DisplayRole:
-      return mCommands.at( index.row() ).name;
+        return mCommands.at( index.row() + index.column() * 6 ).name;
+    case Qt::BackgroundRole: {
+        int cmdIdx = index.row() + index.column() * 6;
+        int cmdHue = cmdIdx % 6;
+        int cmdLight = ( ( cmdIdx / 6 ) + 3 ) % 3;
+        int curColorIdx = mMonitor->currentColorIndex();
+        int newColorY = ( ( curColorIdx % 6 ) + cmdHue ) % 6;
+        int newColorX = ( ( curColorIdx / 6 ) + cmdLight ) % 3;
+        int newColorIdx = newColorX + ( 3 * newColorY );
+        return mMonitor->colorForIndex( newColorIdx );
+    }
     default:
-      return QVariant();
-  }
+        return QVariant();
+    }
 }
 
-int CommandsModel::rowCount(const QModelIndex& parent) const
+int CommandsModel::rowCount( const QModelIndex& parent ) const
 {
-  return mCommands.size();
+    return 6;
 }
+
+int CommandsModel::columnCount( const QModelIndex& parent ) const
+{
+    return 3;
+}
+
 

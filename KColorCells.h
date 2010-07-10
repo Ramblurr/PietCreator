@@ -1,4 +1,6 @@
-/* This file is part of the KDE libraries
+/*
+    Copyright (C) 2010 Casey Link <unnamedrambler@gmail.com>
+    This file was part of the KDE libraries
     Copyright (C) 1997 Martin Jones (mjones@kde.org)
 
     This library is free software; you can redistribute it and/or
@@ -54,8 +56,6 @@ public:
   void setShading(bool shade);
   void setAcceptDrags(bool acceptDrags);
 
-  /** Sets the currently selected cell to @p index */
-  void setSelected(int index);
   /** Returns the index of the cell which is currently selected */
   int  selectedIndex() const;
 
@@ -64,6 +64,10 @@ Q_SIGNALS:
   void colorSelected( int index , const QColor& color );
   /** Emitted when a color in the table is double-clicked */
   void colorDoubleClicked( int index , const QColor& color );
+
+public slots:
+  /** Sets the currently selected cell to @p index */
+  void setSelected( int index );  
 
 protected:
   // the three methods below are used to ensure equal column widths and row heights

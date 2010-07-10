@@ -26,6 +26,7 @@
 #include "KColorPatch.h"
 #include "ViewMonitor.h"
 #include "CommandsModel.h"
+#include "CommandDelegate.h"
 
 #include <QHBoxLayout>
 #include <QTableView>
@@ -46,6 +47,7 @@ MainWindow::MainWindow( QWidget *parent ) :
         ui( new Ui::MainWindow )
 {
     ui->setupUi( this );
+
     mModel = new ImageModel;
     ui->mView->setModel( mModel );
 
@@ -94,85 +96,48 @@ void MainWindow::setupDock()
 {
     QWidget *colorsWidget = new QWidget( ui->mDockContents );
     QHBoxLayout *layout = new QHBoxLayout( colorsWidget  );
-    mPalette = new KColorCells( this, 6, 4 );
+    mPalette = new KColorCells( this, 6, 3 );
     mPalette->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
-    mPalette->setFixedSize( 25*4, 25*6 );
+    mPalette->setFixedSize( 25*3, 25*6 );
+    mMonitor->populateCells( mPalette );
 
-    mPatch = new KColorPatch( this );
-    mPatch->setFixedSize( 48, 48 );
-    mPatch->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
+//     mPatch = new KColorPatch( this );
+//     mPatch->setFixedSize( 48, 48 );
+//     mPatch->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
 
-    layout->addWidget( mPatch );
+//     layout->addWidget( mPatch );
     layout->addWidget( mPalette );
     layout->setSpacing( 0 );
     colorsWidget->setLayout( layout );
 
 //     QWidget *commandsWidget = new QWidget( ui->mDockContents );
-    CommandsModel *commandsModel = new CommandsModel( this );
-    QListView *commandsView = new QListView( ui->mDockContents );
-
+    CommandsModel *commandsModel = new CommandsModel( mMonitor, this );
+    QTableView *commandsView = new QTableView( ui->mDockContents );
+    commandsView->horizontalHeader()->hide();
+    commandsView->verticalHeader()->hide();
+//     commandsView->horizontalHeader()->setMinimumSectionSize( 1 );
+//     commandsView->verticalHeader()->setMinimumSectionSize( 1 );
+//     commandsView->verticalHeader()->setResizeMode( QHeaderView::ResizeToContents );
+    commandsView->horizontalHeader()->setResizeMode( QHeaderView::ResizeToContents );
+//     commandsView->horizontalHeader()->setDefaultSectionSize( 50 );
+//     commandsView->verticalHeader()->setDefaultSectionSize( 50 );
     commandsView->setModel( commandsModel );
+
+    mCommandDelegate = new CommandDelegate( mMonitor, this );
+    commandsView->setItemDelegate( mCommandDelegate );
 
     QBoxLayout *boxLayout = static_cast<QBoxLayout*>( ui->mDockContents->layout() );
     boxLayout->insertWidget(0, colorsWidget);
     boxLayout->insertWidget(1, commandsView);
 
-    setupColors();
-
-    connect( mPalette, SIGNAL( colorSelected( int, QColor ) ), this, SLOT( slotColorSelected( int, QColor ) ) );
-    connect( mPatch, SIGNAL( colorChanged( QColor ) ), mMonitor, SLOT( setCurrentColor( QColor ) ) );
-}
-
-void MainWindow::setupColors()
-{
-    if ( !mPalette )
-        return;
-
-    // 3 shades of red
-    mPalette->setColor( 0, QColor( "#FFC0C0" ) );
-    mPalette->setColor( 1, QColor( "#FF0000" ) );
-    mPalette->setColor( 2, QColor( "#C00000" ) );
-
-    // 3 shades of yellow
-    mPalette->setColor( 4, QColor( "#FFFFC0" ) );
-    mPalette->setColor( 5, QColor( "#FFFF00" ) );
-    mPalette->setColor( 6, QColor( "#C0C000" ) );
-
-    // 3 shades of green
-    mPalette->setColor( 8, QColor( "#C0FFC0" ) );
-    mPalette->setColor( 9, QColor( "#00FF00" ) );
-    mPalette->setColor( 10, QColor( "#00C000" ) );
-
-    // 3 shades of cyan
-    mPalette->setColor( 12, QColor( "#C0FFFF" ) );
-    mPalette->setColor( 13, QColor( "#00FFFF" ) );
-    mPalette->setColor( 14, QColor( "#00C0C0" ) );
-
-    // 3 shades of blue
-    mPalette->setColor( 16, QColor( "#C0C0FF" ) );
-    mPalette->setColor( 17, QColor( "#0000FF" ) );
-    mPalette->setColor( 18, QColor( "#0000C0" ) );
-
-    // 3 shades of magenta
-    mPalette->setColor( 20, QColor( "#FFC0FF" ) );
-    mPalette->setColor( 21, QColor( "#FF00FF" ) );
-    mPalette->setColor( 22, QColor( "#C000C0" ) );
-
-    // black and white
-    mPalette->setColor( 3, QColor( "#FFFFFF" ) );
-    mPalette->setColor( 7, QColor( "#FFFFFF" ) );
-    mPalette->setColor( 11, QColor( "#FFFFFF" ) );
-    mPalette->setColor( 15, QColor( "#000000" ) );
-    mPalette->setColor( 19, QColor( "#000000" ) );
-    mPalette->setColor( 23, QColor( "#000000" ) );
+    connect( mPalette, SIGNAL( colorSelected( int, QColor ) ), mMonitor, SLOT( setCurrentColor( int, QColor ) ) );
+    connect( mMonitor, SIGNAL( currentColorChanged( int , QColor ) ), commandsView, SLOT( reset() ) );
 }
 
 void MainWindow::setupInstructions()
 {
 
 }
-
-
 
 bool MainWindow::eventFilter( QObject* obj, QEvent* event )
 {
@@ -285,12 +250,5 @@ void MainWindow::on_actionToggleHeaders_triggered()
         ui->mView->verticalHeader()->setMinimumSectionSize( largest_index );
     }
 }
-
-void MainWindow::slotColorSelected( int index, const QColor& color )
-{
-    mPatch->setColor( color );
-}
-
-
 
 #include "MainWindow.moc"

@@ -17,29 +17,23 @@
     02110-1301, USA.
 */
 
-#ifndef COMMANDSMODEL_H
-#define COMMANDSMODEL_H
+#ifndef COMMANDDELEGATE_H
+#define COMMANDDELEGATE_H
 
-#include "Command.h"
-
-#include <QAbstractTableModel>
-#include <QVector>
+#include <QStyledItemDelegate>
 
 class ViewMonitor;
-class CommandsModel : public QAbstractTableModel
+
+class CommandDelegate : public QStyledItemDelegate
 {
 
 public:
-    explicit CommandsModel( ViewMonitor* monitor, QObject* parent );
-    virtual ~CommandsModel() {}
-
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-    int rowCount(const QModelIndex& parent = QModelIndex()) const;
-    int columnCount( const QModelIndex& parent = QModelIndex() ) const;
+    CommandDelegate( ViewMonitor* monitor, QObject *parent );
+    void paint( QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index ) const;
+    QSize sizeHint( const QStyleOptionViewItem& option, const QModelIndex& index ) const;
 
 private:
-    QVector<Command> mCommands;
-    ViewMonitor *mMonitor;
+    ViewMonitor* mMonitor;
 };
 
-#endif // COMMANDSMODEL_H
+#endif // COMMANDDELEGATE_H

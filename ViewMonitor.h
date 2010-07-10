@@ -22,29 +22,37 @@
 
 #include <QObject>
 #include <QColor>
+#include <QVector>
+
+class KColorCells;
 
 class ViewMonitor : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY( int pixelsize READ pixelSize WRITE setPixelSize NOTIFY pixelSizeChanged )
-    Q_PROPERTY( QColor currentcolor READ currentColor WRITE setCurrentColor NOTIFY currentColorChanged )
 public:
     explicit ViewMonitor( QObject * parent );
 
     int pixelSize() const;
     QColor currentColor() const;
+    int currentColorIndex() const;
+
+    QColor colorForIndex( int index ) const;
+
+    void populateCells( KColorCells * cells );
 
 signals:
     void pixelSizeChanged( int );
-    void currentColorChanged( const QColor & );
+    void currentColorChanged( int index, const QColor & );
 
 public slots:
-    void setCurrentColor( const QColor &color );
+    void setCurrentColor( int index, const QColor &color );
     void setPixelSize( int );
 
 private:
     QColor mCurrentColor;
+    int mColorIndex;
     int mPixelSize;
+    QVector<QColor> mColors;
 };
 
 #endif // VIEWMONITOR_H
