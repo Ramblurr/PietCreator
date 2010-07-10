@@ -75,6 +75,10 @@ bool PixelDelegate::editorEvent( QEvent* event, QAbstractItemModel* model, const
             model->setData( index, mMonitor->currentColor(), Qt::DisplayRole );
             emit imageEdited();
             return true;
+        } else if ( mev->buttons() & Qt::RightButton ) {
+            model->setData( index, Qt::white, Qt::DisplayRole );
+            emit imageEdited();
+            return false;
         }
     }
     default:
