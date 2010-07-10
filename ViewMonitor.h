@@ -20,9 +20,12 @@
 #ifndef VIEWMONITOR_H
 #define VIEWMONITOR_H
 
+#include "Command.h"
+
 #include <QObject>
 #include <QColor>
 #include <QVector>
+#include <QStack>
 
 class KColorCells;
 
@@ -32,30 +35,31 @@ class ViewMonitor : public QObject
 public:
     explicit ViewMonitor( QObject * parent );
 
-    int pixelSize() const;
     QColor currentColor() const;
     int currentColorIndex() const;
+    QString currentCommandLabel() const;
+    Command currentCommand() const;
+    Command takeCommand();
 
+    int pixelSize() const;
     QColor colorForIndex( int index ) const;
-
-    QString currentCommand() const;
-
     void populateCells( KColorCells * cells );
 
 signals:
+    void currentCommandChanged( const Command & newCommand, const Command & oldCommand );
     void pixelSizeChanged( int );
     void currentColorChanged( const QColor & );
 
 public slots:
-    void setCurrentColor( int index, const QColor &color );
+    void setCurrentCommand( const Command & command );
     void setCurrentColor( int index );
+    void setCurrentColor( int index, const QColor& color );
+
     void setPixelSize( int );
-    void setCurrentCommand( const QString & command );
 
 private:
-    QString mCurrentCommand;
-    QColor mCurrentColor;
-    int mColorIndex;
+    QStack<Command> mStack;
+
     int mPixelSize;
     QVector<QColor> mColors;
 };

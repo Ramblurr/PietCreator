@@ -55,29 +55,32 @@ ViewMonitor::ViewMonitor( QObject* parent ): QObject( parent )
     mColors.insert( 15, QColor( "#FFC0FF" ) );
     mColors.insert( 16, QColor( "#FF00FF" ) );
     mColors.insert( 17, QColor( "#C000C0" ) );
+
+    Command first( "", "", mColors.at(0), 0 );
+    setCurrentCommand( first );
 }
 
 QColor ViewMonitor::currentColor() const
 {
-    return mCurrentColor;
+    return mStack.top().color;
 }
 
 void ViewMonitor::setCurrentColor( int index, const QColor& color )
 {
-  if( mColorIndex != index ) {
-      mCurrentColor = color;
-      mColorIndex = index;
+  if( mStack.top().index != index ) {
+      mStack.top().color = color;
+      mStack.top().index = index;
       emit currentColorChanged( color );
   }
 }
 
 void ViewMonitor::setCurrentColor( int index )
 {
-  if( mColorIndex != index ) {
+  if( mStack.top().index != index ) {
       Q_ASSERT( index < mColors.size() );
-      mCurrentColor = mColors.at( index );
-      mColorIndex = index;
-      emit currentColorChanged( mCurrentColor );
+      mStack.top().color = mColors.at( index );
+      mStack.top().index = index;
+      emit currentColorChanged( mStack.top().color );
   }
 }
 
@@ -94,7 +97,7 @@ void ViewMonitor::setPixelSize( int size )
 
 int ViewMonitor::currentColorIndex() const
 {
-    return mColorIndex;
+    return mStack.top().index;
 }
 
 QColor ViewMonitor::colorForIndex( int index ) const
@@ -104,14 +107,31 @@ QColor ViewMonitor::colorForIndex( int index ) const
     return Qt::black;
 }
 
-QString ViewMonitor::currentCommand() const
+QString ViewMonitor::currentCommandLabel() const
 {
-    return mCurrentCommand;
+    return mStack.top().name;
 }
 
-void ViewMonitor::setCurrentCommand( const QString& command )
+Command ViewMonitor::currentCommand() const
 {
-    mCurrentCommand  = command;
+    return mStack.top();
+}
+
+Command ViewMonitor::takeCommand()
+{
+    return mStack.pop();
+}
+
+static inline int secondToLastIndex( int size ) {
+  return (size > 1) ? size - 2 : size - 1;
+}
+
+void ViewMonitor::setCurrentCommand( const Command& command )
+{
+    mStack.push( command );
+    emit currentCommandChanged( mStack.top(), mStack.at( secondToLastIndex( mStack.size() ) ) );
+    if( mStack.last().color != command.color )
+      emit currentColorChanged( command.color );
 }
 
 

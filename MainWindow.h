@@ -31,12 +31,14 @@ class MainWindow;
 class PixelDelegate;
 class CommandDelegate;
 class ImageModel;
+class CommandsModel;
 class KColorCells;
 class KColorPatch;
 class ViewMonitor;
 class QTableView;
 class QModelIndex;
 class QLabel;
+class Command;
 
 class MainWindow : public QMainWindow
 {
@@ -57,7 +59,7 @@ private slots:
     void on_actionNew_triggered();
     void slotUpdateView( int pixelSize );
     void slotCommandClicked( const QModelIndex &index );
-    void slotHandlePatchChange( const QColor &newColor, const QColor &oldColor );
+    void slotCurrentCommandChanged( const Command & newCommand, const Command & oldCommand );
 
 private:
     void setupDock();
@@ -68,6 +70,7 @@ private:
     QHash<QString, QString> mExtensions;
 
     ImageModel* mModel;
+    CommandsModel *mCommandsModel;
     PixelDelegate* mDelegate;
     CommandDelegate* mCommandDelegate;
     KColorCells* mPalette;

@@ -27,6 +27,7 @@
 #include "ViewMonitor.h"
 #include "CommandsModel.h"
 #include "CommandDelegate.h"
+#include "Command.h"
 
 #include <QHBoxLayout>
 #include <QTableView>
@@ -84,7 +85,6 @@ MainWindow::MainWindow( QWidget *parent ) :
     }
     connect( ui->mZoomSlider, SIGNAL( valueChanged( int ) ), mMonitor, SLOT( setPixelSize( int ) ) );
     connect( mMonitor, SIGNAL( pixelSizeChanged( int ) ), SLOT( slotUpdateView( int ) ) );
-
 }
 
 MainWindow::~MainWindow()
@@ -139,7 +139,7 @@ void MainWindow::setupDock()
     colorsWidget->setLayout( hlayout );
 
 //     QWidget *commandsWidget = new QWidget( ui->mDockContents );
-    CommandsModel *commandsModel = new CommandsModel( mMonitor, this );
+    mCommandsModel = new CommandsModel( mMonitor, this );
     QTableView *commandsView = new QTableView( ui->mDockContents );
     commandsView->horizontalHeader()->hide();
     commandsView->verticalHeader()->hide();
@@ -149,7 +149,7 @@ void MainWindow::setupDock()
     commandsView->horizontalHeader()->setResizeMode( QHeaderView::ResizeToContents );
 //     commandsView->horizontalHeader()->setDefaultSectionSize( 50 );
 //     commandsView->verticalHeader()->setDefaultSectionSize( 50 );
-    commandsView->setModel( commandsModel );
+    commandsView->setModel( mCommandsModel );
 
     mCommandDelegate = new CommandDelegate( mMonitor, this );
     commandsView->setItemDelegate( mCommandDelegate );
@@ -159,10 +159,15 @@ void MainWindow::setupDock()
     boxLayout->insertWidget(1, commandsView);
 
     connect( mPalette, SIGNAL( colorSelected( int, QColor ) ), mMonitor, SLOT( setCurrentColor( int, QColor ) ) );
-    connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), commandsView, SLOT( reset() ) );
-    connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), mPrimaryPatch, SLOT( setColor( QColor ) ) );
+    connect( mMonitor, SIGNAL( currentCommandChanged(Command,Command)), commandsView, SLOT( reset() ) );
+    connect( mMonitor, SIGNAL( currentColorChanged(QColor)), commandsView, SLOT( reset() ) );
+    connect( mMonitor, SIGNAL( currentCommandChanged(Command,Command)), this, SLOT( slotCurrentCommandChanged(Command,Command)));
     connect( commandsView, SIGNAL( clicked( QModelIndex ) ), this, SLOT( slotCommandClicked( QModelIndex ) ) );
-    connect( mPrimaryPatch, SIGNAL( colorChanged(QColor,QColor)), this, SLOT( slotHandlePatchChange( QColor, QColor ) ) );
+//     connect( mPrimaryPatch, SIGNAL( colorChanged(QColor,QColor)), this, SLOT( slotHandlePatchChange( QColor, QColor ) ) );
+
+    // select default
+    Command firstcmd = mCommandsModel->data( mCommandsModel->index(0,0), CommandsModel::CommandRole ).value<Command>();
+    mMonitor->setCurrentCommand( firstcmd );
 }
 
 bool MainWindow::eventFilter( QObject* obj, QEvent* event )
@@ -279,17 +284,17 @@ void MainWindow::on_actionToggleHeaders_triggered()
 
 void MainWindow::slotCommandClicked( const QModelIndex &index )
 {
-    int colorIdx = index.data( CommandsModel::ColorIndexRole ).toInt();
-    mMonitor->setCurrentCommand( index.data().toString()  );
-    mMonitor->setCurrentColor( colorIdx );
+    Command command = index.data( CommandsModel::CommandRole ).value<Command>();
+    qDebug() << "command clicked:" << command.name << command.index;
+    mMonitor->setCurrentCommand( command );
 }
 
-void MainWindow::slotHandlePatchChange( const QColor &newColor, const QColor &oldColor )
+void MainWindow::slotCurrentCommandChanged(const Command& newCommand, const Command& oldCommand )
 {
-    Q_UNUSED( newColor );
-    mSecondaryPatch->setColor( oldColor );
-    mSecondaryCommandLabel->setText( mPrimaryCommandLabel->text() );
-    mPrimaryCommandLabel->setText( mMonitor->currentCommand() );
+    mPrimaryPatch->setColor( newCommand.color );
+    mPrimaryCommandLabel->setText( newCommand.name );
+    mSecondaryPatch->setColor( oldCommand.color );
+    mSecondaryCommandLabel->setText( oldCommand.name );
 }
 
 
