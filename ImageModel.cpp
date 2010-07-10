@@ -106,7 +106,7 @@ QVariant ImageModel::data( const QModelIndex& index, int role ) const
         return c;
       }
       case Qt::StatusTipRole:
-        return QString( "X: %1 Y: %2" ).arg( index.column(), 3 ).arg( index.row(), 3 );
+        return statusString( index );
       default:
         return QVariant();
     }
@@ -142,6 +142,52 @@ void ImageModel::slotPixelSizeChange( int size )
 {
     mPixelSize = size;
 }
+
+QString ImageModel::statusString(QModelIndex index) const
+{
+    QString coords;
+    coords = QString( "X: %1 Y: %2" ).arg( index.column(), 3 ).arg( index.row(), 3 );
+
+    int connected = contiguousBlocks( index.column(), index.row() );
+
+    return QString("%1, contiguous: %2").arg(coords).arg(connected);
+}
+
+int ImageModel::contiguousBlocks( int x, int y ) const
+{
+      if( x < 0 || x >= mImage.width() || y < 0 || y >= mImage.height() )
+          return 0;
+
+      // array used to mark pixels as visited.
+      // the image is mapped in row major fashion
+      QBitArray markedArray( mImage.width() * mImage.height() );
+
+      markedArray[x*mImage.height()+y] = 1;
+      QRgb color = mImage.pixel(x, y);
+      int result = 1; // 1 for the current block
+      result += contiguousBlocks( x + 1, y, color, markedArray );
+      result += contiguousBlocks( x - 1, y, color, markedArray );
+      result += contiguousBlocks( x, y + 1, color, markedArray );
+      result += contiguousBlocks( x, y - 1, color, markedArray );
+      return result;
+}
+
+int ImageModel::contiguousBlocks( int x, int y, QRgb color, QBitArray &markedArray ) const
+{
+      if( x < 0 || x >= mImage.width() || y < 0 || y >= mImage.height() )
+          return 0;
+      if( markedArray[x*mImage.height()+y] || mImage.pixel( x, y ) != color )
+          return 0;
+
+      markedArray[x*mImage.height()+y] = 1;
+      int result = 1; // 1 for the current block
+      result += contiguousBlocks( x + 1, y, color, markedArray );
+      result += contiguousBlocks( x - 1, y, color, markedArray );
+      result += contiguousBlocks( x, y + 1, color, markedArray );
+      result += contiguousBlocks( x, y - 1, color, markedArray );
+      return result;
+}
+
 
 
 #include "ImageModel.moc"

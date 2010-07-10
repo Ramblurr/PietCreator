@@ -21,7 +21,7 @@
 
 #include <QAbstractTableModel>
 #include <QImage>
-
+class QBitArray;
 class ImageModel : public QAbstractTableModel
 {
     Q_OBJECT
@@ -52,6 +52,9 @@ public slots:
         */
     void slotPixelSizeChange( int size );
 private:
+    QString statusString( QModelIndex index ) const;
+    int contiguousBlocks( int x, int y ) const;
+    int contiguousBlocks( int x, int y, QRgb color, QBitArray &markedArray  ) const;
     QImage mImage;
     int mPixelSize;
 };
