@@ -35,31 +35,51 @@ ImageModel::~ImageModel()
 
 }
 
-void ImageModel::setImage( const QImage& image, int codel_size )
+// helper function to check codel size
+void
+cc_check (int i, QRgb c, QRgb *last_c, int *last_p, int *min_w)
 {
+  if (i == 0) {
+    *last_c = c;
+    *last_p = i;
+  } else if (*last_c != c) {
+    int w = i - *last_p;
+    if (w < *min_w) {
+      *min_w = w;
+    }
+    *last_c = c;
+    *last_p = i;
+  }
+}
+
+void ImageModel::setImage( const QImage& _image, int codel_size )
+{
+    QImage image = _image.convertToFormat(QImage::Format_ARGB32);
     if( codel_size < 0 ) {
-        /* Begin: part taken from npiet.c, cleanup_input () */
+        /* Begin: modified part taken from npiet.c, cleanup_input () */
         // (C) 2010 Erik Schoenfelder <schoenfr@web.de>
-        int i, j, last_c, last_p;
+        int i, j, last_p;
+        QRgb last_cc;
         int min_w = image.width() + 1;
+        int min_ww = image.width() + 1;
         int *o_cells;
 
-        int *cells = (int*)image.bits();
-
+        QRgb *cells = (QRgb*) image.bits();
         // scan image to guess codel size
         /* left to right: */
         for (j = 0; j < image.height(); j++) {
             for (i = 0; i < image.width(); i++) {
-                c_check (i, cells [j * image.width() + i], &last_c, &last_p, &min_w);
+                cc_check (i, cells [j * image.width() + i], &last_cc, &last_p, &min_w);
             }
-            c_check (i, c_mark_index, &last_c, &last_p, &min_w);
+            cc_check (i, c_mark_index, &last_cc, &last_p, &min_w);
         }
+        qDebug() << "his min_w" << min_w;
         /* top to bottom: */
         for (i = 0; i < image.width(); i++) {
             for (j = 0; j < image.height(); j++) {
-                c_check (j, cells [j * image.width() + i], &last_c, &last_p, &min_w);
+                cc_check (j, cells [j * image.width() + i], &last_cc, &last_p, &min_w);
             }
-            c_check (j, c_mark_index, &last_c, &last_p, &min_w);
+            cc_check (j, c_mark_index, &last_cc, &last_p, &min_w);
         }
         codel_size = min_w;
         /* End: part taken from npiet.c, cleanup_input () */
