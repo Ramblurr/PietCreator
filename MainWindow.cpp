@@ -102,7 +102,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupToolbar()
 {
-    QMenu* fileMenu = ui->mMenubar->addMenu( tr( "File" ) );
+    QMenu* fileMenu = ui->mMenubar->addMenu( tr( "&File" ) );
     QAction* newAct = ui->mToolBar->addAction( QIcon::fromTheme("document-new"), tr("&New..."), this, SLOT( slotActionNew() ) );
     newAct->setShortcut( QKeySequence::New );
     fileMenu->addAction( newAct );
@@ -120,7 +120,7 @@ void MainWindow::setupToolbar()
 
     fileMenu->addAction( QIcon::fromTheme( "application-exit" ), tr("&Quit"), this, SLOT( slotActionExit() ) )->setShortcut( QKeySequence::Quit );
 
-    QMenu* viewMenu = ui->mMenubar->addMenu( tr( "View" ) );
+    QMenu* viewMenu = ui->mMenubar->addMenu( tr( "&View" ) );
     QAction* gridAct = ui->mToolBar->addAction( QIcon::fromTheme("format-justify-fill"), tr("Toggle &Grid"), this, SLOT( slotActionToggleGrid() ) );
     gridAct->setShortcut( QKeySequence::New );
     viewMenu->addAction( gridAct );
