@@ -36,6 +36,7 @@ class KColorPatch;
 class ViewMonitor;
 class QTableView;
 class QModelIndex;
+class QLabel;
 
 class MainWindow : public QMainWindow
 {
@@ -72,6 +73,8 @@ private:
     KColorCells* mPalette;
     KColorPatch* mPrimaryPatch;
     KColorPatch* mSecondaryPatch;
+    QLabel *mPrimaryCommandLabel;
+    QLabel *mSecondaryCommandLabel;
     ViewMonitor* mMonitor;
 };
 

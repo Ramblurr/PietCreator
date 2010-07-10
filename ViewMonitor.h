@@ -38,6 +38,8 @@ public:
 
     QColor colorForIndex( int index ) const;
 
+    QString currentCommand() const;
+
     void populateCells( KColorCells * cells );
 
 signals:
@@ -48,8 +50,10 @@ public slots:
     void setCurrentColor( int index, const QColor &color );
     void setCurrentColor( int index );
     void setPixelSize( int );
+    void setCurrentCommand( const QString & command );
 
 private:
+    QString mCurrentCommand;
     QColor mCurrentColor;
     int mColorIndex;
     int mPixelSize;

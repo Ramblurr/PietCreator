@@ -104,6 +104,17 @@ QColor ViewMonitor::colorForIndex( int index ) const
     return Qt::black;
 }
 
+QString ViewMonitor::currentCommand() const
+{
+    return mCurrentCommand;
+}
+
+void ViewMonitor::setCurrentCommand( const QString& command )
+{
+    mCurrentCommand  = command;
+}
+
+
 void ViewMonitor::populateCells( KColorCells* cells )
 {
     for( int i = 0; i < mColors.size(); ++i )

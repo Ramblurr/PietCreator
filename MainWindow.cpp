@@ -95,15 +95,18 @@ MainWindow::~MainWindow()
 void MainWindow::setupDock()
 {
     QWidget *colorsWidget = new QWidget( ui->mDockContents );
-    QHBoxLayout *layout = new QHBoxLayout( colorsWidget  );
-    mPalette = new KColorCells( this, 6, 3 );
+    QHBoxLayout *hlayout = new QHBoxLayout( colorsWidget  );
+    mPalette = new KColorCells( colorsWidget, 6, 3 );
     mPalette->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
     mPalette->setFixedSize( 25*3, 25*6 );
     mMonitor->populateCells( mPalette );
 
-    QWidget *patchWidget = new QWidget( colorsWidget );
-
-
+    const int spacing = 15;
+    QWidget *currentCommandWidget = new QWidget( colorsWidget );
+    QVBoxLayout *vlayout = new QVBoxLayout( currentCommandWidget  );
+    QWidget *patchWidget = new QWidget( currentCommandWidget );
+    patchWidget->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
+    patchWidget->setFixedWidth( 48 + spacing );
     mSecondaryPatch = new KColorPatch( patchWidget );
     mSecondaryPatch->setFixedSize( 48, 48 );
     mSecondaryPatch->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
@@ -112,15 +115,28 @@ void MainWindow::setupDock()
     mPrimaryPatch->setFixedSize( 48, 48 );
     mPrimaryPatch->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
 
-    const int spacing = 15;
     QRect secRect = mPrimaryPatch->geometry();
     secRect.setTopLeft( QPoint( secRect.topLeft().x()+spacing,  secRect.topLeft().y()+spacing ) );
     mSecondaryPatch->setGeometry( secRect );
 
-    layout->addWidget( patchWidget );
-    layout->addWidget( mPalette );
-    layout->setSpacing( 0 );
-    colorsWidget->setLayout( layout );
+    mPrimaryCommandLabel = new QLabel( currentCommandWidget );
+    mPrimaryCommandLabel->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
+
+    mSecondaryCommandLabel = new QLabel( currentCommandWidget );
+    mSecondaryCommandLabel->setAlignment( Qt::AlignRight );
+    mSecondaryCommandLabel->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
+    patchWidget->setFixedHeight( 48 + spacing );
+    vlayout->addWidget( mPrimaryCommandLabel );
+    vlayout->addWidget( patchWidget );
+    vlayout->addWidget( mSecondaryCommandLabel );
+    vlayout->addStretch();
+    currentCommandWidget->setLayout( vlayout );
+
+    hlayout->addStretch();
+    hlayout->addWidget( currentCommandWidget );
+    hlayout->addWidget( mPalette );
+    hlayout->addStretch();
+    colorsWidget->setLayout( hlayout );
 
 //     QWidget *commandsWidget = new QWidget( ui->mDockContents );
     CommandsModel *commandsModel = new CommandsModel( mMonitor, this );
@@ -264,6 +280,7 @@ void MainWindow::on_actionToggleHeaders_triggered()
 void MainWindow::slotCommandClicked( const QModelIndex &index )
 {
     int colorIdx = index.data( CommandsModel::ColorIndexRole ).toInt();
+    mMonitor->setCurrentCommand( index.data().toString()  );
     mMonitor->setCurrentColor( colorIdx );
 }
 
@@ -271,6 +288,8 @@ void MainWindow::slotHandlePatchChange( const QColor &newColor, const QColor &ol
 {
     Q_UNUSED( newColor );
     mSecondaryPatch->setColor( oldColor );
+    mSecondaryCommandLabel->setText( mPrimaryCommandLabel->text() );
+    mPrimaryCommandLabel->setText( mMonitor->currentCommand() );
 }
 
 
