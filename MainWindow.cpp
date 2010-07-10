@@ -40,12 +40,14 @@
 #include <QWheelEvent>
 #include <QDebug>
 #include <QListView>
+#include <QKeySequence>
 
 static const int INITIAL_CODEL_SIZE = 12;
 
 MainWindow::MainWindow( QWidget *parent ) :
         QMainWindow( parent ),
-        ui( new Ui::MainWindow )
+        ui( new Ui::MainWindow ),
+        mModified( false )
 {
     ui->setupUi( this );
     setWindowIcon( QIcon(":/piet-16x16.png"));
@@ -85,6 +87,8 @@ MainWindow::MainWindow( QWidget *parent ) :
         if ( it.hasNext() )
             mSaveMessage += ";;";
     }
+
+    connect( mDelegate, SIGNAL( imageEdited() ), SLOT( slotImageEdited() ) );
     connect( ui->mZoomSlider, SIGNAL( valueChanged( int ) ), mMonitor, SLOT( setPixelSize( int ) ) );
     connect( mMonitor, SIGNAL( pixelSizeChanged( int ) ), SLOT( slotUpdateView( int ) ) );
 }
@@ -173,6 +177,13 @@ void MainWindow::setupDock()
     mMonitor->setCurrentCommand( firstcmd );
 }
 
+void MainWindow::setModified(bool flag)
+{
+    mModified = flag;
+    setWindowModified( flag );
+}
+
+
 bool MainWindow::eventFilter( QObject* obj, QEvent* event )
 {
     if ( obj == ui->mView->viewport() && event->type() == QEvent::Wheel ) {
@@ -213,13 +224,31 @@ void MainWindow::slotUpdateView( int pixelSize )
 
 void MainWindow::on_actionOpenSource_triggered()
 {
-
+    if( mModified ) {
+        int but = QMessageBox::warning( this,
+                              tr( "Modifed" ),
+                              tr( "The current source image has been modified. Opening a new image will discard the current changes." ),
+                              QMessageBox::Discard  | QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save );
+        switch( but ) {
+          case QMessageBox::Save:
+            on_actionSaveSource_triggered();
+            break;
+          case QMessageBox::Cancel:
+            return;
+          case QMessageBox::Discard:
+          default:
+            break;
+        }
+    }
     QString file_name = QFileDialog::getOpenFileName( this, tr( "Open Image File" ),
                         QDesktopServices::storageLocation( QDesktopServices::HomeLocation ),
                         tr( "Images (*.png *.bmp *.ppm *.gif)" ) );
     QImage image( file_name );
     if ( !image.isNull() )
         mModel->setImage( image );
+
+    setWindowTitle( QString("Piet Creator - %1 [*]").arg(file_name) );
+    setModified( false );
 
 }
 
@@ -241,15 +270,35 @@ void MainWindow::on_actionSaveSource_triggered()
     if ( file_info.suffix().isEmpty() )
         file_name.append( mExtensions[selected_filter] );
 
-    if ( !image.save( file_name, 0 ) )
+    if ( !image.save( file_name, 0 ) ) {
         QMessageBox::critical( this, tr( "Error saving image" ), tr( "An error occured when trying to save the image." ) );
+    } else
+      setModified( false );
 }
 
 void MainWindow::on_actionNew_triggered()
 {
+    if( mModified ) {
+        int but = QMessageBox::warning( this,
+                              tr( "Modifed" ),
+                              tr( "The current source image has been modified. Creating a new image will discard the current changes." ),
+                              QMessageBox::Discard  | QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save );
+        switch( but ) {
+          case QMessageBox::Save:
+            on_actionSaveSource_triggered();
+            break;
+          case QMessageBox::Cancel:
+            return;
+          case QMessageBox::Discard:
+          default:
+            break;
+        }
+    }
     QImage image( 50, 50, QImage::Format_RGB32 );
     image.fill( QColor( Qt::white ).rgb() );
     mModel->setImage( image, 1 );
+    setWindowTitle( "Piet Creator - new source [*]" );
+    setModified( false );
 }
 
 
@@ -307,6 +356,12 @@ void MainWindow::slotCurrentCommandChanged(const Command& newCommand, const Comm
     mPrimaryCommandLabel->setText( newCommand.name );
     mSecondaryPatch->setColor( oldCommand.color );
     mSecondaryCommandLabel->setText( oldCommand.name );
+}
+
+void MainWindow::slotImageEdited()
+{
+    if( !mModified )
+        setModified( true );
 }
 
 

@@ -60,9 +60,11 @@ private slots:
     void slotUpdateView( int pixelSize );
     void slotCommandClicked( const QModelIndex &index );
     void slotCurrentCommandChanged( const Command & newCommand, const Command & oldCommand );
+    void slotImageEdited();
 
 private:
     void setupDock();
+    void setModified( bool flag );
 
     Ui::MainWindow *ui;
 
@@ -79,6 +81,8 @@ private:
     QLabel *mPrimaryCommandLabel;
     QLabel *mSecondaryCommandLabel;
     ViewMonitor* mMonitor;
+
+    bool mModified;
 };
 
 #endif // MAINWINDOW_H

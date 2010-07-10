@@ -73,6 +73,7 @@ bool PixelDelegate::editorEvent( QEvent* event, QAbstractItemModel* model, const
         QMouseEvent *mev = static_cast<QMouseEvent*>( event );
         if ( mev->buttons() & Qt::LeftButton ) {
             model->setData( index, mMonitor->currentColor(), Qt::DisplayRole );
+            emit imageEdited();
             return true;
         }
     }
