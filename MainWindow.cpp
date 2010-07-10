@@ -207,7 +207,7 @@ void MainWindow::on_actionNew_triggered()
 {
     QImage image( 50, 50, QImage::Format_RGB32 );
     image.fill( QColor( Qt::white ).rgb() );
-    mModel->setImage( image );
+    mModel->setImage( image, 1 );
 }
 
 

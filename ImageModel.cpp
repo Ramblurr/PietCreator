@@ -35,37 +35,37 @@ ImageModel::~ImageModel()
 
 }
 
-void ImageModel::setImage( const QImage& image )
+void ImageModel::setImage( const QImage& image, int codel_size )
 {
-    int codel_size;
-    /* Begin: part taken from npiet.c, cleanup_input () */
-    // (C) 2010 Erik Schoenfelder <schoenfr@web.de>
-    int i, j, last_c, last_p;
-    int min_w = image.width() + 1;
-    int *o_cells;
+    if( codel_size < 0 ) {
+        /* Begin: part taken from npiet.c, cleanup_input () */
+        // (C) 2010 Erik Schoenfelder <schoenfr@web.de>
+        int i, j, last_c, last_p;
+        int min_w = image.width() + 1;
+        int *o_cells;
 
-    int *cells = (int*)image.bits();
+        int *cells = (int*)image.bits();
 
-    // scan image to guess codel size
-    /* left to right: */
-    for (j = 0; j < image.height(); j++) {
-        for (i = 0; i < image.width(); i++) {
-            c_check (i, cells [j * image.width() + i], &last_c, &last_p, &min_w);
-        }
-        c_check (i, c_mark_index, &last_c, &last_p, &min_w);
-    }
-    /* top to bottom: */
-    for (i = 0; i < image.width(); i++) {
+        // scan image to guess codel size
+        /* left to right: */
         for (j = 0; j < image.height(); j++) {
-            c_check (j, cells [j * image.width() + i], &last_c, &last_p, &min_w);
+            for (i = 0; i < image.width(); i++) {
+                c_check (i, cells [j * image.width() + i], &last_c, &last_p, &min_w);
+            }
+            c_check (i, c_mark_index, &last_c, &last_p, &min_w);
         }
-        c_check (j, c_mark_index, &last_c, &last_p, &min_w);
+        /* top to bottom: */
+        for (i = 0; i < image.width(); i++) {
+            for (j = 0; j < image.height(); j++) {
+                c_check (j, cells [j * image.width() + i], &last_c, &last_p, &min_w);
+            }
+            c_check (j, c_mark_index, &last_c, &last_p, &min_w);
+        }
+        codel_size = min_w;
+        /* End: part taken from npiet.c, cleanup_input () */
+
+        qDebug() << "Guessed codel size: " << codel_size;
     }
-    codel_size = min_w;
-    /* End: part taken from npiet.c, cleanup_input () */
-
-    qDebug() << "Guessed codel size: " << codel_size;
-
     // scale image so 1 codel == 1 pixel
     if( codel_size > 1 ) {
       int width = image.width() / codel_size;

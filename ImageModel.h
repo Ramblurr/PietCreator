@@ -29,7 +29,10 @@ public:
     explicit ImageModel( QObject *parent = 0 );
     virtual ~ImageModel();
 
-    void setImage( const QImage &image );
+    /** Sets the image to expose via the model
+        If codel size is not specified, then the model
+    */
+    void setImage( const QImage &image, int codel_size = -1 );
     QImage image() const;
 
     int rowCount( const QModelIndex &parent = QModelIndex() ) const;
