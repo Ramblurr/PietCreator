@@ -170,7 +170,10 @@ QString ImageModel::statusString(QModelIndex index) const
 
     int connected = contiguousBlocks( index.column(), index.row() );
 
-    return QString("%1, contiguous: %2").arg(coords).arg(connected);
+    QString character;
+    if( connected >= 32 && connected <= 126 )
+      character = QString("(char: '%1')").arg((char) connected);
+    return QString("%1, contiguous: %2 %3").arg(coords).arg(connected).arg(character);
 }
 
 int ImageModel::contiguousBlocks( int x, int y ) const
