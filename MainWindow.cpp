@@ -290,6 +290,7 @@ void MainWindow::on_actionToggleHeaders_triggered()
         ui->mZoomSlider->setMinimum( ui->mView->horizontalHeader()->sectionSize( largest_index ) );
         ui->mView->horizontalHeader()->setMinimumSectionSize( largest_index );
         ui->mView->verticalHeader()->setMinimumSectionSize( largest_index );
+        slotUpdateView( mMonitor->pixelSize() );
     }
 }
 
