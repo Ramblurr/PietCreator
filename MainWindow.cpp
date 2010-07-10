@@ -91,11 +91,40 @@ MainWindow::MainWindow( QWidget *parent ) :
     connect( mDelegate, SIGNAL( imageEdited() ), SLOT( slotImageEdited() ) );
     connect( ui->mZoomSlider, SIGNAL( valueChanged( int ) ), mMonitor, SLOT( setPixelSize( int ) ) );
     connect( mMonitor, SIGNAL( pixelSizeChanged( int ) ), SLOT( slotUpdateView( int ) ) );
+
+    setupToolbar();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::setupToolbar()
+{
+    QMenu* fileMenu = ui->mMenubar->addMenu( tr( "File" ) );
+    QAction* newAct = ui->mToolBar->addAction( QIcon::fromTheme("document-new"), tr("&New..."), this, SLOT( on_actionNew_triggered() ) );
+    newAct->setShortcut( QKeySequence::New );
+    fileMenu->addAction( newAct );
+    QAction* openAct = ui->mToolBar->addAction( QIcon::fromTheme("document-open"), tr("&Open..."), this, SLOT( on_actionOpenSource_triggered() ) );
+    openAct->setShortcut( QKeySequence::Open );
+    fileMenu->addAction( openAct );
+    QAction* saveAct = ui->mToolBar->addAction( QIcon::fromTheme("document-save-as"), tr("&Save as..."), this, SLOT( on_actionSaveSource_triggered() ) );
+    saveAct->setShortcut( QKeySequence::SaveAs );
+    fileMenu->addAction( saveAct );
+
+    fileMenu->addSeparator();
+
+    fileMenu->addAction( QIcon::fromTheme( "application-exit" ), tr("&Quit"), this, SLOT( on_actionExit_triggered() ) )->setShortcut( QKeySequence::Quit );
+
+    QMenu* viewMenu = ui->mMenubar->addMenu( tr( "View" ) );
+    QAction* gridAct = ui->mToolBar->addAction( QIcon::fromTheme("format-justify-fill"), tr("Toggle &Grid"), this, SLOT( on_actionToggleGrid_triggered() ) );
+    gridAct->setShortcut( QKeySequence::New );
+    viewMenu->addAction( gridAct );
+
+    QAction* headersAct = ui->mToolBar->addAction( QIcon::fromTheme("view-form-table"), tr("Toggle &Headers"), this, SLOT( on_actionToggleHeaders_triggered() ) );
+    headersAct->setShortcut( QKeySequence::New );
+    viewMenu->addAction( headersAct );
 }
 
 void MainWindow::setupDock()

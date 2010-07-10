@@ -64,6 +64,7 @@ private slots:
 
 private:
     void setupDock();
+    void setupToolbar();
     void setModified( bool flag );
 
     Ui::MainWindow *ui;

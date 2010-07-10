@@ -79,31 +79,6 @@
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>&amp;File</string>
-    </property>
-    <addaction name="actionNew"/>
-    <addaction name="actionOpenSource"/>
-    <addaction name="actionSaveSource"/>
-    <addaction name="separator"/>
-    <addaction name="actionExit"/>
-   </widget>
-   <widget class="QMenu" name="menuView">
-    <property name="title">
-     <string>&amp;View</string>
-    </property>
-    <addaction name="actionToggleGrid"/>
-    <addaction name="actionToggleHeaders"/>
-   </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="title">
-     <string>&amp;Edit</string>
-    </property>
-   </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuEdit"/>
-   <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="mStatusbar"/>
   <widget class="QToolBar" name="mToolBar">
