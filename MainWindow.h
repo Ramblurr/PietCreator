@@ -50,6 +50,8 @@ public:
     ~MainWindow();
 
     virtual bool eventFilter(QObject* , QEvent* );
+signals:
+    void validImageDocument( bool );
 
 private slots:
     void slotActionExit();

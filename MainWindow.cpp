@@ -131,6 +131,8 @@ void MainWindow::setupToolbar()
 
     QMenu* editMenu = ui->mMenubar->addMenu( tr( "&Edit" ) );
     QAction* resizeAct = ui->mToolBar->addAction( QIcon::fromTheme("format-justify-fill"), tr("&Resize Image"), this, SLOT( slotActionResize() ) );
+    resizeAct->setDisabled( true );
+    connect( this, SIGNAL( validImageDocument( bool ) ), resizeAct, SLOT( setEnabled( bool ) ) );
     editMenu->addAction( resizeAct );
 }
 
@@ -272,7 +274,7 @@ void MainWindow::slotActionOpen()
     setWindowTitle( QString("Piet Creator - %1 [*]").arg(file_name) );
     setModified( false );
     mCurrentFile = file_name;
-
+    emit validImageDocument( true );
 }
 
 void MainWindow::slotActionSaveAs()
@@ -341,6 +343,7 @@ void MainWindow::slotActionNew()
     setWindowTitle( "Piet Creator - new source [*]" );
     setModified( false );
     mCurrentFile.clear();
+    emit validImageDocument( true );
 }
 
 
