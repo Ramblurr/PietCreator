@@ -49,7 +49,7 @@ public:
     explicit MainWindow( QWidget *parent = 0 );
     ~MainWindow();
 
-    virtual bool eventFilter(QObject* , QEvent* );
+    virtual bool eventFilter( QObject* , QEvent* );
 signals:
     void validImageDocument( bool );
 

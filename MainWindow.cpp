@@ -51,12 +51,12 @@ MainWindow::MainWindow( QWidget *parent ) :
         mModified( false )
 {
     ui->setupUi( this );
-    setWindowIcon( QIcon(":/piet-16x16.png"));
+    setWindowIcon( QIcon( ":/piet-16x16.png" ) );
 
     mModel = new ImageModel;
     ui->mView->setModel( mModel );
 
-    ui->mView->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->mView->setSelectionMode( QAbstractItemView::SingleSelection );
     ui->mView->horizontalHeader()->hide();
     ui->mView->verticalHeader()->hide();
     ui->mView->horizontalHeader()->setMinimumSectionSize( 1 );
@@ -104,18 +104,18 @@ MainWindow::~MainWindow()
 void MainWindow::setupToolbar()
 {
     QMenu* fileMenu = ui->mMenubar->addMenu( tr( "&File" ) );
-    QAction* newAct = ui->mToolBar->addAction( QIcon::fromTheme("document-new"), tr("&New..."), this, SLOT( slotActionNew() ) );
+    QAction* newAct = ui->mToolBar->addAction( QIcon::fromTheme( "document-new" ), tr( "&New..." ), this, SLOT( slotActionNew() ) );
     newAct->setShortcut( QKeySequence::New );
     fileMenu->addAction( newAct );
-    QAction* openAct = ui->mToolBar->addAction( QIcon::fromTheme("document-open"), tr("&Open..."), this, SLOT( slotActionOpen() ) );
+    QAction* openAct = ui->mToolBar->addAction( QIcon::fromTheme( "document-open" ), tr( "&Open..." ), this, SLOT( slotActionOpen() ) );
     openAct->setShortcut( QKeySequence::Open );
     fileMenu->addAction( openAct );
-    QAction* saveAct = ui->mToolBar->addAction( QIcon::fromTheme("document-save"), tr("&Save"), this, SLOT( slotActionSave() ) );
+    QAction* saveAct = ui->mToolBar->addAction( QIcon::fromTheme( "document-save" ), tr( "&Save" ), this, SLOT( slotActionSave() ) );
     saveAct->setShortcut( QKeySequence::Save );
     saveAct->setDisabled( true );
     connect( this, SIGNAL( validImageDocument( bool ) ), saveAct, SLOT( setEnabled( bool ) ) );
     fileMenu->addAction( saveAct );
-    QAction* saveAsAct = ui->mToolBar->addAction( QIcon::fromTheme("document-save-as"), tr("&Save as..."), this, SLOT( slotActionSaveAs() ) );
+    QAction* saveAsAct = ui->mToolBar->addAction( QIcon::fromTheme( "document-save-as" ), tr( "&Save as..." ), this, SLOT( slotActionSaveAs() ) );
     saveAsAct->setShortcut( QKeySequence::SaveAs );
     saveAsAct->setDisabled( true );
     connect( this, SIGNAL( validImageDocument( bool ) ), saveAsAct, SLOT( setEnabled( bool ) ) );
@@ -123,27 +123,27 @@ void MainWindow::setupToolbar()
 
     fileMenu->addSeparator();
 
-    fileMenu->addAction( QIcon::fromTheme( "application-exit" ), tr("&Quit"), this, SLOT( slotActionExit() ) )->setShortcut( QKeySequence::Quit );
+    fileMenu->addAction( QIcon::fromTheme( "application-exit" ), tr( "&Quit" ), this, SLOT( slotActionExit() ) )->setShortcut( QKeySequence::Quit );
 
     ui->mToolBar->addSeparator();
 
     QMenu* viewMenu = ui->mMenubar->addMenu( tr( "&View" ) );
-    QAction* gridAct = ui->mToolBar->addAction( QIcon::fromTheme("format-justify-fill"), tr("Toggle &Grid"), this, SLOT( slotActionToggleGrid() ) );
+    QAction* gridAct = ui->mToolBar->addAction( QIcon::fromTheme( "format-justify-fill" ), tr( "Toggle &Grid" ), this, SLOT( slotActionToggleGrid() ) );
     gridAct->setShortcut( QKeySequence::New );
     gridAct->setDisabled( true );
     connect( this, SIGNAL( validImageDocument( bool ) ), gridAct, SLOT( setEnabled( bool ) ) );
     viewMenu->addAction( gridAct );
-    QAction* headersAct = ui->mToolBar->addAction( QIcon::fromTheme("view-form-table"), tr("Toggle &Headers"), this, SLOT( slotActionToggleHeaders() ) );
+    QAction* headersAct = ui->mToolBar->addAction( QIcon::fromTheme( "view-form-table" ), tr( "Toggle &Headers" ), this, SLOT( slotActionToggleHeaders() ) );
     headersAct->setDisabled( true );
     headersAct->setShortcut( QKeySequence::New );
     connect( this, SIGNAL( validImageDocument( bool ) ), headersAct, SLOT( setEnabled( bool ) ) );
     viewMenu->addAction( headersAct );
-    QAction* zoomInAct = ui->mToolBar->addAction( QIcon::fromTheme("zoom-in"), tr("Zoom &In"), this, SLOT( slotActionZoom() ) );
+    QAction* zoomInAct = ui->mToolBar->addAction( QIcon::fromTheme( "zoom-in" ), tr( "Zoom &In" ), this, SLOT( slotActionZoom() ) );
     zoomInAct->setDisabled( true );
     zoomInAct->setData( 1 );
     viewMenu->addAction( zoomInAct );
     connect( this, SIGNAL( validImageDocument( bool ) ), zoomInAct, SLOT( setEnabled( bool ) ) );
-    QAction* zoomOutAct = ui->mToolBar->addAction( QIcon::fromTheme("zoom-out"), tr("Zoom &Out"), this, SLOT( slotActionZoom() ) );
+    QAction* zoomOutAct = ui->mToolBar->addAction( QIcon::fromTheme( "zoom-out" ), tr( "Zoom &Out" ), this, SLOT( slotActionZoom() ) );
     zoomOutAct->setDisabled( true );
     zoomOutAct->setData( -1 );
     viewMenu->addAction( zoomOutAct );
@@ -151,7 +151,7 @@ void MainWindow::setupToolbar()
     ui->mToolBar->addSeparator();
 
     QMenu* editMenu = ui->mMenubar->addMenu( tr( "&Edit" ) );
-    QAction* resizeAct = ui->mToolBar->addAction( QIcon::fromTheme("format-justify-fill"), tr("&Resize Image"), this, SLOT( slotActionResize() ) );
+    QAction* resizeAct = ui->mToolBar->addAction( QIcon::fromTheme( "format-justify-fill" ), tr( "&Resize Image" ), this, SLOT( slotActionResize() ) );
     resizeAct->setDisabled( true );
     connect( this, SIGNAL( validImageDocument( bool ) ), resizeAct, SLOT( setEnabled( bool ) ) );
     editMenu->addAction( resizeAct );
@@ -160,7 +160,7 @@ void MainWindow::setupToolbar()
 void MainWindow::setupDock()
 {
     QWidget *colorsWidget = new QWidget( ui->mDockContents );
-    QHBoxLayout *hlayout = new QHBoxLayout( colorsWidget  );
+    QHBoxLayout *hlayout = new QHBoxLayout( colorsWidget );
     mPalette = new KColorCells( colorsWidget, 6, 3 );
     mPalette->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
     mPalette->setFixedSize( 25*3, 25*6 );
@@ -168,7 +168,7 @@ void MainWindow::setupDock()
 
     const int spacing = 15;
     QWidget *currentCommandWidget = new QWidget( colorsWidget );
-    QVBoxLayout *vlayout = new QVBoxLayout( currentCommandWidget  );
+    QVBoxLayout *vlayout = new QVBoxLayout( currentCommandWidget );
     QWidget *patchWidget = new QWidget( currentCommandWidget );
     patchWidget->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
     patchWidget->setFixedWidth( 48 + spacing );
@@ -182,7 +182,7 @@ void MainWindow::setupDock()
     mPrimaryPatch->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
 
     QRect secRect = mPrimaryPatch->geometry();
-    secRect.setTopLeft( QPoint( secRect.topLeft().x()+spacing,  secRect.topLeft().y()+spacing ) );
+    secRect.setTopLeft( QPoint( secRect.topLeft().x() + spacing,  secRect.topLeft().y() + spacing ) );
     mSecondaryPatch->setGeometry( secRect );
 
     mPrimaryCommandLabel = new QLabel( currentCommandWidget );
@@ -221,22 +221,22 @@ void MainWindow::setupDock()
     commandsView->setItemDelegate( mCommandDelegate );
 
     QBoxLayout *boxLayout = static_cast<QBoxLayout*>( ui->mDockContents->layout() );
-    boxLayout->insertWidget(0, colorsWidget);
-    boxLayout->insertWidget(1, commandsView);
+    boxLayout->insertWidget( 0, colorsWidget );
+    boxLayout->insertWidget( 1, commandsView );
 
     connect( mPalette, SIGNAL( colorSelected( int, QColor ) ), mMonitor, SLOT( setCurrentColor( int, QColor ) ) );
-    connect( mMonitor, SIGNAL( currentCommandChanged(Command,Command)), commandsView, SLOT( reset() ) );
-    connect( mMonitor, SIGNAL( currentColorChanged(QColor)), commandsView, SLOT( reset() ) );
-    connect( mMonitor, SIGNAL( currentCommandChanged(Command,Command)), this, SLOT( slotCurrentCommandChanged(Command,Command)));
+    connect( mMonitor, SIGNAL( currentCommandChanged( Command, Command ) ), commandsView, SLOT( reset() ) );
+    connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), commandsView, SLOT( reset() ) );
+    connect( mMonitor, SIGNAL( currentCommandChanged( Command, Command ) ), this, SLOT( slotCurrentCommandChanged( Command, Command ) ) );
     connect( commandsView, SIGNAL( clicked( QModelIndex ) ), this, SLOT( slotCommandClicked( QModelIndex ) ) );
 //     connect( mPrimaryPatch, SIGNAL( colorChanged(QColor,QColor)), this, SLOT( slotHandlePatchChange( QColor, QColor ) ) );
 
     // select default
-    Command firstcmd = mCommandsModel->data( mCommandsModel->index(0,0), CommandsModel::CommandRole ).value<Command>();
+    Command firstcmd = mCommandsModel->data( mCommandsModel->index( 0, 0 ), CommandsModel::CommandRole ).value<Command>();
     mMonitor->setCurrentCommand( firstcmd );
 }
 
-void MainWindow::setModified(bool flag)
+void MainWindow::setModified( bool flag )
 {
     mModified = flag;
     setWindowModified( flag );
@@ -257,12 +257,12 @@ bool MainWindow::eventFilter( QObject* obj, QEvent* event )
             return true;
         }
     }
-    if( obj == mSecondaryPatch && event->type() == QEvent::MouseButtonRelease) {
-      QMouseEvent * mevent = static_cast<QMouseEvent*>( event );
-      if( mevent->button() == Qt::LeftButton ) {
-          mMonitor->takeCommand();
-          return true;
-      }
+    if ( obj == mSecondaryPatch && event->type() == QEvent::MouseButtonRelease ) {
+        QMouseEvent * mevent = static_cast<QMouseEvent*>( event );
+        if ( mevent->button() == Qt::LeftButton ) {
+            mMonitor->takeCommand();
+            return true;
+        }
 
     }
     return QObject::eventFilter( obj, event );
@@ -283,8 +283,8 @@ void MainWindow::slotUpdateView( int pixelSize )
 
 void MainWindow::slotActionOpen()
 {
-    if( !promptSave() )
-      return;
+    if ( !promptSave() )
+        return;
     QString file_name = QFileDialog::getOpenFileName( this, tr( "Open Image File" ),
                         QDesktopServices::storageLocation( QDesktopServices::HomeLocation ),
                         tr( "Images (*.png *.bmp *.ppm *.gif)" ) );
@@ -292,7 +292,7 @@ void MainWindow::slotActionOpen()
     if ( !image.isNull() )
         mModel->setImage( image );
 
-    setWindowTitle( QString("Piet Creator - %1 [*]").arg(file_name) );
+    setWindowTitle( QString( "Piet Creator - %1 [*]" ).arg( file_name ) );
     setModified( false );
     mCurrentFile = file_name;
     emit validImageDocument( true );
@@ -319,16 +319,16 @@ void MainWindow::slotActionSaveAs()
     if ( !image.save( file_name, 0 ) ) {
         QMessageBox::critical( this, tr( "Error saving image" ), tr( "An error occured when trying to save the image." ) );
     } else {
-      setWindowTitle( QString("Piet Creator - %1 [*]").arg(file_name) );
-      setModified( false );
-      mCurrentFile = file_name;
+        setWindowTitle( QString( "Piet Creator - %1 [*]" ).arg( file_name ) );
+        setModified( false );
+        mCurrentFile = file_name;
     }
 }
 
 void MainWindow::slotActionSave()
 {
-    if( mCurrentFile.isEmpty()  )
-      return slotActionSaveAs();
+    if ( mCurrentFile.isEmpty() )
+        return slotActionSaveAs();
 
     QImage image = mModel->image();
 
@@ -338,7 +338,7 @@ void MainWindow::slotActionSave()
     QString selected_filter;
     QString file_name = mCurrentFile.toLocalFile();
     QFileInfo file_info( file_name );
-    if( !file_info.isWritable() )
+    if ( !file_info.isWritable() )
         return slotActionSaveAs();
 
     if ( file_info.suffix().isEmpty() )
@@ -347,17 +347,17 @@ void MainWindow::slotActionSave()
     if ( !image.save( file_name, 0 ) ) {
         QMessageBox::critical( this, tr( "Error saving image" ), tr( "An error occured when trying to save the image." ) );
     } else {
-      setWindowTitle( QString("Piet Creator - %1 [*]").arg(file_name) );
-      setModified( false );
-      mCurrentFile = file_name;
+        setWindowTitle( QString( "Piet Creator - %1 [*]" ).arg( file_name ) );
+        setModified( false );
+        mCurrentFile = file_name;
     }
 }
 
 
 void MainWindow::slotActionNew()
 {
-    if( !promptSave() )
-      return;
+    if ( !promptSave() )
+        return;
     QImage image( 50, 50, QImage::Format_RGB32 );
     image.fill( QColor( Qt::white ).rgb() );
     mModel->setImage( image, 1 );
@@ -370,8 +370,8 @@ void MainWindow::slotActionNew()
 
 void MainWindow::slotActionExit()
 {
-    if( !promptSave() )
-      return;
+    if ( !promptSave() )
+        return;
     qApp->quit();
 }
 
@@ -414,16 +414,16 @@ void MainWindow::slotActionToggleHeaders()
 void MainWindow::slotActionResize()
 {
     QScopedPointer<ResizeDialog> dlg( new ResizeDialog( mModel->imageSize(), this ) );
-    if( dlg->exec() == QDialog::Accepted ) {
+    if ( dlg->exec() == QDialog::Accepted ) {
         QSize size = dlg->newSize();
-        if( size.isValid() ) {
-            if( size.width() < mModel->imageSize().width() ||size.height() < mModel->imageSize().height() ) {
+        if ( size.isValid() ) {
+            if ( size.width() < mModel->imageSize().width() || size.height() < mModel->imageSize().height() ) {
                 int but = QMessageBox::warning( this,
-                        tr( "Resize Image" ),
-                        tr( "The new image dimensions are smaller than the current dimensions. Data loss will occur. Apply the resize operation or Abort?" ),
-                        QMessageBox::Apply  | QMessageBox::Abort, QMessageBox::Abort );
-                if( but == QMessageBox::Abort )
-                  return;
+                                                tr( "Resize Image" ),
+                                                tr( "The new image dimensions are smaller than the current dimensions. Data loss will occur. Apply the resize operation or Abort?" ),
+                                                QMessageBox::Apply  | QMessageBox::Abort, QMessageBox::Abort );
+                if ( but == QMessageBox::Abort )
+                    return;
             }
             mModel->scaleImage( size );
         }
@@ -444,7 +444,7 @@ void MainWindow::slotCommandClicked( const QModelIndex &index )
     mMonitor->setCurrentCommand( command );
 }
 
-void MainWindow::slotCurrentCommandChanged(const Command& newCommand, const Command& oldCommand )
+void MainWindow::slotCurrentCommandChanged( const Command& newCommand, const Command& oldCommand )
 {
     mPrimaryPatch->setColor( newCommand.color );
     mPrimaryCommandLabel->setText( newCommand.name );
@@ -454,25 +454,25 @@ void MainWindow::slotCurrentCommandChanged(const Command& newCommand, const Comm
 
 void MainWindow::slotImageEdited()
 {
-    if( !mModified )
+    if ( !mModified )
         setModified( true );
 }
 
 bool MainWindow::promptSave()
 {
-    if( mModified ) {
+    if ( mModified ) {
         int but = QMessageBox::warning( this,
-                              tr( "Modifed" ),
-                              tr( "The current source image has been modified. Opening a new image will discard the current changes." ),
-                              QMessageBox::Discard  | QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save );
-        switch( but ) {
-          case QMessageBox::Save:
+                                        tr( "Modifed" ),
+                                        tr( "The current source image has been modified. Opening a new image will discard the current changes." ),
+                                        QMessageBox::Discard  | QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save );
+        switch ( but ) {
+        case QMessageBox::Save:
             slotActionSaveAs();
             return true;
-          case QMessageBox::Cancel:
+        case QMessageBox::Cancel:
             return false;
-          case QMessageBox::Discard:
-          default:
+        case QMessageBox::Discard:
+        default:
             return true;
         }
     }
