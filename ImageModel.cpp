@@ -169,7 +169,7 @@ QString ImageModel::statusString( QModelIndex index ) const
     QString coords;
     coords = QString( "X: %1 Y: %2" ).arg( index.column(), 3 ).arg( index.row(), 3 );
 
-    int connected = contiguousBlocks( index.column(), index.row() );
+    quint64 connected = contiguousBlocks( index.column(), index.row() );
 
     QString character;
     if ( connected >= 32 && connected <= 126 )
@@ -177,38 +177,47 @@ QString ImageModel::statusString( QModelIndex index ) const
     return QString( "%1, contiguous: %2 %3" ).arg( coords ).arg( connected ).arg( character );
 }
 
-int ImageModel::contiguousBlocks( int x, int y ) const
+
+struct Frame {
+    Frame( int _x, int _y ) : x(_x), y(_y) {}
+    int x, y;
+};
+
+// emulate stack based iterative recursion to traverse the image data
+// and find the number of contiguous blocks of the same color
+// converted from an earlier 'actually' recursive algorithm.
+// could probably use some optimization, however it seems to perform fine.
+quint64 ImageModel::contiguousBlocks( int x, int y ) const
 {
     if ( x < 0 || x >= mImage.width() || y < 0 || y >= mImage.height() )
         return 0;
 
     // array used to mark pixels as visited.
     // the image is mapped in row major fashion
-    QBitArray markedArray( mImage.width() * mImage.height() );
-
-    markedArray[x*mImage.height()+y] = 1;
+    QScopedPointer<QStack<Frame*> > stack(new QStack<Frame*>() );
+    QScopedPointer<QBitArray> markedArray( new QBitArray( mImage.width() * mImage.height() ) );
+    quint64 result = 0;
     QRgb color = mImage.pixel( x, y );
-    int result = 1; // 1 for the current block
-    result += contiguousBlocks( x + 1, y, color, markedArray );
-    result += contiguousBlocks( x - 1, y, color, markedArray );
-    result += contiguousBlocks( x, y + 1, color, markedArray );
-    result += contiguousBlocks( x, y - 1, color, markedArray );
-    return result;
-}
-
-int ImageModel::contiguousBlocks( int x, int y, QRgb color, QBitArray &markedArray ) const
-{
-    if ( x < 0 || x >= mImage.width() || y < 0 || y >= mImage.height() )
-        return 0;
-    if ( markedArray[x*mImage.height()+y] || mImage.pixel( x, y ) != color )
-        return 0;
-
-    markedArray[x*mImage.height()+y] = 1;
-    int result = 1; // 1 for the current block
-    result += contiguousBlocks( x + 1, y, color, markedArray );
-    result += contiguousBlocks( x - 1, y, color, markedArray );
-    result += contiguousBlocks( x, y + 1, color, markedArray );
-    result += contiguousBlocks( x, y - 1, color, markedArray );
+    stack->push( new Frame( x, y  ) );
+    while( !stack->isEmpty() )
+    {
+        Frame* frame = stack->pop();
+        if ( frame->x < 0 || frame->x >= mImage.width() || frame->y < 0 || frame->y >= mImage.height() ) {
+            delete frame;
+            continue;
+        }
+        if ( (*markedArray)[frame->x*mImage.height()+frame->y] || mImage.pixel( frame->x, frame->y ) != color ) {
+            delete frame;
+            continue;
+        }
+        (*markedArray)[frame->x*mImage.height()+frame->y] = 1;
+        stack->push( new Frame( frame->x + 1, frame->y ) );
+        stack->push( new Frame( frame->x - 1, frame->y ) );
+        stack->push( new Frame( frame->x, frame->y + 1 ) );
+        stack->push( new Frame( frame->x, frame->y - 1 ) );
+        delete frame;
+        result += 1;
+    }
     return result;
 }
 
