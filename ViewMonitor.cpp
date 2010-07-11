@@ -56,6 +56,9 @@ ViewMonitor::ViewMonitor( QObject* parent ): QObject( parent )
     mColors.insert( 16, QColor( "#FF00FF" ) );
     mColors.insert( 17, QColor( "#C000C0" ) );
 
+    mColors.insert( 18, QColor( "#FFFFFF" ) );
+    mColors.insert( 19, QColor( "#000000" ) );
+
     Command first( "", "", mColors.at(0), 0 );
     setCurrentCommand( first );
 }
@@ -68,6 +71,16 @@ QColor ViewMonitor::currentColor() const
 void ViewMonitor::setCurrentColor( int index, const QColor& color )
 {
   if( mStack.top().index != index ) {
+      mStack.top().color = color;
+      mStack.top().index = index;
+      emit currentColorChanged( color );
+  }
+}
+
+void ViewMonitor::setCurrentColor( const QColor& color )
+{
+  int index = mColors.indexOf( color );
+  if( index > 0 && mStack.top().index != index ) {
       mStack.top().color = color;
       mStack.top().index = index;
       emit currentColorChanged( color );
@@ -143,7 +156,7 @@ void ViewMonitor::setCurrentCommand( const Command& command )
 
 void ViewMonitor::populateCells( KColorCells* cells )
 {
-    for( int i = 0; i < mColors.size(); ++i )
+    for( int i = 0; i < cells->count(); ++i )
         cells->setColor( i, mColors.at( i ) );
 
     cells->setSelected( 0 );

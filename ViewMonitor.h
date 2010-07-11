@@ -54,6 +54,7 @@ public slots:
     void setCurrentCommand( const Command & command );
     void setCurrentColor( int index );
     void setCurrentColor( int index, const QColor& color );
+    void setCurrentColor( const QColor& color );
 
     void setPixelSize( int );
 

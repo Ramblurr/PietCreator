@@ -166,6 +166,12 @@ void MainWindow::setupDock()
     mPalette->setFixedSize( 25*3, 25*6 );
     mMonitor->populateCells( mPalette );
 
+    KColorCells* mBWPalette = new KColorCells( colorsWidget, 2, 1 );
+    mBWPalette->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
+    mBWPalette->setFixedSize( 25, 25*6 );
+    mBWPalette->setColor( 0, Qt::black );
+    mBWPalette->setColor( 1, Qt::white );
+
     const int spacing = 15;
     QWidget *currentCommandWidget = new QWidget( colorsWidget );
     QVBoxLayout *vlayout = new QVBoxLayout( currentCommandWidget );
@@ -198,9 +204,11 @@ void MainWindow::setupDock()
     vlayout->addStretch();
     currentCommandWidget->setLayout( vlayout );
 
+    hlayout->setSpacing( 0 );
     hlayout->addStretch();
     hlayout->addWidget( currentCommandWidget );
     hlayout->addWidget( mPalette );
+    hlayout->addWidget( mBWPalette );
     hlayout->addStretch();
     colorsWidget->setLayout( hlayout );
 
@@ -225,8 +233,10 @@ void MainWindow::setupDock()
     boxLayout->insertWidget( 1, commandsView );
 
     connect( mPalette, SIGNAL( colorSelected( int, QColor ) ), mMonitor, SLOT( setCurrentColor( int, QColor ) ) );
+    connect( mBWPalette, SIGNAL( colorSelected( int, QColor ) ), mMonitor, SLOT( setCurrentColor( int, QColor ) ) );
     connect( mMonitor, SIGNAL( currentCommandChanged( Command, Command ) ), commandsView, SLOT( reset() ) );
     connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), commandsView, SLOT( reset() ) );
+    connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), mPrimaryPatch, SLOT( setColor( QColor ) ) );
     connect( mMonitor, SIGNAL( currentCommandChanged( Command, Command ) ), this, SLOT( slotCurrentCommandChanged( Command, Command ) ) );
     connect( commandsView, SIGNAL( clicked( QModelIndex ) ), this, SLOT( slotCommandClicked( QModelIndex ) ) );
 //     connect( mPrimaryPatch, SIGNAL( colorChanged(QColor,QColor)), this, SLOT( slotHandlePatchChange( QColor, QColor ) ) );
