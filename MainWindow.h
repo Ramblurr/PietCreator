@@ -62,6 +62,7 @@ private slots:
     void slotActionToggleHeaders();
     void slotActionNew();
     void slotActionResize();
+    void slotActionZoom();
     void slotUpdateView( int pixelSize );
     void slotCommandClicked( const QModelIndex &index );
     void slotCurrentCommandChanged( const Command & newCommand, const Command & oldCommand );

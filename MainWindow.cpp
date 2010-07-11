@@ -112,22 +112,43 @@ void MainWindow::setupToolbar()
     fileMenu->addAction( openAct );
     QAction* saveAct = ui->mToolBar->addAction( QIcon::fromTheme("document-save"), tr("&Save"), this, SLOT( slotActionSave() ) );
     saveAct->setShortcut( QKeySequence::Save );
+    saveAct->setDisabled( true );
+    connect( this, SIGNAL( validImageDocument( bool ) ), saveAct, SLOT( setEnabled( bool ) ) );
     fileMenu->addAction( saveAct );
     QAction* saveAsAct = ui->mToolBar->addAction( QIcon::fromTheme("document-save-as"), tr("&Save as..."), this, SLOT( slotActionSaveAs() ) );
     saveAsAct->setShortcut( QKeySequence::SaveAs );
+    saveAsAct->setDisabled( true );
+    connect( this, SIGNAL( validImageDocument( bool ) ), saveAsAct, SLOT( setEnabled( bool ) ) );
     fileMenu->addAction( saveAsAct );
 
     fileMenu->addSeparator();
 
     fileMenu->addAction( QIcon::fromTheme( "application-exit" ), tr("&Quit"), this, SLOT( slotActionExit() ) )->setShortcut( QKeySequence::Quit );
 
+    ui->mToolBar->addSeparator();
+
     QMenu* viewMenu = ui->mMenubar->addMenu( tr( "&View" ) );
     QAction* gridAct = ui->mToolBar->addAction( QIcon::fromTheme("format-justify-fill"), tr("Toggle &Grid"), this, SLOT( slotActionToggleGrid() ) );
     gridAct->setShortcut( QKeySequence::New );
+    gridAct->setDisabled( true );
+    connect( this, SIGNAL( validImageDocument( bool ) ), gridAct, SLOT( setEnabled( bool ) ) );
     viewMenu->addAction( gridAct );
     QAction* headersAct = ui->mToolBar->addAction( QIcon::fromTheme("view-form-table"), tr("Toggle &Headers"), this, SLOT( slotActionToggleHeaders() ) );
+    headersAct->setDisabled( true );
     headersAct->setShortcut( QKeySequence::New );
+    connect( this, SIGNAL( validImageDocument( bool ) ), headersAct, SLOT( setEnabled( bool ) ) );
     viewMenu->addAction( headersAct );
+    QAction* zoomInAct = ui->mToolBar->addAction( QIcon::fromTheme("zoom-in"), tr("Zoom &In"), this, SLOT( slotActionZoom() ) );
+    zoomInAct->setDisabled( true );
+    zoomInAct->setData( 1 );
+    viewMenu->addAction( zoomInAct );
+    connect( this, SIGNAL( validImageDocument( bool ) ), zoomInAct, SLOT( setEnabled( bool ) ) );
+    QAction* zoomOutAct = ui->mToolBar->addAction( QIcon::fromTheme("zoom-out"), tr("Zoom &Out"), this, SLOT( slotActionZoom() ) );
+    zoomOutAct->setDisabled( true );
+    zoomOutAct->setData( -1 );
+    viewMenu->addAction( zoomOutAct );
+    connect( this, SIGNAL( validImageDocument( bool ) ), zoomOutAct, SLOT( setEnabled( bool ) ) );
+    ui->mToolBar->addSeparator();
 
     QMenu* editMenu = ui->mMenubar->addMenu( tr( "&Edit" ) );
     QAction* resizeAct = ui->mToolBar->addAction( QIcon::fromTheme("format-justify-fill"), tr("&Resize Image"), this, SLOT( slotActionResize() ) );
@@ -407,6 +428,12 @@ void MainWindow::slotActionResize()
             mModel->scaleImage( size );
         }
     }
+}
+
+void MainWindow::slotActionZoom()
+{
+    QAction* act = qobject_cast< QAction* >( sender() );
+    ui->mZoomSlider->setValue( ui->mZoomSlider->value() +  act->data().toInt() );
 }
 
 
