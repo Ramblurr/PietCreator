@@ -35,6 +35,9 @@ public:
     void setImage( const QImage &image, int codel_size = -1 );
     QImage image() const;
 
+    void scaleImage( const QSize & size );
+    QSize imageSize() const;
+
     int rowCount( const QModelIndex &parent = QModelIndex() ) const;
     int columnCount( const QModelIndex &parent = QModelIndex() ) const;
 

@@ -28,6 +28,7 @@
 #include "CommandsModel.h"
 #include "CommandDelegate.h"
 #include "Command.h"
+#include "ResizeDialog.h"
 
 #include <QHBoxLayout>
 #include <QTableView>
@@ -124,10 +125,13 @@ void MainWindow::setupToolbar()
     QAction* gridAct = ui->mToolBar->addAction( QIcon::fromTheme("format-justify-fill"), tr("Toggle &Grid"), this, SLOT( slotActionToggleGrid() ) );
     gridAct->setShortcut( QKeySequence::New );
     viewMenu->addAction( gridAct );
-
     QAction* headersAct = ui->mToolBar->addAction( QIcon::fromTheme("view-form-table"), tr("Toggle &Headers"), this, SLOT( slotActionToggleHeaders() ) );
     headersAct->setShortcut( QKeySequence::New );
     viewMenu->addAction( headersAct );
+
+    QMenu* editMenu = ui->mMenubar->addMenu( tr( "&Edit" ) );
+    QAction* resizeAct = ui->mToolBar->addAction( QIcon::fromTheme("format-justify-fill"), tr("&Resize Image"), this, SLOT( slotActionResize() ) );
+    editMenu->addAction( resizeAct );
 }
 
 void MainWindow::setupDock()
@@ -382,6 +386,26 @@ void MainWindow::slotActionToggleHeaders()
         slotUpdateView( mMonitor->pixelSize() );
     }
 }
+
+void MainWindow::slotActionResize()
+{
+    QScopedPointer<ResizeDialog> dlg( new ResizeDialog( mModel->imageSize(), this ) );
+    if( dlg->exec() == QDialog::Accepted ) {
+        QSize size = dlg->newSize();
+        if( size.isValid() ) {
+            if( size.width() < mModel->imageSize().width() ||size.height() < mModel->imageSize().height() ) {
+                int but = QMessageBox::warning( this,
+                        tr( "Resize Image" ),
+                        tr( "The new image dimensions are smaller than the current dimensions. Data loss will occur. Apply the resize operation or Abort?" ),
+                        QMessageBox::Apply  | QMessageBox::Abort, QMessageBox::Abort );
+                if( but == QMessageBox::Abort )
+                  return;
+            }
+            mModel->scaleImage( size );
+        }
+    }
+}
+
 
 void MainWindow::slotCommandClicked( const QModelIndex &index )
 {

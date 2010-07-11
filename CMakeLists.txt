@@ -21,7 +21,8 @@ set( pietcreator_SRCS
     ViewMonitor.cpp
     Command.cpp
     CommandsModel.cpp
-    CommandDelegate.cpp )
+    CommandDelegate.cpp
+    ResizeDialog.cpp )
 
 set( pietcreator_RCS
     pietcreator.qrc )

@@ -211,6 +211,15 @@ int ImageModel::contiguousBlocks( int x, int y, QRgb color, QBitArray &markedArr
       return result;
 }
 
+void ImageModel::scaleImage( const QSize& size )
+{
+    mImage = mImage.scaled( size, Qt::IgnoreAspectRatio, Qt::FastTransformation );
+    reset();
+}
 
+QSize ImageModel::imageSize() const
+{
+    return mImage.size();
+}
 
 #include "ImageModel.moc"
