@@ -193,14 +193,12 @@ void KColorCells::resizeEvent(QResizeEvent*)
 
 int KColorCells::sizeHintForColumn(int /*column*/) const
 {
-//     return width() / columnCount() ;
-    return 25;
+    return width() / columnCount() ;
 }
 
 int KColorCells::sizeHintForRow(int /*row*/) const
 {
-//     return height() / rowCount() ;
-    return 25;
+    return height() / rowCount() ;
 }
 
 void KColorCells::mousePressEvent(QMouseEvent *e)
