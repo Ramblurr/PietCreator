@@ -151,7 +151,7 @@ void MainWindow::setupToolbar()
     ui->mToolBar->addSeparator();
 
     QMenu* editMenu = ui->mMenubar->addMenu( tr( "&Edit" ) );
-    QAction* resizeAct = ui->mToolBar->addAction( QIcon::fromTheme( "format-justify-fill" ), tr( "&Resize Image" ), this, SLOT( slotActionResize() ) );
+    QAction* resizeAct = ui->mToolBar->addAction( QIcon::fromTheme( "transform-scale" ), tr( "&Resize Image" ), this, SLOT( slotActionResize() ) );
     resizeAct->setDisabled( true );
     connect( this, SIGNAL( validImageDocument( bool ) ), resizeAct, SLOT( setEnabled( bool ) ) );
     editMenu->addAction( resizeAct );
