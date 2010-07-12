@@ -1,13 +1,6 @@
 #ifndef NPIET_H
 #define NPIET_H
 
-/* print debugging stuff: */
-extern int debug;
-
-
-/* internal used index for filling areas: */
-#define c_mark_index    9999
-
 /*
  * color and hue values:
  *
@@ -25,18 +18,20 @@ extern int debug;
 #define c_white         (n_hue * n_light)
 #define c_black         (c_white + 1)
 #define n_colors        (c_black + 1)
+/* internal used index for filling areas: */
+#define c_mark_index    9999
 
-// extern int width;
-// extern int height;
-// extern int *cells;
-// extern int p_dir_pointer;              /* DP: p_{left, right, up, down} */
-// extern int p_codel_chooser;            /* CC: p_left or p_right */
-
-int set_image( unsigned int* _cells, int w, int h);
+int set_image( int w, int h );
 int read_ppm (char *fname);
+int read_png (char *fname);
+int get_color_idx (int col);
+void set_cell (int x, int y, int val);
+void cleanup_input ();
+
 int piet_run();
 void piet_init ();
 int piet_step ();
+
 /*
  * walk along the border of a given colorblock looking about the
  * next codel described by dir dp and the cc.
