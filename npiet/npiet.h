@@ -29,8 +29,8 @@ void set_cell (int x, int y, int val);
 void cleanup_input ();
 
 int piet_run();
-void piet_init ();
-int piet_step ();
+void piet_init();
+int piet_step();
 
 /*
  * walk along the border of a given colorblock looking about the

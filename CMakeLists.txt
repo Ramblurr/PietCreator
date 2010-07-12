@@ -22,7 +22,9 @@ set( pietcreator_SRCS
     Command.cpp
     CommandsModel.cpp
     CommandDelegate.cpp
-    ResizeDialog.cpp )
+    ResizeDialog.cpp
+    OutputModel.cpp
+    RunController.cpp )
 
 set( pietcreator_RCS
     pietcreator.qrc )

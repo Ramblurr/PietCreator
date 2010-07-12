@@ -29,6 +29,7 @@
 #include "CommandDelegate.h"
 #include "Command.h"
 #include "ResizeDialog.h"
+#include "RunController.h"
 
 #include <QHBoxLayout>
 #include <QTableView>
@@ -155,6 +156,17 @@ void MainWindow::setupToolbar()
     resizeAct->setDisabled( true );
     connect( this, SIGNAL( validImageDocument( bool ) ), resizeAct, SLOT( setEnabled( bool ) ) );
     editMenu->addAction( resizeAct );
+    ui->mToolBar->addSeparator();
+
+    QMenu* progMenu = ui->mMenubar->addMenu( tr( "&Program" ) );
+    QAction* runAct = ui->mToolBar->addAction( QIcon::fromTheme( "system-run" ), tr( "&Execute" ), this, SLOT( slotActionRun() ) );
+    runAct->setDisabled( true );
+    connect( this, SIGNAL( validImageDocument( bool ) ), runAct, SLOT( setEnabled( bool ) ) );
+    progMenu->addAction( runAct );
+    QAction* debugAct = ui->mToolBar->addAction( QIcon::fromTheme( "run-build" ), tr( "&Debug" ), this, SLOT( slotActionDebug() ) );
+    debugAct->setDisabled( true );
+    connect( this, SIGNAL( validImageDocument( bool ) ), debugAct, SLOT( setEnabled( bool ) ) );
+    progMenu->addAction( debugAct );
 }
 
 void MainWindow::setupDock()
@@ -446,6 +458,16 @@ void MainWindow::slotActionZoom()
     ui->mZoomSlider->setValue( ui->mZoomSlider->value() +  act->data().toInt() );
 }
 
+void MainWindow::slotActionDebug()
+{
+    qDebug() << "debug clicked";
+}
+
+void MainWindow::slotActionRun()
+{
+    QScopedPointer<RunController> controller( new RunController( mModel, this ) );
+    controller->run();
+}
 
 void MainWindow::slotCommandClicked( const QModelIndex &index )
 {
