@@ -30,6 +30,7 @@
 #include "Command.h"
 #include "ResizeDialog.h"
 #include "RunController.h"
+#include "OutputModel.h"
 
 #include <QHBoxLayout>
 #include <QTableView>
@@ -95,6 +96,9 @@ MainWindow::MainWindow( QWidget *parent ) :
     connect( mMonitor, SIGNAL( pixelSizeChanged( int ) ), SLOT( slotUpdateView( int ) ) );
 
     setupToolbar();
+
+    mOutputModel = new OutputModel( this );
+    ui->mOutputView->setModel( mOutputModel );
 }
 
 MainWindow::~MainWindow()
@@ -466,6 +470,9 @@ void MainWindow::slotActionDebug()
 void MainWindow::slotActionRun()
 {
     QScopedPointer<RunController> controller( new RunController( mModel, this ) );
+    connect( controller.data(), SIGNAL( newOutput( QString ) ), mOutputModel, SLOT( appendLine( QString ) ) );
+    ui->mOutputView->setVisible( true );
+    controller->initialize();
     controller->run();
 }
 

@@ -23,6 +23,9 @@
 #include "ImageModel.h"
 
 #include <QObject>
+#include <QTextStream>
+
+class QSocketNotifier;
 
 class RunController : public QObject
 {
@@ -36,11 +39,23 @@ public:
      */
     void run();
 
+    void initialize();
+
+signals:
+    void newOutput( const QString &);
+
+private slots:
+    void stdoutReadyRead();
 private:
     bool prepare();
-
+    void finish();
+    QTextStream* mStdOut;
+    QSocketNotifier* mNotifier;
     ImageModel* mImageModel;
     bool mPrepared;
+    int mPipeFd[2]; /**< [0] is read end, [1] is write end */
+    int mOrigFd;
+    int mOrigFdCopy;
 };
 
 #endif // RUNCONTROLLER_H

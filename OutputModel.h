@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2010 Casey Link <unnamedrambler@gmail.com>
+    Copyright 2007 Andreas Pakulat <apaku@gmx.de>
 
     This library is free software; you can redistribute it and/or modify it
     under the terms of the GNU Library General Public License as published by
@@ -25,6 +26,12 @@
 
 class OutputModel : public QStandardItemModel
 {
+Q_OBJECT
+public:
+    OutputModel( QObject* parent = 0 );
+public Q_SLOTS:
+    void appendLine( const QString& );
+    void appendLines( const QStringList& );
 };
 
 #endif // OUTPUTMODEL_H

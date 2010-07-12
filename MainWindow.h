@@ -40,6 +40,7 @@ class QTableView;
 class QModelIndex;
 class QLabel;
 class Command;
+class OutputModel;
 
 class MainWindow : public QMainWindow
 {
@@ -91,6 +92,7 @@ private:
     QLabel *mPrimaryCommandLabel;
     QLabel *mSecondaryCommandLabel;
     ViewMonitor* mMonitor;
+    OutputModel* mOutputModel;
 
     QUrl mCurrentFile;
     bool mModified;

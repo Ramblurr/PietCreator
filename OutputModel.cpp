@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2010 Casey Link <unnamedrambler@gmail.com>
+    Copyright 2007 Andreas Pakulat <apaku@gmx.de>
 
     This library is free software; you can redistribute it and/or modify it
     under the terms of the GNU Library General Public License as published by
@@ -19,3 +20,27 @@
 
 #include "OutputModel.h"
 
+#include <QStringList>
+
+
+OutputModel::OutputModel( QObject* parent )
+        : QStandardItemModel( parent )
+{
+
+}
+
+void OutputModel::appendLine( const QString& line )
+{
+    QStandardItem* item = new QStandardItem( line );
+    appendRow( item );
+}
+
+void OutputModel::appendLines( const QStringList& lines)
+{
+    Q_FOREACH( const QString& s, lines )
+    {
+        appendLine( s );
+    }
+}
+
+#include "OutputModel.moc"
