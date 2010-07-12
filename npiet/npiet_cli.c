@@ -128,13 +128,13 @@ int verbose = 0;
 int quiet = 0;
 
 /* show program execution information: */
-int trace = 0;
+int trace = 2;
 
 /* maximum number of execution steps (0 == unlimited): */
 unsigned max_exec_step = 0;
 
 /* print debugging stuff: */
-int debug = 0;
+int debug = 1;
 
 /* filename to work for: */
 char *input_filename = 0;
@@ -2461,15 +2461,15 @@ piet_run ()
       vprintf ("\ninfo: program end\n");
       break;
     }
-
-    if (do_gdtrace && trace) {
-      /* 
-       * in case of additional tracing, make sure we always have
-       * an up-to-date picture; it's way expensive, so it may be
-       * get an extra option...
-       */
-      gd_save ();
-    }
+// 
+//     if (do_gdtrace && trace) {
+//       /* 
+//        * in case of additional tracing, make sure we always have
+//        * an up-to-date picture; it's way expensive, so it may be
+//        * get an extra option...
+//        */
+//       gd_save ();
+//     }
   }
 
   return 0;
@@ -2733,3 +2733,12 @@ main (int argc, char *argv[])
   
   return rc;
 }*/
+
+
+int set_image(unsigned int* _cells, int w, int h)
+{
+    cells = _cells;
+    height = h;
+    width = w;
+}
+    

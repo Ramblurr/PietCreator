@@ -18,12 +18,16 @@ CHECK_INCLUDE_FILES (gif_lib.h HAVE_GIF_LIB_H)
 
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${QT_INCLUDES} )
 
 set( CMAKE_BUILD_TYPE Debug)
 set( DEBUG_BUILD_TYPE ON )
 
-set(npiet_SRCS npiet.c )
+ENABLE_TESTING()
+
+ADD_TEST(npiettest ${EXECUTABLE_OUTPUT_PATH}/npiettest Hello)
+
+set(npiet_SRCS npiet_cli.c )
 
 # add_executable(npiet ${npiet_SRCS} )
 # target_link_libraries( npiet ${GD_LIBRARIES} ${GIF_LIBRARIES} ${PNG_LIBRARIES})
@@ -33,3 +37,16 @@ target_link_libraries( npiet
                        ${GD_LIBRARIES}
                        ${GIF_LIBRARIES}
                        ${PNG_LIBRARIES} )
+
+# Tests
+
+set( npiettest_SRCS test/NPietTest.cpp )
+qt4_automoc(${npiettest_SRCS})
+ADD_EXECUTABLE(npiettest ${npiettest_SRCS} )
+TARGET_LINK_LIBRARIES(npiettest
+    ${QT_LIBRARIES}
+    ${QT_QTTEST_LIBRARIES}
+    ${QT_QTCORE_LIBRARY}
+    ${QT_QTGUI_LIBRARY}
+    npiet )
+
