@@ -71,9 +71,11 @@ private slots:
     void slotCurrentCommandChanged( const Command & newCommand, const Command & oldCommand );
     void slotImageEdited();
     void slotToggleOutput();
+    void slotToggleDebug();
 
 private:
-    void setupDock();
+    void setupCommandsPage();
+    void setupDebugPage();
     void setupToolbar();
     void setModified( bool flag );
     bool promptSave();

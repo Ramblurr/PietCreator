@@ -76,7 +76,7 @@ MainWindow::MainWindow( QWidget *parent ) :
 
     mDelegate = new PixelDelegate( mMonitor, this );
     ui->mView->setItemDelegate( mDelegate );
-    setupDock();
+    setupCommandsPage();
 
     // setup save message
     mExtensions[ tr( "PNG (*.png)" )] = ".png";
@@ -172,15 +172,15 @@ void MainWindow::setupToolbar()
     runAct->setDisabled( true );
     connect( this, SIGNAL( validImageDocument( bool ) ), runAct, SLOT( setEnabled( bool ) ) );
     progMenu->addAction( runAct );
-    QAction* debugAct = ui->mToolBar->addAction( QIcon::fromTheme( "run-build" ), tr( "&Debug" ), this, SLOT( slotActionDebug() ) );
+    QAction* debugAct = ui->mToolBar->addAction( QIcon::fromTheme( "run-build" ), tr( "&Debug" ), this, SLOT( slotToggleDebug() ) );
     debugAct->setDisabled( true );
     connect( this, SIGNAL( validImageDocument( bool ) ), debugAct, SLOT( setEnabled( bool ) ) );
     progMenu->addAction( debugAct );
 }
 
-void MainWindow::setupDock()
+void MainWindow::setupCommandsPage()
 {
-    QWidget *colorsWidget = new QWidget( ui->mDockContents );
+    QWidget *colorsWidget = new QWidget( ui->mCommandsPage );
     QHBoxLayout *hlayout = new QHBoxLayout( colorsWidget );
     mPalette = new KColorCells( colorsWidget, 6, 3 );
     mPalette->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
@@ -235,7 +235,7 @@ void MainWindow::setupDock()
 
 //     QWidget *commandsWidget = new QWidget( ui->mDockContents );
     mCommandsModel = new CommandsModel( mMonitor, this );
-    QTableView *commandsView = new QTableView( ui->mDockContents );
+    QTableView *commandsView = new QTableView( ui->mCommandsPage );
     commandsView->horizontalHeader()->hide();
     commandsView->verticalHeader()->hide();
 //     commandsView->horizontalHeader()->setMinimumSectionSize( 1 );
@@ -249,7 +249,7 @@ void MainWindow::setupDock()
     mCommandDelegate = new CommandDelegate( mMonitor, this );
     commandsView->setItemDelegate( mCommandDelegate );
 
-    QBoxLayout *boxLayout = static_cast<QBoxLayout*>( ui->mDockContents->layout() );
+    QBoxLayout *boxLayout = static_cast<QBoxLayout*>( ui->mCommandsPage->layout() );
     boxLayout->insertWidget( 0, colorsWidget );
     boxLayout->insertWidget( 1, commandsView );
 
@@ -266,6 +266,14 @@ void MainWindow::setupDock()
     Command firstcmd = mCommandsModel->data( mCommandsModel->index( 0, 0 ), CommandsModel::CommandRole ).value<Command>();
     mMonitor->setCurrentCommand( firstcmd );
 }
+
+void MainWindow::setupDebugPage()
+{
+   
+
+    
+}
+
 
 void MainWindow::setModified( bool flag )
 {
@@ -531,6 +539,12 @@ void MainWindow::slotToggleOutput()
         ui->dockWidget_2->show();
     }
 }
+
+void MainWindow::slotToggleDebug()
+{
+    ui->mStackedWidget->setCurrentIndex( !ui->mStackedWidget->currentIndex()  );
+}
+
 
 
 
