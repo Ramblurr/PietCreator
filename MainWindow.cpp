@@ -99,6 +99,7 @@ MainWindow::MainWindow( QWidget *parent ) :
 
     mOutputModel = new OutputModel( this );
     ui->mOutputView->setModel( mOutputModel );
+
 }
 
 MainWindow::~MainWindow()
@@ -153,6 +154,10 @@ void MainWindow::setupToolbar()
     zoomOutAct->setData( -1 );
     viewMenu->addAction( zoomOutAct );
     connect( this, SIGNAL( validImageDocument( bool ) ), zoomOutAct, SLOT( setEnabled( bool ) ) );
+    ui->mToolBar->addSeparator();
+    viewMenu->addSeparator();
+    QAction* debugViewAct = ui->mToolBar->addAction( QIcon::fromTheme( "utilities-terminal" ), tr( "Toggle Output View" ), this, SLOT( slotToggleOutput() ) );
+    viewMenu->addAction( debugViewAct );
     ui->mToolBar->addSeparator();
 
     QMenu* editMenu = ui->mMenubar->addMenu( tr( "&Edit" ) );
@@ -517,6 +522,16 @@ bool MainWindow::promptSave()
     }
     return true;
 }
+
+void MainWindow::slotToggleOutput()
+{
+    if( ui->dockWidget_2->isVisible() ) { //hide
+        ui->dockWidget_2->hide();
+    } else { //show
+        ui->dockWidget_2->show();
+    }
+}
+
 
 
 #include "MainWindow.moc"

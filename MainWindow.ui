@@ -99,6 +99,9 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
+   <property name="windowTitle">
+    <string>Development Bar</string>
+   </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
@@ -121,6 +124,9 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget_2">
+   <property name="windowTitle">
+    <string>Program Output</string>
+   </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>

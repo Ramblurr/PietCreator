@@ -70,6 +70,7 @@ private slots:
     void slotCommandClicked( const QModelIndex &index );
     void slotCurrentCommandChanged( const Command & newCommand, const Command & oldCommand );
     void slotImageEdited();
+    void slotToggleOutput();
 
 private:
     void setupDock();
