@@ -104,6 +104,7 @@ CommandWidget::CommandWidget( ViewMonitor* monitor, QWidget* parent ): QWidget( 
 
     mainLayout->insertWidget( 0, colorsWidget );
     mainLayout->insertWidget( 1, mCommandsView );
+    mainLayout->addStretch();
 
     connect( mPalette, SIGNAL( colorSelected( int, QColor ) ), mMonitor, SLOT( setCurrentColor( int, QColor ) ) );
     connect( mBWPalette, SIGNAL( colorSelected( int, QColor ) ), mMonitor, SLOT( setCurrentColor( int, QColor ) ) );
