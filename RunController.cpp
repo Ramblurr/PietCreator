@@ -19,6 +19,8 @@
 
 #include "RunController.h"
 
+#include "NPietObserver.h"
+
 #include <QSocketNotifier>
 #include <QDebug>
 #include <QTemporaryFile>
@@ -39,11 +41,13 @@
 extern "C"
 {
 #include "npiet/npiet.h"
+#include "npiet/npiet_utils.h"
 }
 
-static int OUTP;
-RunController::RunController(): QObject( 0 ), mPrepared( false ), mStdOut( 0 ), mNotifier( 0 )
+RunController::RunController(): QObject( 0 ), mPrepared( false ), mStdOut( 0 ), mNotifier( 0 ), mObserver( new NPietObserver(this) )
 {
+    connect( mObserver, SIGNAL( stepped( trace_step* ) ), this, SIGNAL( stepped( trace_step* ) ) );
+    connect( mObserver, SIGNAL( actionChanged( trace_action* ) ), this, SIGNAL( actionChanged( trace_action* ) ) );
 }
 
 bool RunController::initialize( const QImage &source )

@@ -23,7 +23,12 @@
 #include <QObject>
 #include <QTextStream>
 #include <QImage>
+
 class QSocketNotifier;
+class NPietObserver;
+
+struct trace_step;
+struct trace_action;
 
 class RunController : public QObject
 {
@@ -31,9 +36,10 @@ class RunController : public QObject
 public:
     RunController();
 
-
 signals:
     void newOutput( const QString &);
+    void stepped( trace_step* );
+    void actionChanged( trace_action* );
 
 public slots:
     /**
@@ -53,8 +59,10 @@ private:
     void captureStdout();
     bool prepare();
     void finish();
+
     QTextStream* mStdOut;
     QSocketNotifier* mNotifier;
+    NPietObserver* mObserver;
     bool mPrepared;
     int mPipeFd[2]; /**< [0] is read end, [1] is write end */
     int mOrigFd;
