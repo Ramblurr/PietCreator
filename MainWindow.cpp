@@ -111,6 +111,8 @@ MainWindow::MainWindow( QWidget *parent ) :
 
 MainWindow::~MainWindow()
 {
+    mRunThread.quit();
+    mRunThread.wait();
     delete ui;
 }
 
