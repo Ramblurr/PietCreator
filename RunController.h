@@ -20,42 +20,46 @@
 #ifndef RUNCONTROLLER_H
 #define RUNCONTROLLER_H
 
-#include "ImageModel.h"
-
 #include <QObject>
 #include <QTextStream>
-
+#include <QImage>
 class QSocketNotifier;
 
 class RunController : public QObject
 {
     Q_OBJECT
 public:
-    RunController( ImageModel * model, QObject* parent );
+    RunController();
 
-    /**
-     Take the program image, pass it to the npiet interpreter
-     and execute it.
-     */
-    void run();
-
-    void initialize();
 
 signals:
     void newOutput( const QString &);
 
+public slots:
+    /**
+     Call this right before calling execute
+     */
+    bool initialize( const QImage &source );
+    /**
+    Take the program image, pass it to the npiet interpreter
+    and execute it.
+    */
+    void execute();
+
+    bool initializeAndExecute( const QImage &source );
 private slots:
     void stdoutReadyRead();
 private:
+    void captureStdout();
     bool prepare();
     void finish();
     QTextStream* mStdOut;
     QSocketNotifier* mNotifier;
-    ImageModel* mImageModel;
     bool mPrepared;
     int mPipeFd[2]; /**< [0] is read end, [1] is write end */
     int mOrigFd;
     int mOrigFdCopy;
+    QImage mSource;
 };
 
 #endif // RUNCONTROLLER_H

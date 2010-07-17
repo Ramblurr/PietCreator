@@ -42,8 +42,15 @@ extern "C"
 }
 
 static int OUTP;
-RunController::RunController( ImageModel* model, QObject* parent ): QObject( parent ), mImageModel( model ), mPrepared( false ), mStdOut( 0 ), mNotifier( 0 )
+RunController::RunController(): QObject( 0 ), mPrepared( false ), mStdOut( 0 ), mNotifier( 0 )
 {
+}
+
+bool RunController::initialize( const QImage &source )
+{
+    mSource = source;
+    captureStdout();
+    return prepare();
 }
 
 //
@@ -51,20 +58,19 @@ RunController::RunController( ImageModel* model, QObject* parent ): QObject( par
 //
 // License: Public domain
 //
-void RunController::initialize()
+void RunController::captureStdout()
 {
     /**
-     Capture stdout in a cross platform way (I hope).
-
-     1. Initialize pipe.
-     2. Dup STDOUT so we can restore it later.
-     3. Make the stdout descriptor a copy of pipe's write end.
-     4. Close write end.
-     5. Set flags to ensure non blocking on pipe's read end
-     6. Associate pipe read end with a FILE*
-     7. Pass the FILE* to qtextstream
-     8. Create a QSocketNotifier on the pipe's read end to monitor for new data
-     */
+    Capture stdout in a cross platform way (I hope).
+    1. Initialize pipe.
+    2. Dup STDOUT so we can restore it later.
+    3. Make the stdout descriptor a copy of pipe's write end.
+    4. Close write end.
+    5. Set flags to ensure non blocking on pipe's read end
+    6. Associate pipe read end with a FILE*
+    7. Pass the FILE* to qtextstream
+    8. Create a QSocketNotifier on the pipe's read end to monitor for new data
+    */
 #ifdef Q_WS_WIN
     int rc = ::_pipe( mPipeFd, 1024, _O_TEXT );
 #else
@@ -100,14 +106,18 @@ void RunController::initialize()
 }
 
 
-void RunController::run()
+void RunController::execute()
 {
-    if ( !mImageModel )
-        return;
-    if ( !mPrepared && !prepare() )
+    if ( !mPrepared )
         return;
     piet_run();
     finish();
+}
+
+bool RunController::initializeAndExecute( const QImage& source )
+{
+    if ( initialize( source ) )
+        execute();
 }
 
 void RunController::finish()
@@ -134,13 +144,12 @@ void RunController::finish()
 
 bool RunController::prepare()
 {
-    QImage image = mImageModel->image();
-//     image = image.convertToFormat( QImage::Format_RGB32 );
-    QRgb* cells = ( QRgb* ) image.bits();
-    set_image( image.width(), image.height() );
-    for ( int i = 0; i < image.height(); ++i ) {
-        QRgb* lineptr = ( QRgb* ) image.scanLine( i );
-        for ( int j = 0; j < image.width(); ++j ) {
+//     image = mSource.convertToFormat( QImage::Format_RGB32 );
+    QRgb* cells = ( QRgb* ) mSource.bits();
+    set_image( mSource.width(), mSource.height() );
+    for ( int i = 0; i < mSource.height(); ++i ) {
+        QRgb* lineptr = ( QRgb* ) mSource.scanLine( i );
+        for ( int j = 0; j < mSource.width(); ++j ) {
             int r = qRed( lineptr[j] );
             int g = qGreen( lineptr[j] );
             int b = qBlue( lineptr[j] );

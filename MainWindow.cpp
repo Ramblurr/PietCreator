@@ -44,6 +44,7 @@
 #include <QDebug>
 #include <QListView>
 #include <QKeySequence>
+#include <QThread>
 
 static const int INITIAL_CODEL_SIZE = 12;
 
@@ -100,6 +101,12 @@ MainWindow::MainWindow( QWidget *parent ) :
     mOutputModel = new OutputModel( this );
     ui->mOutputView->setModel( mOutputModel );
 
+    mRunController = new RunController;
+    connect( mRunController, SIGNAL( newOutput( QString ) ), mOutputModel, SLOT( appendLine( QString ) ) );
+    connect( this, SIGNAL( executeSource( QImage ) ), mRunController, SLOT( initializeAndExecute( QImage ) ) );
+
+    mRunController->moveToThread( &mRunThread );
+    mRunThread.start();
 }
 
 MainWindow::~MainWindow()
@@ -482,11 +489,8 @@ void MainWindow::slotActionDebug()
 
 void MainWindow::slotActionRun()
 {
-    QScopedPointer<RunController> controller( new RunController( mModel, this ) );
-    connect( controller.data(), SIGNAL( newOutput( QString ) ), mOutputModel, SLOT( appendLine( QString ) ) );
     ui->mOutputView->setVisible( true );
-    controller->initialize();
-    controller->run();
+    emit executeSource( mModel->image() );
 }
 
 void MainWindow::slotCommandClicked( const QModelIndex &index )

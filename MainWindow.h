@@ -23,6 +23,7 @@
 #include <QMainWindow>
 #include <QHash>
 #include <QUrl>
+#include <QThread>
 
 namespace Ui
 {
@@ -41,6 +42,7 @@ class QModelIndex;
 class QLabel;
 class Command;
 class OutputModel;
+class RunController;
 
 class MainWindow : public QMainWindow
 {
@@ -53,6 +55,8 @@ public:
     virtual bool eventFilter( QObject* , QEvent* );
 signals:
     void validImageDocument( bool );
+    void executeSource( const QImage & );
+    void debugSource( const QImage & );
 
 private slots:
     void slotActionExit();
@@ -96,7 +100,9 @@ private:
     QLabel *mSecondaryCommandLabel;
     ViewMonitor* mMonitor;
     OutputModel* mOutputModel;
+    RunController* mRunController;
 
+    QThread mRunThread;
     QUrl mCurrentFile;
     bool mModified;
 };
