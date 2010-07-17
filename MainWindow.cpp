@@ -27,6 +27,7 @@
 #include "RunController.h"
 #include "OutputModel.h"
 #include "CommandWidget.h"
+#include "DebugWidget.h"
 
 #include <QHBoxLayout>
 #include <QTableView>
@@ -76,6 +77,9 @@ MainWindow::MainWindow( QWidget *parent ) :
 
     mCommandWidget = new CommandWidget( mMonitor, ui->mCommandsPage );
     ui->mCommandsPage->layout()->addWidget( mCommandWidget );
+
+    mDebugWidget = new DebugWidget( ui->mDebugPage );
+    ui->mDebugPage->layout()->addWidget( mDebugWidget );
     // setup save message
     mExtensions[ tr( "PNG (*.png)" )] = ".png";
     mExtensions[ tr( "GIF (*.gif)" )] = ".gif";

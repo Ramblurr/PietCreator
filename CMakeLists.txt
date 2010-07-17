@@ -26,7 +26,8 @@ set( pietcreator_SRCS
     OutputModel.cpp
     RunController.cpp
     NPietObserver.cpp
-    CommandWidget.cpp )
+    CommandWidget.cpp
+    DebugWidget.cpp )
 
 set( pietcreator_RCS
     pietcreator.qrc )
@@ -35,7 +36,7 @@ QT4_ADD_RESOURCES( pietcreator_SRCS ${pietcreator_RCS} )
 
 qt4_automoc(${pietcreator_SRCS})
 
-qt4_wrap_ui( pietcreator_SRCS MainWindow.ui )
+qt4_wrap_ui( pietcreator_SRCS MainWindow.ui DebugWidget.ui )
 
 
 

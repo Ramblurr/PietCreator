@@ -37,6 +37,7 @@ class QTableView;
 class OutputModel;
 class RunController;
 class CommandWidget;
+class DebugWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -86,6 +87,7 @@ private:
     OutputModel* mOutputModel;
     RunController* mRunController;
     CommandWidget* mCommandWidget;
+    DebugWidget* mDebugWidget;
 
     QThread mRunThread;
     QUrl mCurrentFile;
