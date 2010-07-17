@@ -97,20 +97,23 @@ MainWindow::MainWindow( QWidget *parent ) :
     connect( ui->mZoomSlider, SIGNAL( valueChanged( int ) ), mMonitor, SLOT( setPixelSize( int ) ) );
     connect( mMonitor, SIGNAL( pixelSizeChanged( int ) ), SLOT( slotUpdateView( int ) ) );
 
-    setupToolbar();
-
     mOutputModel = new OutputModel( this );
     ui->mOutputView->setModel( mOutputModel );
 
     mRunController = new RunController;
     connect( mRunController, SIGNAL( newOutput( QString ) ), mOutputModel, SLOT( appendLine( QString ) ) );
     connect( this, SIGNAL( executeSource( QImage ) ), mRunController, SLOT( initializeAndExecute( QImage ) ) );
+    connect( this, SIGNAL( debugSource( QImage ) ), mRunController, SLOT( initialize( QImage ) ) );
+    connect( this, SIGNAL( debugStep() ), mRunController, SLOT( step() ) );
+    connect( this, SIGNAL( debugStop() ), mRunController, SLOT( stop() ) );
 
     connect( mRunController, SIGNAL( stepped( trace_step* ) ), mDebugWidget, SLOT( slotStepped( trace_step* ) ) );
     connect( mRunController, SIGNAL( actionChanged( trace_action* ) ), mDebugWidget, SLOT( slotActionChanged( trace_action* ) ) );
 
     mRunController->moveToThread( &mRunThread );
     mRunThread.start();
+
+    setupToolbar();
 }
 
 MainWindow::~MainWindow()
@@ -189,15 +192,13 @@ void MainWindow::setupToolbar()
     debugAct->setDisabled( true );
     connect( this, SIGNAL( validImageDocument( bool ) ), debugAct, SLOT( setEnabled( bool ) ) );
     progMenu->addAction( debugAct );
+    ui->mToolBar->addSeparator();
+    progMenu->addSeparator();
+    QAction* stepAct = ui->mToolBar->addAction( QIcon(":/icons/debug-step.png"), tr( "&Step" ), this, SIGNAL( debugStep() ) );
+    stepAct->setDisabled( true );
+    connect( this, SIGNAL( debugStarted( bool ) ), stepAct, SLOT( setEnabled( bool ) ) );
+    progMenu->addAction( stepAct );
 }
-
-void MainWindow::setupDebugPage()
-{
-   
-
-    
-}
-
 
 void MainWindow::setModified( bool flag )
 {
@@ -439,6 +440,8 @@ void MainWindow::slotToggleOutput()
 
 void MainWindow::slotToggleDebug()
 {
+    emit debugStarted( true );
+    emit debugSource( mModel->image() );
     ui->mStackedWidget->setCurrentIndex( !ui->mStackedWidget->currentIndex()  );
 }
 

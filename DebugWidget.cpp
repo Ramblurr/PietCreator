@@ -43,7 +43,7 @@ void DebugWidget::slotActionChanged( trace_action* action )
 
 void DebugWidget::slotStepped( trace_step* step )
 {
-//     qDebug() << step->execution_step;
+    mCoordinate->setText( QString("%1,%2").arg(step->p_xpos).arg( step->p_ypos) );
 }
 
 

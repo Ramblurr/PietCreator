@@ -52,6 +52,9 @@ signals:
     void validImageDocument( bool );
     void executeSource( const QImage & );
     void debugSource( const QImage & );
+    void debugStep();
+    void debugStop();
+    void debugStarted( bool );
 
 private slots:
     void slotActionExit();
@@ -71,7 +74,6 @@ private slots:
     void slotToggleDebug();
 
 private:
-    void setupDebugPage();
     void setupToolbar();
     void setModified( bool flag );
     bool promptSave();

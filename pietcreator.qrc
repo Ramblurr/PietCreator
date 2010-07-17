@@ -3,4 +3,8 @@
         <file>piet.ico</file>
         <file>piet-16x16.png</file>
     </qresource>
+    <qresource prefix="/icons">
+        <file>icons/debug-step.svg</file>
+        <file alias="debug-step.png">icons/fallback/32x32/actions/debug-step.png</file>
+    </qresource>
 </RCC>

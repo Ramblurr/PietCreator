@@ -2399,7 +2399,7 @@ piet_step ()
       p_toggle++;
 
     } else {
-      tprintf ("\ntrace: step %d  (%d,%d/%c,%c %s -> %d,%d/%c,%c %s):\n",
+      printf ("\ntrace: step %d  (%d,%d/%c,%c %s -> %d,%d/%c,%c %s):\n",
 	       exec_step, p_xpos, p_ypos, pre_dp, pre_cc,
 	       cell2str (get_cell (p_xpos, p_ypos)),
 	       a_x, a_y, p_dir_pointer, p_codel_chooser,

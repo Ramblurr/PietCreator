@@ -53,6 +53,9 @@ public slots:
     void execute();
 
     bool initializeAndExecute( const QImage &source );
+
+    void step();
+    void stop();
 private slots:
     void stdoutReadyRead();
 private:

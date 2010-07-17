@@ -54,7 +54,11 @@ bool RunController::initialize( const QImage &source )
 {
     mSource = source;
     captureStdout();
-    return prepare();
+    if( prepare() ) {
+        piet_init();
+        return true;
+    }
+    return false;
 }
 
 //
@@ -117,6 +121,20 @@ void RunController::execute()
     piet_run();
     finish();
 }
+
+void RunController::step()
+{
+    if ( !mPrepared )
+        return;
+    int res = piet_step();
+}
+
+void RunController::stop()
+{
+    // TODO reset npiets internal state
+    finish();
+}
+
 
 bool RunController::initializeAndExecute( const QImage& source )
 {
