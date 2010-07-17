@@ -31,6 +31,7 @@ class QLabel;
 class Command;
 class ViewMonitor;
 class QEvent;
+class QTableView;
 
 class CommandWidget : public QWidget
 {
@@ -46,6 +47,8 @@ public slots:
 
 private slots:
     void slotCommandClicked( const QModelIndex &index );
+
+    void slotSetViewWidth();
 private:
     CommandsModel *mCommandsModel;
     CommandDelegate* mCommandDelegate;
@@ -55,6 +58,7 @@ private:
     QLabel *mPrimaryCommandLabel;
     QLabel *mSecondaryCommandLabel;
     ViewMonitor *mMonitor;
+    QTableView *mCommandsView;
 
 };
 

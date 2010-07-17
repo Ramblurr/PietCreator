@@ -94,27 +94,29 @@ CommandWidget::CommandWidget( ViewMonitor* monitor, QWidget* parent ): QWidget( 
     colorsWidget->setLayout( hlayout );
 
     mCommandsModel = new CommandsModel( mMonitor, this );
-    QTableView *commandsView = new QTableView( this );
-    commandsView->horizontalHeader()->hide();
-    commandsView->verticalHeader()->hide();
-    commandsView->horizontalHeader()->setResizeMode( QHeaderView::ResizeToContents );
-    commandsView->setModel( mCommandsModel );
+    mCommandsView = new QTableView( this );
+    mCommandsView->horizontalHeader()->hide();
+    mCommandsView->verticalHeader()->hide();
+    mCommandsView->horizontalHeader()->setResizeMode( QHeaderView::ResizeToContents );
+    mCommandsView->setModel( mCommandsModel );
     mCommandDelegate = new CommandDelegate( mMonitor, this );
-    commandsView->setItemDelegate( mCommandDelegate );
+    mCommandsView->setItemDelegate( mCommandDelegate );
 
     mainLayout->insertWidget( 0, colorsWidget );
-    mainLayout->insertWidget( 1, commandsView );
+    mainLayout->insertWidget( 1, mCommandsView );
 
     connect( mPalette, SIGNAL( colorSelected( int, QColor ) ), mMonitor, SLOT( setCurrentColor( int, QColor ) ) );
     connect( mBWPalette, SIGNAL( colorSelected( int, QColor ) ), mMonitor, SLOT( setCurrentColor( int, QColor ) ) );
-    connect( mMonitor, SIGNAL( currentCommandChanged( Command, Command ) ), commandsView, SLOT( reset() ) );
-    connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), commandsView, SLOT( reset() ) );
+    connect( mMonitor, SIGNAL( currentCommandChanged( Command, Command ) ), mCommandsView, SLOT( reset() ) );
+    connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), mCommandsView, SLOT( reset() ) );
     connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), mPrimaryPatch, SLOT( setColor( QColor ) ) );
     connect( mMonitor, SIGNAL( currentCommandChanged( Command, Command ) ), this, SLOT( slotCurrentCommandChanged( Command, Command ) ) );
-    connect( commandsView, SIGNAL( clicked( QModelIndex ) ), this, SLOT( slotCommandClicked( QModelIndex ) ) );
+    connect( mCommandsView, SIGNAL( clicked( QModelIndex ) ), this, SLOT( slotCommandClicked( QModelIndex ) ) );
+    connect( mCommandsView->horizontalHeader(), SIGNAL( geometriesChanged() ), this, SLOT( slotSetViewWidth() ) );
 
     Command firstcmd = mCommandsModel->data( mCommandsModel->index( 0, 0 ), CommandsModel::CommandRole ).value<Command>();
     mMonitor->setCurrentCommand( firstcmd );
+    slotSetViewWidth();
 }
 
 CommandWidget::~CommandWidget()
@@ -148,5 +150,23 @@ bool CommandWidget::eventFilter( QObject* obj, QEvent* event )
     }
     return QObject::eventFilter( obj, event );
 }
+
+void CommandWidget::slotSetViewWidth()
+{
+    // This table will always have 3 columns.
+    // if this changes we have bigger worries
+    mCommandsView->resizeColumnsToContents();
+    int width = 0;
+    width += mCommandsView->columnWidth(0);
+    width += mCommandsView->columnWidth(1);
+    width += mCommandsView->columnWidth(2);
+    width += mCommandsView->frameWidth();
+    width += 3;
+
+    mCommandsView->setMinimumWidth(width);
+    mCommandsView->adjustSize();
+    adjustSize();
+}
+
 
 #include "CommandWidget.moc"
