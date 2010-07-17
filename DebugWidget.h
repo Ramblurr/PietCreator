@@ -24,13 +24,18 @@
 
 #include <QWidget>
 
-
+struct trace_step;
+struct trace_action;
 class DebugWidget : public QWidget, public Ui_DebugUi
 {
     Q_OBJECT
 public:
     DebugWidget( QWidget* parent = 0, Qt::WindowFlags f = 0 );
     virtual ~DebugWidget();
+
+public slots:
+    void slotStepped( trace_step* );
+    void slotActionChanged( trace_action* );
 private:
 };
 

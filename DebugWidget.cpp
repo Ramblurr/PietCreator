@@ -19,6 +19,13 @@
 
 #include "DebugWidget.h"
 
+extern "C"
+{
+    #include "npiet/npiet_utils.h"
+}
+
+#include <QDebug>
+
 DebugWidget::DebugWidget( QWidget* parent, Qt::WindowFlags f ): QWidget( parent, f )
 {
     setupUi( this );
@@ -28,5 +35,16 @@ DebugWidget::~DebugWidget()
 {
 
 }
+
+void DebugWidget::slotActionChanged( trace_action* action )
+{
+
+}
+
+void DebugWidget::slotStepped( trace_step* step )
+{
+//     qDebug() << step->execution_step;
+}
+
 
 #include "DebugWidget.moc"

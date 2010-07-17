@@ -106,6 +106,9 @@ MainWindow::MainWindow( QWidget *parent ) :
     connect( mRunController, SIGNAL( newOutput( QString ) ), mOutputModel, SLOT( appendLine( QString ) ) );
     connect( this, SIGNAL( executeSource( QImage ) ), mRunController, SLOT( initializeAndExecute( QImage ) ) );
 
+    connect( mRunController, SIGNAL( stepped( trace_step* ) ), mDebugWidget, SLOT( slotStepped( trace_step* ) ) );
+    connect( mRunController, SIGNAL( actionChanged( trace_action* ) ), mDebugWidget, SLOT( slotActionChanged( trace_action* ) ) );
+
     mRunController->moveToThread( &mRunThread );
     mRunThread.start();
 }
