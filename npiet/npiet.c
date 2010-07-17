@@ -63,6 +63,7 @@ char *version = "v1.2a";
 #include <errno.h>
 
 #include "npiet.h"
+#include "npiet_utils.h"
 
 // #ifdef HAVE_CONFIG_H
 # include "config.h"

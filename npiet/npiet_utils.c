@@ -16,12 +16,15 @@ along with this library; see the file COPYING.LIB.  If not, write to the
 Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 02110-1301, USA.
 */
-#include "npiet.h"
+#include "npiet_utils.h"
 
 #include <stdlib.h>
 #include <string.h>
 
+void* step_object = 0;
 step_callback_t step_callback = 0;
+
+void* action_object = 0;
 action_callback_t action_callback = 0;
 
 void notify_step( int step, int px, int py, int pdp, int pcc, int pcol,
@@ -45,7 +48,7 @@ void notify_step( int step, int px, int py, int pdp, int pcc, int pcol,
         s->n_cc = ncc;
         s->n_color = ncol;
 
-        step_callback( s );
+        step_callback(step_object, s );
     }
 }
 
@@ -60,16 +63,18 @@ void notify_action( int hue_change, int light_change, int value, char* msg)
         a->value = value;
         a->msg = strdup( msg );
 
-        action_callback( a );
+        action_callback(action_object, a );
     }
 }
 
-void register_step_callback( step_callback_t callable )
+void register_step_callback( step_callback_t callable, void* obj )
 {
+    step_object = obj;
     step_callback = callable;
 }
 
-void register_action_callback( action_callback_t callable )
+void register_action_callback( action_callback_t callable, void* obj )
 {
+    action_object = obj;
     action_callback = callable;
 }
