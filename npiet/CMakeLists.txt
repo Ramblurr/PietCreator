@@ -27,7 +27,7 @@ ENABLE_TESTING()
 
 ADD_TEST(npiettest ${EXECUTABLE_OUTPUT_PATH}/npiettest Hello)
 
-set(npiet_SRCS npiet.c )
+set(npiet_SRCS npiet.c npiet_utils.c)
 
 # add_executable(npiet ${npiet_SRCS} )
 # target_link_libraries( npiet ${GD_LIBRARIES} ${GIF_LIBRARIES} ${PNG_LIBRARIES})
