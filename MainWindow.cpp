@@ -22,15 +22,11 @@
 
 #include "PixelDelegate.h"
 #include "ImageModel.h"
-#include "KColorCells.h"
-#include "KColorPatch.h"
 #include "ViewMonitor.h"
-#include "CommandsModel.h"
-#include "CommandDelegate.h"
-#include "Command.h"
 #include "ResizeDialog.h"
 #include "RunController.h"
 #include "OutputModel.h"
+#include "CommandWidget.h"
 
 #include <QHBoxLayout>
 #include <QTableView>
@@ -77,8 +73,9 @@ MainWindow::MainWindow( QWidget *parent ) :
 
     mDelegate = new PixelDelegate( mMonitor, this );
     ui->mView->setItemDelegate( mDelegate );
-    setupCommandsPage();
 
+    mCommandWidget = new CommandWidget( mMonitor, ui->mCommandsPage );
+    ui->mCommandsPage->layout()->addWidget( mCommandWidget );
     // setup save message
     mExtensions[ tr( "PNG (*.png)" )] = ".png";
     mExtensions[ tr( "GIF (*.gif)" )] = ".gif";
@@ -187,95 +184,6 @@ void MainWindow::setupToolbar()
     progMenu->addAction( debugAct );
 }
 
-void MainWindow::setupCommandsPage()
-{
-    QWidget *colorsWidget = new QWidget( ui->mCommandsPage );
-    QHBoxLayout *hlayout = new QHBoxLayout( colorsWidget );
-    mPalette = new KColorCells( colorsWidget, 6, 3 );
-    mPalette->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
-    mPalette->setFixedSize( 25*3, 25*6 );
-    mMonitor->populateCells( mPalette );
-
-    KColorCells* mBWPalette = new KColorCells( colorsWidget, 2, 1 );
-    mBWPalette->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
-    mBWPalette->setFixedSize( 25, 25*6 );
-    mBWPalette->setColor( 0, Qt::black );
-    mBWPalette->setColor( 1, Qt::white );
-
-    const int spacing = 15;
-    QWidget *currentCommandWidget = new QWidget( colorsWidget );
-    QVBoxLayout *vlayout = new QVBoxLayout( currentCommandWidget );
-    QWidget *patchWidget = new QWidget( currentCommandWidget );
-    patchWidget->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
-    patchWidget->setFixedWidth( 48 + spacing );
-    mSecondaryPatch = new KColorPatch( patchWidget );
-    mSecondaryPatch->setFixedSize( 48, 48 );
-    mSecondaryPatch->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
-    mSecondaryPatch->installEventFilter( this );
-
-    mPrimaryPatch = new KColorPatch( patchWidget );
-    mPrimaryPatch->setFixedSize( 48, 48 );
-    mPrimaryPatch->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
-
-    QRect secRect = mPrimaryPatch->geometry();
-    secRect.setTopLeft( QPoint( secRect.topLeft().x() + spacing,  secRect.topLeft().y() + spacing ) );
-    mSecondaryPatch->setGeometry( secRect );
-
-    mPrimaryCommandLabel = new QLabel( currentCommandWidget );
-    mPrimaryCommandLabel->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
-
-    mSecondaryCommandLabel = new QLabel( currentCommandWidget );
-    mSecondaryCommandLabel->setAlignment( Qt::AlignRight );
-    mSecondaryCommandLabel->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
-    patchWidget->setFixedHeight( 48 + spacing );
-    vlayout->addWidget( mPrimaryCommandLabel );
-    vlayout->addWidget( patchWidget );
-    vlayout->addWidget( mSecondaryCommandLabel );
-    vlayout->addStretch();
-    currentCommandWidget->setLayout( vlayout );
-
-    hlayout->setSpacing( 0 );
-    hlayout->addStretch();
-    hlayout->addWidget( currentCommandWidget );
-    hlayout->addWidget( mPalette );
-    hlayout->addWidget( mBWPalette );
-    hlayout->addStretch();
-    colorsWidget->setLayout( hlayout );
-
-//     QWidget *commandsWidget = new QWidget( ui->mDockContents );
-    mCommandsModel = new CommandsModel( mMonitor, this );
-    QTableView *commandsView = new QTableView( ui->mCommandsPage );
-    commandsView->horizontalHeader()->hide();
-    commandsView->verticalHeader()->hide();
-//     commandsView->horizontalHeader()->setMinimumSectionSize( 1 );
-//     commandsView->verticalHeader()->setMinimumSectionSize( 1 );
-//     commandsView->verticalHeader()->setResizeMode( QHeaderView::ResizeToContents );
-    commandsView->horizontalHeader()->setResizeMode( QHeaderView::ResizeToContents );
-//     commandsView->horizontalHeader()->setDefaultSectionSize( 50 );
-//     commandsView->verticalHeader()->setDefaultSectionSize( 50 );
-    commandsView->setModel( mCommandsModel );
-
-    mCommandDelegate = new CommandDelegate( mMonitor, this );
-    commandsView->setItemDelegate( mCommandDelegate );
-
-    QBoxLayout *boxLayout = static_cast<QBoxLayout*>( ui->mCommandsPage->layout() );
-    boxLayout->insertWidget( 0, colorsWidget );
-    boxLayout->insertWidget( 1, commandsView );
-
-    connect( mPalette, SIGNAL( colorSelected( int, QColor ) ), mMonitor, SLOT( setCurrentColor( int, QColor ) ) );
-    connect( mBWPalette, SIGNAL( colorSelected( int, QColor ) ), mMonitor, SLOT( setCurrentColor( int, QColor ) ) );
-    connect( mMonitor, SIGNAL( currentCommandChanged( Command, Command ) ), commandsView, SLOT( reset() ) );
-    connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), commandsView, SLOT( reset() ) );
-    connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), mPrimaryPatch, SLOT( setColor( QColor ) ) );
-    connect( mMonitor, SIGNAL( currentCommandChanged( Command, Command ) ), this, SLOT( slotCurrentCommandChanged( Command, Command ) ) );
-    connect( commandsView, SIGNAL( clicked( QModelIndex ) ), this, SLOT( slotCommandClicked( QModelIndex ) ) );
-//     connect( mPrimaryPatch, SIGNAL( colorChanged(QColor,QColor)), this, SLOT( slotHandlePatchChange( QColor, QColor ) ) );
-
-    // select default
-    Command firstcmd = mCommandsModel->data( mCommandsModel->index( 0, 0 ), CommandsModel::CommandRole ).value<Command>();
-    mMonitor->setCurrentCommand( firstcmd );
-}
-
 void MainWindow::setupDebugPage()
 {
    
@@ -305,15 +213,6 @@ bool MainWindow::eventFilter( QObject* obj, QEvent* event )
             return true;
         }
     }
-    if ( obj == mSecondaryPatch && event->type() == QEvent::MouseButtonRelease ) {
-        QMouseEvent * mevent = static_cast<QMouseEvent*>( event );
-        if ( mevent->button() == Qt::LeftButton ) {
-            mMonitor->takeCommand();
-            return true;
-        }
-
-    }
-    return QObject::eventFilter( obj, event );
 }
 
 void MainWindow::slotActionToggleGrid()
@@ -495,21 +394,6 @@ void MainWindow::slotActionRun()
     emit executeSource( mModel->image() );
 }
 
-void MainWindow::slotCommandClicked( const QModelIndex &index )
-{
-    Command command = index.data( CommandsModel::CommandRole ).value<Command>();
-    qDebug() << "command clicked:" << command.name << command.index;
-    mMonitor->setCurrentCommand( command );
-}
-
-void MainWindow::slotCurrentCommandChanged( const Command& newCommand, const Command& oldCommand )
-{
-    mPrimaryPatch->setColor( newCommand.color );
-    mPrimaryCommandLabel->setText( newCommand.name );
-    mSecondaryPatch->setColor( oldCommand.color );
-    mSecondaryCommandLabel->setText( oldCommand.name );
-}
-
 void MainWindow::slotImageEdited()
 {
     if ( !mModified )
@@ -550,8 +434,5 @@ void MainWindow::slotToggleDebug()
 {
     ui->mStackedWidget->setCurrentIndex( !ui->mStackedWidget->currentIndex()  );
 }
-
-
-
 
 #include "MainWindow.moc"

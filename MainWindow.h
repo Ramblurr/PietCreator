@@ -31,18 +31,12 @@ class MainWindow;
 }
 
 class PixelDelegate;
-class CommandDelegate;
 class ImageModel;
-class CommandsModel;
-class KColorCells;
-class KColorPatch;
 class ViewMonitor;
 class QTableView;
-class QModelIndex;
-class QLabel;
-class Command;
 class OutputModel;
 class RunController;
+class CommandWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -71,14 +65,11 @@ private slots:
     void slotActionDebug();
     void slotActionRun();
     void slotUpdateView( int pixelSize );
-    void slotCommandClicked( const QModelIndex &index );
-    void slotCurrentCommandChanged( const Command & newCommand, const Command & oldCommand );
     void slotImageEdited();
     void slotToggleOutput();
     void slotToggleDebug();
 
 private:
-    void setupCommandsPage();
     void setupDebugPage();
     void setupToolbar();
     void setModified( bool flag );
@@ -90,17 +81,11 @@ private:
     QHash<QString, QString> mExtensions;
 
     ImageModel* mModel;
-    CommandsModel *mCommandsModel;
     PixelDelegate* mDelegate;
-    CommandDelegate* mCommandDelegate;
-    KColorCells* mPalette;
-    KColorPatch* mPrimaryPatch;
-    KColorPatch* mSecondaryPatch;
-    QLabel *mPrimaryCommandLabel;
-    QLabel *mSecondaryCommandLabel;
     ViewMonitor* mMonitor;
     OutputModel* mOutputModel;
     RunController* mRunController;
+    CommandWidget* mCommandWidget;
 
     QThread mRunThread;
     QUrl mCurrentFile;

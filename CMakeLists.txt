@@ -25,7 +25,8 @@ set( pietcreator_SRCS
     ResizeDialog.cpp
     OutputModel.cpp
     RunController.cpp
-    NPietObserver.cpp )
+    NPietObserver.cpp
+    CommandWidget.cpp )
 
 set( pietcreator_RCS
     pietcreator.qrc )
