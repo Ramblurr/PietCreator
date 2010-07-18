@@ -55,6 +55,7 @@ signals:
     void debugStep();
     void debugStop();
     void debugStarted( bool );
+    void setStopEnabled( bool );
 
 private slots:
     void slotActionExit();
@@ -72,6 +73,7 @@ private slots:
     void slotImageEdited();
     void slotToggleOutput();
     void slotToggleDebug();
+    void slotControllerStopped();
 
 private:
     void setupToolbar();

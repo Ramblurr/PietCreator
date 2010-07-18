@@ -23,6 +23,8 @@
 #include <QObject>
 #include <QTextStream>
 #include <QImage>
+#include <QMutex>
+#include <QTimer>
 
 class QSocketNotifier;
 class NPietObserver;
@@ -35,42 +37,53 @@ class RunController : public QObject
     Q_OBJECT
 public:
     RunController();
-
+    ~RunController();
 signals:
     void newOutput( const QString &);
     void stepped( trace_step* );
     void actionChanged( trace_action* );
+    void stopped();
 
 public slots:
-    /**
-     Call this right before calling execute
-     */
-    bool initialize( const QImage &source );
-    /**
-    Take the program image, pass it to the npiet interpreter
-    and execute it.
-    */
-    void execute();
-
-    bool initializeAndExecute( const QImage &source );
+    void debugSource( const QImage &source );
+    bool runSource( const QImage &source );
 
     void step();
     void stop();
 private slots:
     void stdoutReadyRead();
+
+    bool initialize( const QImage &source );
+    void execute();
+
+    void slotStepped( trace_step* );
+    void slotAction( trace_action* );
+
+    void tick();
 private:
     void captureStdout();
     bool prepare();
     void finish();
 
+    //Capturing program output
     QTextStream* mStdOut;
     QSocketNotifier* mNotifier;
-    NPietObserver* mObserver;
-    bool mPrepared;
     int mPipeFd[2]; /**< [0] is read end, [1] is write end */
     int mOrigFd;
     int mOrigFdCopy;
+
+    // Reacting to notifications from npiet
+    NPietObserver* mObserver;
+
+
+    bool mPrepared;
     QImage mSource;
+
+    QMutex mMutex;
+    bool mAbort;
+    bool mExecuting;
+    bool mDebugging;
+    QTimer mTimer;
 };
 
 #endif // RUNCONTROLLER_H

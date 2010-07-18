@@ -44,10 +44,19 @@ extern "C"
 #include "npiet/npiet_utils.h"
 }
 
-RunController::RunController(): QObject( 0 ), mPrepared( false ), mStdOut( 0 ), mNotifier( 0 ), mObserver( new NPietObserver(this) )
+RunController::RunController(): QObject( 0 ), mPrepared( false ), mStdOut( 0 ), mNotifier( 0 ), mObserver( new NPietObserver(this) ), mAbort( false ), mExecuting( false ), mDebugging( false )
 {
     connect( mObserver, SIGNAL( stepped( trace_step* ) ), this, SIGNAL( stepped( trace_step* ) ) );
     connect( mObserver, SIGNAL( actionChanged( trace_action* ) ), this, SIGNAL( actionChanged( trace_action* ) ) );
+    connect( &mTimer, SIGNAL( timeout() ), this, SLOT( tick() ) );
+}
+
+RunController::~RunController()
+{
+    mMutex.lock();
+    mAbort = true;
+    mMutex.unlock();
+    wait();
 }
 
 bool RunController::initialize( const QImage &source )
@@ -61,65 +70,29 @@ bool RunController::initialize( const QImage &source )
     return false;
 }
 
-//
-// Downloaded from: http://www.ibib.waw.pl/~winnie
-//
-// License: Public domain
-//
-void RunController::captureStdout()
-{
-    /**
-    Capture stdout in a cross platform way (I hope).
-    1. Initialize pipe.
-    2. Dup STDOUT so we can restore it later.
-    3. Make the stdout descriptor a copy of pipe's write end.
-    4. Close write end.
-    5. Set flags to ensure non blocking on pipe's read end
-    6. Associate pipe read end with a FILE*
-    7. Pass the FILE* to qtextstream
-    8. Create a QSocketNotifier on the pipe's read end to monitor for new data
-    */
-#ifdef Q_WS_WIN
-    int rc = ::_pipe( mPipeFd, 1024, _O_TEXT );
-#else
-    int rc = ::pipe( mPipeFd );
-#endif
-    Q_ASSERT( rc >= 0 );
-
-    mOrigFd = STDOUT_FILENO;
-
-    mOrigFdCopy = ::dup( mOrigFd );
-    Q_ASSERT( mOrigFdCopy >= 0 );
-
-    rc = ::dup2( mPipeFd[1], mOrigFd );
-    Q_ASSERT( rc >= 0 );
-    ::close( mPipeFd[1] );
-
-#ifndef Q_WS_WIN
-    rc = ::fcntl( mPipeFd[0], F_GETFL );
-    Q_ASSERT( rc != -1 );
-    rc = ::fcntl( mPipeFd[0], F_SETFL, rc | O_NONBLOCK );
-    Q_ASSERT( rc != -1 );
-#endif
-    FILE * f = fdopen( mPipeFd[0], "r" );
-    Q_ASSERT( f != 0 );
-
-    if ( mStdOut != 0 )
-        delete mStdOut;
-    if ( mNotifier != 0 )
-        delete mNotifier;
-    mStdOut = new QTextStream( f );
-    mNotifier = new QSocketNotifier( mPipeFd[0], QSocketNotifier::Read );
-    QObject::connect( mNotifier, SIGNAL( activated( int ) ), SLOT( stdoutReadyRead() ) );
-}
-
-
 void RunController::execute()
 {
+    mExecuting = true;
     if ( !mPrepared )
         return;
-    piet_run();
-    finish();
+    mTimer.start( 100 );
+}
+
+void RunController::tick()
+{
+    QMutexLocker locker( &mMutex );
+    bool abort;
+    if( mAbort ) {
+        abort = true;
+    } else if( piet_step() < 0 )
+        abort = true;
+    if( abort ) {
+        qDebug() << "ABORT";
+        mTimer.stop();
+        finish();
+        emit stopped();
+        return;
+    }
 }
 
 void RunController::step()
@@ -131,16 +104,38 @@ void RunController::step()
 
 void RunController::stop()
 {
-    // TODO reset npiets internal state
-    finish();
+    if( mExecuting ) {
+        mMutex.lock();
+        mAbort = true;
+        mMutex.unlock();
+    } else if( mDebugging ) {
+        // TODO reset npiets internal state?
+        finish();
+        emit stopped();
+    }
 }
 
 
-bool RunController::initializeAndExecute( const QImage& source )
+bool RunController::runSource( const QImage& source )
 {
-    if ( initialize( source ) )
+    mExecuting = true;
+    if ( initialize( source ) ) {
         execute();
+        return true;
+    }
+
+    stop();
+    finish();
+    return false;
 }
+
+void RunController::debugSource(const QImage& source)
+{
+    mDebugging = true;
+    if( !initialize( source ) )
+        stop();
+}
+
 
 void RunController::finish()
 {
@@ -162,6 +157,9 @@ void RunController::finish()
     ::dup2( mOrigFdCopy, mOrigFd ); // restore the output descriptor
     ::close( mOrigFdCopy ); // close the copy as it's redundant now
     ::close( mPipeFd[0] );  // close the reading end of the pipe
+
+    mExecuting = false;
+    mDebugging = false;
 }
 
 bool RunController::prepare()
@@ -193,5 +191,67 @@ void RunController::stdoutReadyRead()
     emit newOutput( mStdOut->readAll() );
 }
 
+void RunController::slotAction(trace_action* )
+{
+//     mMutex.lock();
+//     if( mA
+}
+
+void RunController::slotStepped(trace_step* )
+{
+
+}
+
+//
+// Downloaded from: http://www.ibib.waw.pl/~winnie
+//
+// License: Public domain
+//
+void RunController::captureStdout()
+{
+    /**
+    Capture stdout in a cross platform way (I hope).
+    1. Initialize pipe.
+    2. Dup STDOUT so we can restore it later.
+    3. Make the stdout descriptor a copy of pipe's write end.
+    4. Close write end.
+    5. Set flags to ensure non blocking on pipe's read end
+    6. Associate pipe read end with a FILE*
+    7. Pass the FILE* to qtextstream
+    8. Create a QSocketNotifier on the pipe's read end to monitor for new data
+    */
+    #ifdef Q_WS_WIN
+    int rc = ::_pipe( mPipeFd, 1024, _O_TEXT );
+    #else
+    int rc = ::pipe( mPipeFd );
+    #endif
+    Q_ASSERT( rc >= 0 );
+    
+    mOrigFd = STDOUT_FILENO;
+    
+    mOrigFdCopy = ::dup( mOrigFd );
+    Q_ASSERT( mOrigFdCopy >= 0 );
+    
+    rc = ::dup2( mPipeFd[1], mOrigFd );
+    Q_ASSERT( rc >= 0 );
+    ::close( mPipeFd[1] );
+    
+    #ifndef Q_WS_WIN
+    rc = ::fcntl( mPipeFd[0], F_GETFL );
+    Q_ASSERT( rc != -1 );
+    rc = ::fcntl( mPipeFd[0], F_SETFL, rc | O_NONBLOCK );
+    Q_ASSERT( rc != -1 );
+    #endif
+    FILE * f = fdopen( mPipeFd[0], "r" );
+    Q_ASSERT( f != 0 );
+    
+    if ( mStdOut != 0 )
+        delete mStdOut;
+    if ( mNotifier != 0 )
+        delete mNotifier;
+    mStdOut = new QTextStream( f );
+    mNotifier = new QSocketNotifier( mPipeFd[0], QSocketNotifier::Read );
+    QObject::connect( mNotifier, SIGNAL( activated( int ) ), SLOT( stdoutReadyRead() ) );
+}
 
 #include "RunController.moc"

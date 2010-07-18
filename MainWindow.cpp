@@ -102,13 +102,14 @@ MainWindow::MainWindow( QWidget *parent ) :
 
     mRunController = new RunController;
     connect( mRunController, SIGNAL( newOutput( QString ) ), mOutputModel, SLOT( appendLine( QString ) ) );
-    connect( this, SIGNAL( executeSource( QImage ) ), mRunController, SLOT( initializeAndExecute( QImage ) ) );
-    connect( this, SIGNAL( debugSource( QImage ) ), mRunController, SLOT( initialize( QImage ) ) );
+    connect( this, SIGNAL( executeSource( QImage ) ), mRunController, SLOT( runSource( QImage ) ) );
+    connect( this, SIGNAL( debugSource( QImage ) ), mRunController, SLOT( debugSource( QImage ) ) );
     connect( this, SIGNAL( debugStep() ), mRunController, SLOT( step() ) );
     connect( this, SIGNAL( debugStop() ), mRunController, SLOT( stop() ) );
 
     connect( mRunController, SIGNAL( stepped( trace_step* ) ), mDebugWidget, SLOT( slotStepped( trace_step* ) ) );
     connect( mRunController, SIGNAL( actionChanged( trace_action* ) ), mDebugWidget, SLOT( slotActionChanged( trace_action* ) ) );
+    connect( mRunController, SIGNAL(stopped()), this, SLOT( slotControllerStopped() ) );
 
     mRunController->moveToThread( &mRunThread );
     mRunThread.start();
@@ -198,6 +199,10 @@ void MainWindow::setupToolbar()
     stepAct->setDisabled( true );
     connect( this, SIGNAL( debugStarted( bool ) ), stepAct, SLOT( setEnabled( bool ) ) );
     progMenu->addAction( stepAct );
+    QAction* stopAct = ui->mToolBar->addAction( QIcon::fromTheme( "process-stop" ), tr( "&Stop" ), this, SIGNAL( debugStop() ) );
+    stopAct->setDisabled( true );
+    connect( this, SIGNAL( setStopEnabled( bool ) ), stopAct, SLOT( setEnabled( bool ) ) );
+    progMenu->addAction( stopAct );
 }
 
 void MainWindow::setModified( bool flag )
@@ -205,7 +210,6 @@ void MainWindow::setModified( bool flag )
     mModified = flag;
     setWindowModified( flag );
 }
-
 
 bool MainWindow::eventFilter( QObject* obj, QEvent* event )
 {
@@ -399,6 +403,7 @@ void MainWindow::slotActionDebug()
 void MainWindow::slotActionRun()
 {
     ui->mOutputView->setVisible( true );
+    emit setStopEnabled( true );
     emit executeSource( mModel->image() );
 }
 
@@ -441,8 +446,17 @@ void MainWindow::slotToggleOutput()
 void MainWindow::slotToggleDebug()
 {
     emit debugStarted( true );
+    emit setStopEnabled( true );
     emit debugSource( mModel->image() );
     ui->mStackedWidget->setCurrentIndex( !ui->mStackedWidget->currentIndex()  );
 }
+
+void MainWindow::slotControllerStopped()
+{
+    emit debugStarted( false );
+    emit setStopEnabled( false );
+}
+
+
 
 #include "MainWindow.moc"
