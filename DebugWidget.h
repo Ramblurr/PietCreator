@@ -38,6 +38,9 @@ public:
 public slots:
     void slotStepped( trace_step* );
     void slotActionChanged( trace_action* );
+    void slotDebugStopped();
+    void slotDebugStarted();
+
 private:
     Command command( int light_change, int hue_change );
     ImageModel* mImageModel;

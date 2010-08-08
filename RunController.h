@@ -51,6 +51,7 @@ signals:
     void stepped( trace_step* );
     void actionChanged( trace_action* );
     void stopped();
+    void debugStarted();
     void waitingForInt();
     void waitingForChar();
 
@@ -61,7 +62,7 @@ public slots:
     bool runSource( const QImage &source );
 
     void step();
-    void stop();
+    void abort();
 private slots:
     void stdoutReadyRead();
 
@@ -77,6 +78,9 @@ private:
     void captureStdout();
     bool prepare();
     void finish();
+
+    /** Call with mutex locked */
+    void stop();
 
     //Capturing program output
     QTextStream* mStdOut;

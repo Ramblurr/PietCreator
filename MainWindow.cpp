@@ -115,6 +115,9 @@ MainWindow::MainWindow( QWidget *parent ) :
     connect( mRunController, SIGNAL( stepped( trace_step* ) ), mDebugWidget, SLOT( slotStepped( trace_step* ) ) );
     connect( mRunController, SIGNAL( actionChanged( trace_action* ) ), mDebugWidget, SLOT( slotActionChanged( trace_action* ) ) );
     connect( mRunController, SIGNAL(stopped()), this, SLOT( slotControllerStopped() ) );
+    connect( mRunController, SIGNAL(debugStarted()), this, SLOT(slotControllerStarted()) );
+    connect( mRunController, SIGNAL(stopped()), mDebugWidget, SLOT(slotDebugStopped()) );
+    connect( mRunController, SIGNAL(debugStarted()), mDebugWidget, SLOT(slotDebugStarted()) );
     connect( mRunController, SIGNAL(waitingForInt()), this, SLOT( slotGetInt()) );
     connect( mRunController, SIGNAL(waitingForChar()), this, SLOT( slotGetChar() ) );
 
@@ -205,7 +208,7 @@ void MainWindow::setupToolbar()
     runAct->setDisabled( true );
     connect( this, SIGNAL( validImageDocument( bool ) ), runAct, SLOT( setEnabled( bool ) ) );
     progMenu->addAction( runAct );
-    QAction* debugAct = ui->mToolBar->addAction( QIcon::fromTheme( "run-build" ), tr( "&Debug" ), this, SLOT( slotToggleDebug() ) );
+    QAction* debugAct = ui->mToolBar->addAction( QIcon::fromTheme( "run-build" ), tr( "&Debug" ), this, SLOT( slotStartDebug() ) );
     debugAct->setDisabled( true );
     connect( this, SIGNAL( validImageDocument( bool ) ), debugAct, SLOT( setEnabled( bool ) ) );
     progMenu->addAction( debugAct );
@@ -459,12 +462,12 @@ void MainWindow::slotToggleOutput()
     }
 }
 
-void MainWindow::slotToggleDebug()
+void MainWindow::slotStartDebug()
 {
     emit debugStarted( true );
     emit setStopEnabled( true );
     emit debugSource( mModel->image() );
-    ui->mStackedWidget->setCurrentIndex( !ui->mStackedWidget->currentIndex()  );
+    ui->mStackedWidget->setCurrentIndex( 1 );
 }
 
 void MainWindow::slotControllerStopped()
@@ -475,6 +478,12 @@ void MainWindow::slotControllerStopped()
     ui->mInputEdit->clear();
     emit debugStarted( false );
     emit setStopEnabled( false );
+}
+
+void MainWindow::slotControllerStarted()
+{
+    emit debugStarted( true );
+    emit setStopEnabled( true );
 }
 
 void MainWindow::slotGetChar()
@@ -516,7 +525,7 @@ void MainWindow::slotReturnPressed()
 
 void MainWindow::slotStopController()
 {
-    mRunController->stop();
+    mRunController->abort();
 }
 
 

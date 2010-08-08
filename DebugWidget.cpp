@@ -39,6 +39,20 @@ DebugWidget::~DebugWidget()
 
 }
 
+void DebugWidget::slotDebugStopped()
+{
+    mImageModel->setDebuggedPixel( -1, -1 );
+    mStackedWidget->setCurrentIndex( 1 );
+}
+
+void DebugWidget::slotDebugStarted()
+{
+    mStackedWidget->setCurrentIndex( 0 );
+    mActionLabel->setText( "" );
+    mValueLabel->setText( "" );
+    mCoordinate->setText( "Before first instruction" );
+}
+
 void DebugWidget::slotActionChanged( trace_action* action )
 {
     mActionLabel->setText( command( action->light_change, action->hue_change ).name );

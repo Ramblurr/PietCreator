@@ -74,9 +74,10 @@ private slots:
     void slotImageEdited();
 
     void slotToggleOutput();
-    void slotToggleDebug();
+    void slotStartDebug();
 
     void slotControllerStopped();
+    void slotControllerStarted();
     void slotGetChar();
     void slotGetInt();
     void slotReturnPressed();

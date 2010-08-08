@@ -112,10 +112,16 @@ void RunController::step()
     int res = piet_step();
 }
 
+void RunController::abort()
+{
+    qDebug() << "abort!";
+    QMutexLocker locker( &mMutex );
+    stop();
+}
+
 void RunController::stop()
 {
     qDebug() << "stop!";
-    QMutexLocker locker( &mMutex );
     if( mExecuting ) {
         mAbort = true;
         mWaitCond.wakeOne();
@@ -126,17 +132,17 @@ void RunController::stop()
     }
 }
 
-
 bool RunController::runSource( const QImage& source )
 {
     mMutex.lock();
+    stop();
     mExecuting = true;
     mMutex.unlock();
     if ( initialize( source ) ) {
         execute();
         return true;
     }
-    stop();
+    abort();
     mMutex.lock();
     finish();
     mMutex.unlock();
@@ -146,10 +152,12 @@ bool RunController::runSource( const QImage& source )
 void RunController::debugSource(const QImage& source)
 {
     mMutex.lock();
+    stop();
     mDebugging = true;
     mMutex.unlock();
     if( !initialize( source ) )
-        stop();
+        abort();
+    emit debugStarted();
 }
 
 
