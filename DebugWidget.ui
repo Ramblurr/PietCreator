@@ -133,13 +133,16 @@
       </sizepolicy>
      </property>
      <property name="title">
-      <string>The Stack</string>
+      <string>Stack</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QLabel" name="label_4">
+          <property name="toolTip">
+           <string>The state of the stack before the current codel was evaluated.</string>
+          </property>
           <property name="text">
            <string>Before:</string>
           </property>
@@ -149,7 +152,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QListWidget" name="mBeforeStack"/>
+         <widget class="QListWidget" name="mBeforeStack">
+          <property name="toolTip">
+           <string>The state of the stack before the current codel was evaluated.</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -157,6 +164,9 @@
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QLabel" name="label_5">
+          <property name="toolTip">
+           <string>The state of the stack after the current codel was evaluated.</string>
+          </property>
           <property name="text">
            <string>After:</string>
           </property>
@@ -166,7 +176,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QListWidget" name="mAfterStack"/>
+         <widget class="QListWidget" name="mAfterStack">
+          <property name="toolTip">
+           <string>The state of the stack after the current codel was evaluated.</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
