@@ -105,7 +105,6 @@ QImage ImageModel::image() const
 void ImageModel::setDebuggedPixel( int x, int y )
 {
     emitNeighborsChanged( mDebugPixel.y(), mDebugPixel.x() );
-    qDebug() << "slotPixelSizeChange" << mDebugPixel;
     mDebugPixel.setY( y );
     mDebugPixel.setX( x );
     emitNeighborsChanged( mDebugPixel.y(), mDebugPixel.x() );

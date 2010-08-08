@@ -21,7 +21,7 @@
 #define DEBUGWIDGET_H
 
 #include "ui_DebugWidget.h"
-
+#include "Command.h"
 
 #include <QWidget>
 
@@ -39,6 +39,7 @@ public slots:
     void slotStepped( trace_step* );
     void slotActionChanged( trace_action* );
 private:
+    Command command( int light_change, int hue_change );
     ImageModel* mImageModel;
 };
 

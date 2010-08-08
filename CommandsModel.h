@@ -34,6 +34,7 @@ public:
         ColorIndexRole = Qt::UserRole,
         CommandRole
     };
+
     explicit CommandsModel( ViewMonitor* monitor, QObject* parent );
     virtual ~CommandsModel() {}
 
