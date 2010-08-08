@@ -135,6 +135,13 @@
      <item>
       <widget class="QListView" name="mOutputView"/>
      </item>
+     <item>
+      <widget class="QLineEdit" name="mInputEdit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>

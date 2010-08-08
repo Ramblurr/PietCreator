@@ -223,20 +223,22 @@ int RunController::getInt()
     emit waitingForInt();
 //     qDebug() << "getInt()" << "waiting";
     mWaitCond.wait( &mMutex );
-//     qDebug() << "getInt()" << "woke up!" << mInt;
+    qDebug() << "getInt()" << "woke up!" << mInt;
     return mInt;
 }
 
-void RunController::putChar( char c )
+void RunController::putChar( const QChar & c )
 {
+    qDebug() << "putChar";
     QMutexLocker locker( &mMutex );
-    mChar = c;
+    mChar = c.toAscii();
     mWaitCond.wakeOne();
 }
 
 void RunController::putInt( int i )
 {
     QMutexLocker locker( &mMutex );
+    qDebug() << "putInt" << i;
     mInt = i;
     mWaitCond.wakeOne();
 }

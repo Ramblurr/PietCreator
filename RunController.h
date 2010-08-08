@@ -41,7 +41,7 @@ public:
     ~RunController();
 
     void putInt( int i );
-    void putChar( char c );
+    void putChar( const QChar & c );
 
     int getInt();
     char getChar();

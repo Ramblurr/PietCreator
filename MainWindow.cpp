@@ -48,7 +48,9 @@ static const int INITIAL_CODEL_SIZE = 12;
 MainWindow::MainWindow( QWidget *parent ) :
         QMainWindow( parent ),
         ui( new Ui::MainWindow ),
-        mModified( false )
+        mModified( false ),
+        mWaitInt( false ),
+        mWaitChar( false )
 {
     ui->setupUi( this );
     setWindowIcon( QIcon( ":/piet-16x16.png" ) );
@@ -99,6 +101,8 @@ MainWindow::MainWindow( QWidget *parent ) :
 
     mOutputModel = new OutputModel( this );
     ui->mOutputView->setModel( mOutputModel );
+
+    connect( ui->mInputEdit, SIGNAL(returnPressed()), this, SLOT(slotReturnPressed()) );
 
     mRunController = new RunController;
     connect( mRunController, SIGNAL( newOutput( QString ) ), mOutputModel, SLOT( appendString( QString ) ) );
@@ -463,14 +467,38 @@ void MainWindow::slotControllerStopped()
 void MainWindow::slotGetChar()
 {
     qDebug() << "slotGetChar();";
-    mRunController->putChar( 'c' );
+    ui->mInputEdit->setEnabled( true );
+    ui->mInputEdit->setFocus();
+    mWaitChar = true;
 }
 
 void MainWindow::slotGetInt()
 {
     qDebug() << "slotGetInt();";
-    mRunController->putInt( 3 );
+    ui->mInputEdit->setEnabled( true );
+    ui->mInputEdit->setFocus();
+    mWaitInt = true;
 }
 
+void MainWindow::slotReturnPressed()
+{
+    QString text = ui->mInputEdit->text();
+    if( mWaitChar ) {
+        if( text.length() > 0 ) {
+            mRunController->putChar( text.at(0) );
+            mWaitChar = false;
+            ui->mInputEdit->setEnabled( false );
+        }
+    } else if( mWaitInt ) {
+        bool ok = false;
+        int i = text.toInt( &ok );
+        if( ok ) {
+            mRunController->putInt( i );
+            mWaitInt = false;
+            ui->mInputEdit->setEnabled( false );
+        }
+    }
+    ui->mInputEdit->clear();
+}
 
 #include "MainWindow.moc"

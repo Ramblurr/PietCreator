@@ -76,6 +76,7 @@ private slots:
     void slotControllerStopped();
     void slotGetChar();
     void slotGetInt();
+    void slotReturnPressed();
 
 private:
     void setupToolbar();
@@ -98,6 +99,8 @@ private:
     QThread mRunThread;
     QUrl mCurrentFile;
     bool mModified;
+    bool mWaitInt;
+    bool mWaitChar;
 };
 
 #endif // MAINWINDOW_H
