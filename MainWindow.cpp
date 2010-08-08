@@ -126,6 +126,7 @@ MainWindow::MainWindow( QWidget *parent ) :
     mRunThread.start();
 
     setupToolbar();
+    ui->dockWidget_2->hide();
 }
 
 MainWindow::~MainWindow()
@@ -467,7 +468,6 @@ void MainWindow::slotStartDebug()
     emit debugStarted( true );
     emit setStopEnabled( true );
     emit debugSource( mModel->image() );
-    ui->mStackedWidget->setCurrentIndex( 1 );
 }
 
 void MainWindow::slotControllerStopped()
@@ -478,12 +478,15 @@ void MainWindow::slotControllerStopped()
     ui->mInputEdit->clear();
     emit debugStarted( false );
     emit setStopEnabled( false );
+    ui->mStackedWidget->setCurrentIndex( 0 );
 }
 
 void MainWindow::slotControllerStarted()
 {
+    ui->dockWidget_2->show();
     emit debugStarted( true );
     emit setStopEnabled( true );
+    ui->mStackedWidget->setCurrentIndex( 1 );
 }
 
 void MainWindow::slotGetChar()

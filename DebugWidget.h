@@ -42,6 +42,7 @@ public slots:
     void slotDebugStarted();
 
 private:
+    void changeCurrent( int idx );
     Command command( int light_change, int hue_change );
     ImageModel* mImageModel;
 };

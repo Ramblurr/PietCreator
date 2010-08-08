@@ -42,16 +42,25 @@ DebugWidget::~DebugWidget()
 void DebugWidget::slotDebugStopped()
 {
     mImageModel->setDebuggedPixel( -1, -1 );
-    mStackedWidget->setCurrentIndex( 1 );
+    changeCurrent( 1 );
 }
 
 void DebugWidget::slotDebugStarted()
 {
-    mStackedWidget->setCurrentIndex( 0 );
     mActionLabel->setText( "" );
     mValueLabel->setText( "" );
     mCoordinate->setText( "Before first instruction" );
+    changeCurrent( 0 );
 }
+
+void DebugWidget::changeCurrent(int idx)
+{
+    mStackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    mStackedWidget->setCurrentIndex( idx );
+    mStackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    adjustSize();
+}
+
 
 void DebugWidget::slotActionChanged( trace_action* action )
 {
