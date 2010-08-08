@@ -69,14 +69,19 @@ private slots:
     void slotActionZoom();
     void slotActionDebug();
     void slotActionRun();
+
     void slotUpdateView( int pixelSize );
     void slotImageEdited();
+
     void slotToggleOutput();
     void slotToggleDebug();
+
     void slotControllerStopped();
     void slotGetChar();
     void slotGetInt();
     void slotReturnPressed();
+
+    void slotStopController();
 
 private:
     void setupToolbar();

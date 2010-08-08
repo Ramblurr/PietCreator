@@ -50,8 +50,11 @@ RunController::RunController(): QObject( 0 ), mPrepared( false ), mStdOut( 0 ), 
 
 RunController::~RunController()
 {
+    qDebug() << "~RunController";
     mMutex.lock();
     mAbort = true;
+    qDebug() << "waking";
+    mWaitCond.wakeOne();
     mMutex.unlock();
     wait();
 }
@@ -86,17 +89,17 @@ void RunController::execute()
 
 void RunController::tick()
 {
-    mMutex.lock();
     bool abort;
+    QMutexLocker locker( &mMutex );
+//     if( mAbort ) {
+//         abort = true;
+//     }
+    if( !mAbort && piet_step() < 0 )
+        mAbort = true;
     if( mAbort ) {
-        abort = true;
-    }
-    mMutex.unlock();
-    if( !abort && piet_step() < 0 )
-        abort = true;
-    if( abort ) {
         mTimer.stop();
         finish();
+        mAbort = false;
         emit stopped();
         return;
     }
@@ -111,10 +114,11 @@ void RunController::step()
 
 void RunController::stop()
 {
+    qDebug() << "stop!";
+    QMutexLocker locker( &mMutex );
     if( mExecuting ) {
-        mMutex.lock();
         mAbort = true;
-        mMutex.unlock();
+        mWaitCond.wakeOne();
     } else if( mDebugging ) {
         // TODO reset npiets internal state?
         finish();
@@ -125,20 +129,25 @@ void RunController::stop()
 
 bool RunController::runSource( const QImage& source )
 {
+    mMutex.lock();
     mExecuting = true;
+    mMutex.unlock();
     if ( initialize( source ) ) {
         execute();
         return true;
     }
-
     stop();
+    mMutex.lock();
     finish();
+    mMutex.unlock();
     return false;
 }
 
 void RunController::debugSource(const QImage& source)
 {
+    mMutex.lock();
     mDebugging = true;
+    mMutex.unlock();
     if( !initialize( source ) )
         stop();
 }
@@ -146,6 +155,10 @@ void RunController::debugSource(const QImage& source)
 
 void RunController::finish()
 {
+    mTimer.stop();
+    mExecuting = false;
+    mDebugging = false;
+
     if ( mNotifier == 0 ) return;
 
     std::cout.flush(); // flush standard output cout file descriptor
@@ -164,9 +177,6 @@ void RunController::finish()
     ::dup2( mOrigFdCopy, mOrigFd ); // restore the output descriptor
     ::close( mOrigFdCopy ); // close the copy as it's redundant now
     ::close( mPipeFd[0] );  // close the reading end of the pipe
-
-    mExecuting = false;
-    mDebugging = false;
 }
 
 bool RunController::prepare()
@@ -209,7 +219,7 @@ void RunController::slotStepped(trace_step* )
 
 char RunController::getChar()
 {
-    QMutexLocker locker( &mMutex );
+//     QMutexLocker locker( &mMutex );
     emit waitingForChar();
     mWaitCond.wait( &mMutex );
     return mChar;
@@ -218,12 +228,17 @@ char RunController::getChar()
 int RunController::getInt()
 {
 //     qDebug() << "getInt()" << "getting lock";
-    QMutexLocker locker( &mMutex );
+//     QMutexLocker locker( &mMutex );
 //     qDebug() << "getInt()" << "got lock";
     emit waitingForInt();
 //     qDebug() << "getInt()" << "waiting";
+    bool timer_running = mTimer.isActive(); 
+    if( timer_running )
+        mTimer.stop();
     mWaitCond.wait( &mMutex );
     qDebug() << "getInt()" << "woke up!" << mInt;
+    if( timer_running )
+        mTimer.start();
     return mInt;
 }
 

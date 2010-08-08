@@ -109,7 +109,7 @@ MainWindow::MainWindow( QWidget *parent ) :
     connect( this, SIGNAL( executeSource( QImage ) ), mRunController, SLOT( runSource( QImage ) ) );
     connect( this, SIGNAL( debugSource( QImage ) ), mRunController, SLOT( debugSource( QImage ) ) );
     connect( this, SIGNAL( debugStep() ), mRunController, SLOT( step() ) );
-    connect( this, SIGNAL( debugStop() ), mRunController, SLOT( stop() ) );
+    connect( this, SIGNAL( debugStop() ), this, SLOT(slotStopController()) );
 
     connect( mRunController, SIGNAL( stepped( trace_step* ) ), mDebugWidget, SLOT( slotStepped( trace_step* ) ) );
     connect( mRunController, SIGNAL( actionChanged( trace_action* ) ), mDebugWidget, SLOT( slotActionChanged( trace_action* ) ) );
@@ -126,6 +126,14 @@ MainWindow::MainWindow( QWidget *parent ) :
 
 MainWindow::~MainWindow()
 {
+    qDebug() << "~MainWindow";
+
+    //FIXME this is very hacky. a better way to force wakeup
+    if( mWaitChar )
+        mRunController->putChar('a');
+    if( mWaitInt )
+        mRunController->putInt(1);
+
     mRunThread.quit();
     mRunThread.wait();
     delete ui;
@@ -460,6 +468,10 @@ void MainWindow::slotToggleDebug()
 
 void MainWindow::slotControllerStopped()
 {
+    mWaitChar = false;
+    mWaitInt = false;
+    ui->mInputEdit->setDisabled(true);
+    ui->mInputEdit->clear();
     emit debugStarted( false );
     emit setStopEnabled( false );
 }
@@ -500,5 +512,11 @@ void MainWindow::slotReturnPressed()
     }
     ui->mInputEdit->clear();
 }
+
+void MainWindow::slotStopController()
+{
+    mRunController->stop();
+}
+
 
 #include "MainWindow.moc"
