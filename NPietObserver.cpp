@@ -19,6 +19,7 @@
 
 #include "NPietObserver.h"
 #include <QDebug>
+#include <QThread>
 extern "C"
 {
     #include "npiet/npiet_utils.h"
@@ -49,33 +50,31 @@ char NPietObserver::get_char()
 
 int NPietObserver::get_int()
 {
-    qDebug() << "HAI";
-    qDebug() << thread();
     return mRunController->getInt();
 }
 
 void NPietObserver::call_action( void* object, trace_action* act )
 {
-    NPietObserver* me = (NPietObserver*) object;
+    NPietObserver* me = static_cast<NPietObserver*>( object );
     me->action( act );
 }
 
 void NPietObserver::call_step( void* object, trace_step* ste )
 {
-    NPietObserver* me = (NPietObserver*) object;
+    NPietObserver* me = static_cast<NPietObserver*>( object );
     me->step( ste );
 }
 
 char NPietObserver::call_readchar( void* object )
 {
-    NPietObserver* me = (NPietObserver*) object;
+    NPietObserver* me = static_cast<NPietObserver*>( object );
     return me->get_char();
 }
 
 int NPietObserver::call_readint( void* object )
 {
-    NPietObserver* me = (NPietObserver*) object;
-    return me->get_int();
+    NPietObserver* me = static_cast<NPietObserver*>( object );
+    return me->get_int();;
 }
 
 

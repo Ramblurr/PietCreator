@@ -74,6 +74,8 @@ private slots:
     void slotToggleOutput();
     void slotToggleDebug();
     void slotControllerStopped();
+    void slotGetChar();
+    void slotGetInt();
 
 private:
     void setupToolbar();

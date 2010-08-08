@@ -24,6 +24,7 @@
 #include <QTextStream>
 #include <QImage>
 #include <QMutex>
+#include <QWaitCondition>
 #include <QTimer>
 
 class QSocketNotifier;
@@ -38,13 +39,24 @@ class RunController : public QObject
 public:
     RunController();
     ~RunController();
+
+    void putInt( int i );
+    void putChar( char c );
+
+    int getInt();
+    char getChar();
+
 signals:
     void newOutput( const QString & );
     void stepped( trace_step* );
     void actionChanged( trace_action* );
     void stopped();
+    void waitingForInt();
+    void waitingForChar();
 
 public slots:
+    void slotThreadStarted();
+
     void debugSource( const QImage &source );
     bool runSource( const QImage &source );
 
@@ -60,6 +72,7 @@ private slots:
     void slotAction( trace_action* );
 
     void tick();
+
 private:
     void captureStdout();
     bool prepare();
@@ -80,10 +93,14 @@ private:
     QImage mSource;
 
     QMutex mMutex;
+    QWaitCondition mWaitCond;
     bool mAbort;
     bool mExecuting;
     bool mDebugging;
     QTimer mTimer;
+
+    char mChar;
+    int mInt;
 };
 
 #endif // RUNCONTROLLER_H

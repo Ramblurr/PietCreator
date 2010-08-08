@@ -88,23 +88,23 @@ void register_action_callback( action_callback_t callable, void* obj )
 
 int read_int()
 {
-    return readint_callback( readint_callback );
+    return readint_callback( readint_object );
 }
 
 char read_char()
 {
-    return readchar_callback( readchar_callback );
+    return readchar_callback( readchar_object );
 }
 
-void register_readchar_callback(readchar_callback_t callable, void* obj)
+void register_readchar_callback( readchar_callback_t callable, void* obj )
 {
     readchar_object = obj;
     readchar_callback = callable;
 }
 
-void register_readint_callback(readint_callback_t callable, void* obj)
+void register_readint_callback( readint_callback_t callable, void* obj )
 {
-    readint_callback = obj;
+    readint_object = obj;
     readint_callback = callable;
 }
 

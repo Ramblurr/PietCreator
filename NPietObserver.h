@@ -28,7 +28,7 @@ struct trace_action;
 
 class NPietObserver : public QObject
 {
-    Q_OBJECT
+Q_OBJECT
 public:
     NPietObserver( RunController* controller = 0 );
 

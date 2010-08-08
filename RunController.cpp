@@ -24,7 +24,7 @@
 #include <QSocketNotifier>
 #include <QDebug>
 #include <QTemporaryFile>
-
+#include <QThread>
 
 #include <unistd.h>
 #include <stdio.h>
@@ -44,11 +44,8 @@ extern "C"
 #include "npiet/npiet_utils.h"
 }
 
-RunController::RunController(): QObject( 0 ), mPrepared( false ), mStdOut( 0 ), mNotifier( 0 ), mObserver( new NPietObserver(this) ), mAbort( false ), mExecuting( false ), mDebugging( false )
+RunController::RunController(): QObject( 0 ), mPrepared( false ), mStdOut( 0 ), mNotifier( 0 ), mObserver( 0 ), mAbort( false ), mExecuting( false ), mDebugging( false )
 {
-    connect( mObserver, SIGNAL( stepped( trace_step* ) ), this, SIGNAL( stepped( trace_step* ) ) );
-    connect( mObserver, SIGNAL( actionChanged( trace_action* ) ), this, SIGNAL( actionChanged( trace_action* ) ) );
-    connect( &mTimer, SIGNAL( timeout() ), this, SLOT( tick() ) );
 }
 
 RunController::~RunController()
@@ -58,6 +55,15 @@ RunController::~RunController()
     mMutex.unlock();
     wait();
 }
+
+void RunController::slotThreadStarted()
+{
+    mObserver = new NPietObserver( this );
+    connect( mObserver, SIGNAL( stepped( trace_step* ) ), this, SIGNAL( stepped( trace_step* ) ) );
+    connect( mObserver, SIGNAL( actionChanged( trace_action* ) ), this, SIGNAL( actionChanged( trace_action* ) ) );
+    connect( &mTimer, SIGNAL( timeout() ), this, SLOT( tick() ) );
+}
+
 
 bool RunController::initialize( const QImage &source )
 {
@@ -75,19 +81,20 @@ void RunController::execute()
     mExecuting = true;
     if ( !mPrepared )
         return;
-    mTimer.start( 100 );
+    mTimer.start( 0 );
 }
 
 void RunController::tick()
 {
-    QMutexLocker locker( &mMutex );
+    mMutex.lock();
     bool abort;
     if( mAbort ) {
         abort = true;
-    } else if( piet_step() < 0 )
+    }
+    mMutex.unlock();
+    if( !abort && piet_step() < 0 )
         abort = true;
     if( abort ) {
-        qDebug() << "ABORT";
         mTimer.stop();
         finish();
         emit stopped();
@@ -193,13 +200,45 @@ void RunController::stdoutReadyRead()
 
 void RunController::slotAction(trace_action* )
 {
-//     mMutex.lock();
-//     if( mA
 }
 
 void RunController::slotStepped(trace_step* )
 {
 
+}
+
+char RunController::getChar()
+{
+    QMutexLocker locker( &mMutex );
+    emit waitingForChar();
+    mWaitCond.wait( &mMutex );
+    return mChar;
+}
+
+int RunController::getInt()
+{
+//     qDebug() << "getInt()" << "getting lock";
+    QMutexLocker locker( &mMutex );
+//     qDebug() << "getInt()" << "got lock";
+    emit waitingForInt();
+//     qDebug() << "getInt()" << "waiting";
+    mWaitCond.wait( &mMutex );
+//     qDebug() << "getInt()" << "woke up!" << mInt;
+    return mInt;
+}
+
+void RunController::putChar( char c )
+{
+    QMutexLocker locker( &mMutex );
+    mChar = c;
+    mWaitCond.wakeOne();
+}
+
+void RunController::putInt( int i )
+{
+    QMutexLocker locker( &mMutex );
+    mInt = i;
+    mWaitCond.wakeOne();
 }
 
 //
@@ -226,16 +265,16 @@ void RunController::captureStdout()
     int rc = ::pipe( mPipeFd );
     #endif
     Q_ASSERT( rc >= 0 );
-    
+
     mOrigFd = STDOUT_FILENO;
-    
+
     mOrigFdCopy = ::dup( mOrigFd );
     Q_ASSERT( mOrigFdCopy >= 0 );
-    
+
     rc = ::dup2( mPipeFd[1], mOrigFd );
     Q_ASSERT( rc >= 0 );
     ::close( mPipeFd[1] );
-    
+
     #ifndef Q_WS_WIN
     rc = ::fcntl( mPipeFd[0], F_GETFL );
     Q_ASSERT( rc != -1 );
@@ -244,7 +283,7 @@ void RunController::captureStdout()
     #endif
     FILE * f = fdopen( mPipeFd[0], "r" );
     Q_ASSERT( f != 0 );
-    
+
     if ( mStdOut != 0 )
         delete mStdOut;
     if ( mNotifier != 0 )

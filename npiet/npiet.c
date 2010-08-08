@@ -2073,10 +2073,10 @@ piet_action (int c_col, int a_col, int num_cells, char *msg)
       tprintf ("action: in(number)\n");
       alloc_stack_space (num_stack + 1);
 
-      if (! quiet) {
+//       if (! quiet) {
 	/* show a prompt: */
-	printf ("? "); fflush (stdout);
-      }
+// 	printf ("? "); fflush (stdout);
+//       }
       c = read_int();
 //       if (1 != scanf (stdin, "%d", &c)) {
 //           notify_msg = "cannot read int from stdin";

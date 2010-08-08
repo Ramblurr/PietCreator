@@ -110,7 +110,10 @@ MainWindow::MainWindow( QWidget *parent ) :
     connect( mRunController, SIGNAL( stepped( trace_step* ) ), mDebugWidget, SLOT( slotStepped( trace_step* ) ) );
     connect( mRunController, SIGNAL( actionChanged( trace_action* ) ), mDebugWidget, SLOT( slotActionChanged( trace_action* ) ) );
     connect( mRunController, SIGNAL(stopped()), this, SLOT( slotControllerStopped() ) );
+    connect( mRunController, SIGNAL(waitingForInt()), this, SLOT( slotGetInt()) );
+    connect( mRunController, SIGNAL(waitingForChar()), this, SLOT( slotGetChar() ) );
 
+    connect( &mRunThread, SIGNAL( started() ), mRunController, SLOT( slotThreadStarted() ) );
     mRunController->moveToThread( &mRunThread );
     mRunThread.start();
 
@@ -457,6 +460,17 @@ void MainWindow::slotControllerStopped()
     emit setStopEnabled( false );
 }
 
+void MainWindow::slotGetChar()
+{
+    qDebug() << "slotGetChar();";
+    mRunController->putChar( 'c' );
+}
+
+void MainWindow::slotGetInt()
+{
+    qDebug() << "slotGetInt();";
+    mRunController->putInt( 3 );
+}
 
 
 #include "MainWindow.moc"
