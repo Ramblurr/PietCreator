@@ -19,6 +19,7 @@
 
 #include "PixelDelegate.h"
 
+#include "ImageModel.h"
 #include "ViewMonitor.h"
 
 #include <QPainter>
@@ -32,28 +33,34 @@ PixelDelegate::PixelDelegate( ViewMonitor* monitor, QObject *parent ) : QAbstrac
 void PixelDelegate::paint( QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index ) const
 {
 
-    if ( option.state & QStyle::State_Selected )
-        painter->fillRect( option.rect, option.palette.highlight() );
+//     if ( option.state & QStyle::State_Selected )
+//         painter->fillRect( option.rect, option.palette.highlight() );
 
     int size = qMin( option.rect.width(), option.rect.height() );
     QColor c = index.model()->data( index, Qt::DisplayRole ).value<QColor>();
 
     painter->save();
-    painter->setRenderHint( QPainter::Antialiasing, true );
     painter->setPen( Qt::NoPen );
     painter->setBrush( QBrush( c ) );
 
     // shorten the rectangle a little to provide some spacing
-    QRect shortRect;
-    QPoint pt = option.rect.topLeft();
-    pt.setX( pt.x() + 1 );
-    pt.setY( pt.y() + 1 );
-    shortRect.setTopLeft( pt );
-    pt = option.rect.bottomRight();
-    pt.setX( pt.x() - 1 );
-    pt.setY( pt.y() - 1 );
-    shortRect.setBottomRight( pt );
+    QRect shortRect = option.rect.adjusted( 1, 1, -1, -1 );
     painter->drawRect( shortRect );
+    painter->restore();
+
+    painter->save();
+    QPen pen = painter->pen();
+    if( index.data( ImageModel::IsCurrentDebugRole ).toBool() ) {
+        pen.setColor( Qt::black );
+        pen.setWidth( 3 );
+        painter->setPen( pen );
+        painter->drawRect( shortRect );
+    } else {
+        pen.setColor( Qt::black );
+        pen.setWidth( 1 );
+        painter->setPen( pen );
+        painter->drawRect( shortRect );
+    }
     painter->restore();
 }
 

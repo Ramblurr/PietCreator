@@ -102,6 +102,22 @@ QImage ImageModel::image() const
     return mImage;
 }
 
+void ImageModel::setDebuggedPixel( int x, int y )
+{
+    emitNeighborsChanged( mDebugPixel.y(), mDebugPixel.x() );
+    qDebug() << "slotPixelSizeChange" << mDebugPixel;
+    mDebugPixel.setY( y );
+    mDebugPixel.setX( x );
+    emitNeighborsChanged( mDebugPixel.y(), mDebugPixel.x() );
+}
+
+void ImageModel::emitNeighborsChanged( int row, int col )
+{
+    QModelIndex topLeft = index( row-1,  col-1 );
+    QModelIndex bottomRight = index( row+1,  col+1 );
+    emit dataChanged( topLeft, bottomRight );
+}
+
 int ImageModel::columnCount( const QModelIndex& parent ) const
 {
     Q_UNUSED( parent )
@@ -128,6 +144,9 @@ QVariant ImageModel::data( const QModelIndex& index, int role ) const
     }
     case Qt::StatusTipRole:
         return statusString( index );
+    case ImageModel::IsCurrentDebugRole:
+//         qDebug() << mDebugPixel;
+        return mDebugPixel.x() == index.column() && mDebugPixel.y() == index.row();
     default:
         return QVariant();
     }

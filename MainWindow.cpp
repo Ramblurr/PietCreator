@@ -69,6 +69,7 @@ MainWindow::MainWindow( QWidget *parent ) :
     ui->mView->verticalHeader()->setDefaultSectionSize( 12 );
     ui->mView->viewport()->setMouseTracking( true ); // to enable Qt::StatusTipRole
     ui->mView->viewport()->installEventFilter( this );
+    ui->mView->setShowGrid( false );
 
     mMonitor = new ViewMonitor( this );
     mMonitor->setPixelSize( INITIAL_CODEL_SIZE );
@@ -80,7 +81,7 @@ MainWindow::MainWindow( QWidget *parent ) :
     mCommandWidget = new CommandWidget( mMonitor, ui->mCommandsPage );
     ui->mCommandsPage->layout()->addWidget( mCommandWidget );
 
-    mDebugWidget = new DebugWidget( ui->mDebugPage );
+    mDebugWidget = new DebugWidget( mModel, ui->mDebugPage );
     ui->mDebugPage->layout()->addWidget( mDebugWidget );
     // setup save message
     mExtensions[ tr( "PNG (*.png)" )] = ".png";
@@ -166,11 +167,11 @@ void MainWindow::setupToolbar()
     ui->mToolBar->addSeparator();
 
     QMenu* viewMenu = ui->mMenubar->addMenu( tr( "&View" ) );
-    QAction* gridAct = ui->mToolBar->addAction( QIcon::fromTheme( "format-justify-fill" ), tr( "Toggle &Grid" ), this, SLOT( slotActionToggleGrid() ) );
-    gridAct->setShortcut( QKeySequence::New );
-    gridAct->setDisabled( true );
-    connect( this, SIGNAL( validImageDocument( bool ) ), gridAct, SLOT( setEnabled( bool ) ) );
-    viewMenu->addAction( gridAct );
+//     QAction* gridAct = ui->mToolBar->addAction( QIcon::fromTheme( "format-justify-fill" ), tr( "Toggle &Grid" ), this, SLOT( slotActionToggleGrid() ) );
+//     gridAct->setShortcut( QKeySequence::New );
+//     gridAct->setDisabled( true );
+//     connect( this, SIGNAL( validImageDocument( bool ) ), gridAct, SLOT( setEnabled( bool ) ) );
+//     viewMenu->addAction( gridAct );
     QAction* headersAct = ui->mToolBar->addAction( QIcon::fromTheme( "view-form-table" ), tr( "Toggle &Headers" ), this, SLOT( slotActionToggleHeaders() ) );
     headersAct->setDisabled( true );
     headersAct->setShortcut( QKeySequence::New );
@@ -244,7 +245,7 @@ bool MainWindow::eventFilter( QObject* obj, QEvent* event )
 
 void MainWindow::slotActionToggleGrid()
 {
-    ui->mView->setShowGrid( !ui->mView->showGrid() );
+//     ui->mView->setShowGrid( !ui->mView->showGrid() );
 }
 
 void MainWindow::slotUpdateView( int pixelSize )

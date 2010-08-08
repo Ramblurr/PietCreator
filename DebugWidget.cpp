@@ -24,9 +24,11 @@ extern "C"
     #include "npiet/npiet_utils.h"
 }
 
+#include "ImageModel.h"
+
 #include <QDebug>
 
-DebugWidget::DebugWidget( QWidget* parent, Qt::WindowFlags f ): QWidget( parent, f )
+DebugWidget::DebugWidget( ImageModel* model, QWidget* parent, Qt::WindowFlags f ): QWidget( parent, f ), mImageModel( model )
 {
     setupUi( this );
 }
@@ -44,6 +46,7 @@ void DebugWidget::slotActionChanged( trace_action* action )
 void DebugWidget::slotStepped( trace_step* step )
 {
     mCoordinate->setText( QString("%1,%2").arg(step->p_xpos).arg( step->p_ypos) );
+    mImageModel->setDebuggedPixel( step->p_xpos, step->p_ypos );
 }
 
 

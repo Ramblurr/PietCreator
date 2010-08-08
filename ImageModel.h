@@ -26,6 +26,11 @@ class ImageModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
+
+    enum ImageRoles {
+        IsCurrentDebugRole = Qt::UserRole
+    };
+
     explicit ImageModel( QObject *parent = 0 );
     virtual ~ImageModel();
 
@@ -37,6 +42,8 @@ public:
 
     void scaleImage( const QSize & size );
     QSize imageSize() const;
+
+    void setDebuggedPixel( int x, int y );
 
     int rowCount( const QModelIndex &parent = QModelIndex() ) const;
     int columnCount( const QModelIndex &parent = QModelIndex() ) const;
@@ -55,10 +62,13 @@ public slots:
         */
     void slotPixelSizeChange( int size );
 private:
+    void emitNeighborsChanged( int row, int col );
     QString statusString( QModelIndex index ) const;
     quint64 contiguousBlocks( int x, int y ) const;
     QImage mImage;
     int mPixelSize;
+
+    QPoint mDebugPixel;
 };
 
 #endif // IMAGEMODEL_H
