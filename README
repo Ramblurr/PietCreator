@@ -18,6 +18,9 @@ npiet: http://www.bertnase.de/npiet/
 
 Piet Creator is licensed under the GPL v3, and is written in C++ with Qt.
 
+Piet the esoteric programming language was created by David Morgan-Mar <dmm@dangermouse.net>,
+and is copyright by him.
+
 Compiling / Running
 ----------------
 Prerequisites for Linux/Mac OS X/Windows:
