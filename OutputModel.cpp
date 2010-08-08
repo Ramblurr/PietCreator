@@ -21,12 +21,37 @@
 #include "OutputModel.h"
 
 #include <QStringList>
-
+#include <QTextStream>
 
 OutputModel::OutputModel( QObject* parent )
         : QStandardItemModel( parent )
 {
 
+}
+
+void OutputModel::appendString( const QString& text )
+{
+    if( this->item( rowCount()-1 ) == 0 ) {
+        appendLine( text );
+        return;
+    }
+    QByteArray ba = text.toAscii();
+    QTextStream s( &ba );
+    QString buffer;
+    while( !s.atEnd() )  {
+        QChar c;
+        s >> c;
+        if( c.category() == QChar::Separator_Line ) {
+            appendLine( buffer );
+            buffer.clear();
+        } else {
+            buffer.append( c );
+        }
+    }
+    if( !buffer.isEmpty() ) {
+        QStandardItem* item = this->item( rowCount()-1 );
+        item->setText( item->text().append( buffer ) );
+    }
 }
 
 void OutputModel::appendLine( const QString& line )

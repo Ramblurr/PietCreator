@@ -30,8 +30,9 @@ Q_OBJECT
 public:
     OutputModel( QObject* parent = 0 );
 public Q_SLOTS:
-    void appendLine( const QString& );
-    void appendLines( const QStringList& );
+    void appendString( const QString & text );
+    void appendLine( const QString& line );
+    void appendLines( const QStringList& lines );
 };
 
 #endif // OUTPUTMODEL_H

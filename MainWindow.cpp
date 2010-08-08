@@ -101,7 +101,7 @@ MainWindow::MainWindow( QWidget *parent ) :
     ui->mOutputView->setModel( mOutputModel );
 
     mRunController = new RunController;
-    connect( mRunController, SIGNAL( newOutput( QString ) ), mOutputModel, SLOT( appendLine( QString ) ) );
+    connect( mRunController, SIGNAL( newOutput( QString ) ), mOutputModel, SLOT( appendString( QString ) ) );
     connect( this, SIGNAL( executeSource( QImage ) ), mRunController, SLOT( runSource( QImage ) ) );
     connect( this, SIGNAL( debugSource( QImage ) ), mRunController, SLOT( debugSource( QImage ) ) );
     connect( this, SIGNAL( debugStep() ), mRunController, SLOT( step() ) );

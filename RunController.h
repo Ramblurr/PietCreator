@@ -39,7 +39,7 @@ public:
     RunController();
     ~RunController();
 signals:
-    void newOutput( const QString &);
+    void newOutput( const QString & );
     void stepped( trace_step* );
     void actionChanged( trace_action* );
     void stopped();
