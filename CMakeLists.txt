@@ -27,7 +27,8 @@ set( pietcreator_SRCS
     RunController.cpp
     NPietObserver.cpp
     CommandWidget.cpp
-    DebugWidget.cpp )
+    DebugWidget.cpp
+    CommandImpl.cpp )
 
 set( pietcreator_RCS
     pietcreator.qrc )
