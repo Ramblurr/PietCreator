@@ -53,11 +53,11 @@ void DebugWidget::slotDebugStarted()
     changeCurrent( 0 );
 }
 
-void DebugWidget::changeCurrent(int idx)
+void DebugWidget::changeCurrent( int idx )
 {
-    mStackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    mStackedWidget->currentWidget()->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
     mStackedWidget->setCurrentIndex( idx );
-    mStackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    mStackedWidget->currentWidget()->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
     adjustSize();
 }
 
@@ -69,28 +69,28 @@ void DebugWidget::slotActionChanged( trace_action* action )
 
 void DebugWidget::slotStepped( trace_step* step )
 {
-    mCoordinate->setText( QString("%1,%2").arg(step->p_xpos).arg( step->p_ypos) );
+    mCoordinate->setText( QString( "%1,%2" ).arg( step->p_xpos ).arg( step->p_ypos ) );
     mImageModel->setDebuggedPixel( step->p_xpos, step->p_ypos );
 
     quint64 connected = mImageModel->data( mImageModel->index( step->p_ypos, step->p_xpos ), ImageModel::ContiguousBlocksRole ).toInt();
     QString character;
     if ( connected >= 32 && connected <= 126 )
-        character = QString( "(char: '%1')" ).arg(( char ) connected );
+        character = QString( "(char: '%1')" ).arg( ( char ) connected );
     QString value = QString( "%1 %2" ).arg( connected ).arg( character );
     mValueLabel->setText( value );
 }
 
 Command DebugWidget::command( int light_change, int hue_change )
 {
-    switch (hue_change) {
+    switch ( hue_change ) {
     case 0:
         /*  None                  push        pop     */
-        if (light_change == 0) {
+        if ( light_change == 0 ) {
             /*
             * noop - nothing to do (should not happen)
             */
             return PietCommand::Noop();
-        } else if (light_change == 1) {
+        } else if ( light_change == 1 ) {
             /*
             push: Pushes the value of the colour block just exited on to the
             stack. Note that values of colour blocks are not automatically
@@ -98,7 +98,7 @@ Command DebugWidget::command( int light_change, int hue_change )
             carried out.
             */
             return PietCommand::Push();
-        } else if (light_change == 2) {
+        } else if ( light_change == 2 ) {
             /*
             pop: Pops the top value off the stack and discards it.
             */
@@ -107,20 +107,20 @@ Command DebugWidget::command( int light_change, int hue_change )
         break;
     case 1:
         /*     1 Step       add    subtract   multiply */
-        if (light_change == 0) {
+        if ( light_change == 0 ) {
             /*
             add: Pops the top two values off the stack, adds them, and pushes
             the result back on the stack.
             */
             return PietCommand::Add();
-        } else if (light_change == 1) {
+        } else if ( light_change == 1 ) {
             /*
             subtract: Pops the top two values off the stack, subtracts the top
             value from the second top value, and pushes the result back on the
             stack.
             */
             return PietCommand::Subtract();
-        } else if (light_change == 2) {
+        } else if ( light_change == 2 ) {
             /*
             multiply: Pops the top two values off the stack, multiplies them,
             and pushes the result back on the stack.
@@ -130,21 +130,21 @@ Command DebugWidget::command( int light_change, int hue_change )
         break;
     case 2:
         /*    2 Steps    divide         mod        not */
-        if (light_change == 0) {
+        if ( light_change == 0 ) {
             /*
             divide: Pops the top two values off the stack, calculates the
             integer division of the second top value by the top value, and
             pushes the result back on the stack.
             */
             return PietCommand::Divide();
-        } else if (light_change == 1) {
+        } else if ( light_change == 1 ) {
             /*
             mod: Pops the top two values off the stack, calculates the second
             top value modulo the top value, and pushes the result back on the
             stack.
             */
             return PietCommand::Mod();
-        } else if (light_change == 2) {
+        } else if ( light_change == 2 ) {
             /*
             not: Replaces the top value of the stack with 0 if it is non-zero,
             and 1 if it is zero.
@@ -154,20 +154,20 @@ Command DebugWidget::command( int light_change, int hue_change )
         break;
     case 3:
         /*    3 Steps   greater     pointer     switch */
-        if (light_change == 0) {
+        if ( light_change == 0 ) {
             /*
             greater: Pops the top two values off the stack, and pushes 1 on to
             the stack if the second top value is greater than the top value,
             and pushes 0 if it is not greater.
             */
             return PietCommand::Greater();
-        } else if (light_change == 1) {
+        } else if ( light_change == 1 ) {
             /*
             pointer: Pops the top value off the stack and rotates the DP
             clockwise that many steps (anticlockwise if negative).
             */
             return PietCommand::Pointer();
-        } else if (light_change == 2) {
+        } else if ( light_change == 2 ) {
             /*
             switch: Pops the top value off the stack and toggles the CC that
                 many times.
@@ -177,13 +177,13 @@ Command DebugWidget::command( int light_change, int hue_change )
         break;
     case 4:
         /*    4 Steps  duplicate  roll  in(number) */
-        if (light_change == 0) {
+        if ( light_change == 0 ) {
             /*
             duplicate: Pushes a copy of the top value on the stack on to the
             stack.
             */
             return PietCommand::Duplicate();
-        } else if (light_change == 1) {
+        } else if ( light_change == 1 ) {
             /*
             roll: Pops the top two values off the stack and "rolls" the
             remaining stack entries to a depth equal to the second value
@@ -194,7 +194,7 @@ Command DebugWidget::command( int light_change, int hue_change )
             negative depth is an error and the command is ignored.
             */
             return PietCommand::Roll();
-        } else if (light_change == 2) {
+        } else if ( light_change == 2 ) {
             /*
             in: Reads a value from STDIN as either a number or character,
             depending on the particular incarnation of this command and pushes
@@ -205,21 +205,21 @@ Command DebugWidget::command( int light_change, int hue_change )
         break;
     case 5:
         /*    5 Steps  in(char) out(number)  out(char) */
-        if (light_change == 0) {
+        if ( light_change == 0 ) {
             /*
             in: Reads a value from STDIN as either a number or character,
             depending on the particular incarnation of this command and pushes
             it on to the stack.
             */
             return PietCommand::In();
-        } else if (light_change == 1) {
+        } else if ( light_change == 1 ) {
             /*
             out: Pops the top value off the stack and prints it to STDOUT as
             either a number or character, depending on the particular
             incarnation of this command.
             */
             return PietCommand::Out();
-        } else if (light_change == 2) {
+        } else if ( light_change == 2 ) {
             /*
             out: Pops the top value off the stack and prints it to STDOUT as
             either a number or character, depending on the particular

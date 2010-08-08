@@ -23,10 +23,10 @@
 #include "Command.h"
 
 
-int main(int argc, char** argv)
+int main( int argc, char** argv )
 {
     qRegisterMetaType<Command>( "Command" );
-    QApplication app(argc, argv);
+    QApplication app( argc, argv );
     MainWindow foo;
     foo.show();
     return app.exec();

@@ -26,51 +26,50 @@
 #include <QPainter>
 
 void
-KColorMimeData::populateMimeData(QMimeData *mimeData, const QColor &color)
+KColorMimeData::populateMimeData( QMimeData *mimeData, const QColor &color )
 {
-    mimeData->setColorData(color);
-    mimeData->setText(color.name());
+    mimeData->setColorData( color );
+    mimeData->setText( color.name() );
 }
 
 bool
-KColorMimeData::canDecode(const QMimeData *mimeData)
+KColorMimeData::canDecode( const QMimeData *mimeData )
 {
-    if (mimeData->hasColor())
+    if ( mimeData->hasColor() )
         return true;
-    if (mimeData->hasText())
-    {
-        const QString colorName=mimeData->text();
-        if ((colorName.length() >= 4) && (colorName[0] == '#'))
+    if ( mimeData->hasText() ) {
+        const QString colorName = mimeData->text();
+        if ( ( colorName.length() >= 4 ) && ( colorName[0] == '#' ) )
             return true;
     }
     return false;
 }
 
 QColor
-KColorMimeData::fromMimeData(const QMimeData *mimeData)
+KColorMimeData::fromMimeData( const QMimeData *mimeData )
 {
-    if (mimeData->hasColor())
+    if ( mimeData->hasColor() )
         return mimeData->colorData().value<QColor>();
-    if (canDecode(mimeData))
-        return QColor(mimeData->text());
+    if ( canDecode( mimeData ) )
+        return QColor( mimeData->text() );
     return QColor();
 }
 
 
 QDrag*
-KColorMimeData::createDrag(const QColor &color, QWidget *dragsource)
+KColorMimeData::createDrag( const QColor &color, QWidget *dragsource )
 {
-    QDrag *drag=new QDrag(dragsource);
-    QMimeData *mime=new QMimeData;
-    populateMimeData(mime,color);
-    drag->setMimeData(mime);
+    QDrag *drag = new QDrag( dragsource );
+    QMimeData *mime = new QMimeData;
+    populateMimeData( mime, color );
+    drag->setMimeData( mime );
     QPixmap colorpix( 25, 20 );
     colorpix.fill( color );
     QPainter p( &colorpix );
     p.setPen( Qt::black );
-    p.drawRect(0,0,24,19);
+    p.drawRect( 0, 0, 24, 19 );
     p.end();
-    drag->setPixmap(colorpix);
-    drag->setHotSpot(QPoint(-5,-7));
+    drag->setPixmap( colorpix );
+    drag->setHotSpot( QPoint( -5, -7 ) );
     return drag;
 }

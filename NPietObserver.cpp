@@ -22,7 +22,7 @@
 #include <QThread>
 extern "C"
 {
-    #include "npiet/npiet_utils.h"
+#include "npiet/npiet_utils.h"
 }
 
 NPietObserver::NPietObserver( RunController* controller ): QObject( controller ), mRunController( controller )

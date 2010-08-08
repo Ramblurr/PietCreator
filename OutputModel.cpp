@@ -24,21 +24,21 @@
 #include <QTextStream>
 
 OutputModel::OutputModel( QObject* parent )
-        : QStandardItemModel( parent )
+    : QStandardItemModel( parent )
 {
 
 }
 
 void OutputModel::appendString( const QString& text )
 {
-    if( this->item( rowCount()-1 ) == 0 ) {
+    if( this->item( rowCount() - 1 ) == 0 ) {
         appendLine( text );
         return;
     }
     QByteArray ba = text.toAscii();
     QTextStream s( &ba );
     QString buffer;
-    while( !s.atEnd() )  {
+    while( !s.atEnd() ) {
         QChar c;
         s >> c;
         if( c.category() == QChar::Separator_Line ) {
@@ -49,7 +49,7 @@ void OutputModel::appendString( const QString& text )
         }
     }
     if( !buffer.isEmpty() ) {
-        QStandardItem* item = this->item( rowCount()-1 );
+        QStandardItem* item = this->item( rowCount() - 1 );
         item->setText( item->text().append( buffer ) );
     }
 }
@@ -60,10 +60,9 @@ void OutputModel::appendLine( const QString& line )
     appendRow( item );
 }
 
-void OutputModel::appendLines( const QStringList& lines)
+void OutputModel::appendLines( const QStringList& lines )
 {
-    Q_FOREACH( const QString& s, lines )
-    {
+    Q_FOREACH( const QString & s, lines ) {
         appendLine( s );
     }
 }

@@ -27,7 +27,7 @@ extern "C"
 #include <QDebug>
 
 ImageModel::ImageModel( QObject *parent ) :
-        QAbstractTableModel( parent ), mPixelSize( 1 ), mDebugPixel( -1, -1 )
+    QAbstractTableModel( parent ), mPixelSize( 1 ), mDebugPixel( -1, -1 )
 {
 }
 
@@ -112,8 +112,8 @@ void ImageModel::setDebuggedPixel( int x, int y )
 
 void ImageModel::emitNeighborsChanged( int row, int col )
 {
-    QModelIndex topLeft = index( row-1,  col-1 );
-    QModelIndex bottomRight = index( row+1,  col+1 );
+    QModelIndex topLeft = index( row - 1,  col - 1 );
+    QModelIndex bottomRight = index( row + 1,  col + 1 );
     emit dataChanged( topLeft, bottomRight );
 }
 
@@ -192,13 +192,13 @@ QString ImageModel::statusString( QModelIndex index ) const
 
     QString character;
     if ( connected >= 32 && connected <= 126 )
-        character = QString( "(char: '%1')" ).arg(( char ) connected );
+        character = QString( "(char: '%1')" ).arg( ( char ) connected );
     return QString( "%1, contiguous: %2 %3" ).arg( coords ).arg( connected ).arg( character );
 }
 
 
 struct Frame {
-    Frame( int _x, int _y ) : x(_x), y(_y) {}
+    Frame( int _x, int _y ) : x( _x ), y( _y ) {}
     int x, y;
 };
 
@@ -213,23 +213,22 @@ quint64 ImageModel::contiguousBlocks( int x, int y ) const
 
     // array used to mark pixels as visited.
     // the image is mapped in row major fashion
-    QScopedPointer<QStack<Frame*> > stack(new QStack<Frame*>() );
+    QScopedPointer<QStack<Frame*> > stack( new QStack<Frame*>() );
     QScopedPointer<QBitArray> markedArray( new QBitArray( mImage.width() * mImage.height() ) );
     quint64 result = 0;
     QRgb color = mImage.pixel( x, y );
     stack->push( new Frame( x, y  ) );
-    while( !stack->isEmpty() )
-    {
+    while( !stack->isEmpty() ) {
         Frame* frame = stack->pop();
         if ( frame->x < 0 || frame->x >= mImage.width() || frame->y < 0 || frame->y >= mImage.height() ) {
             delete frame;
             continue;
         }
-        if ( (*markedArray)[frame->x*mImage.height()+frame->y] || mImage.pixel( frame->x, frame->y ) != color ) {
+        if ( ( *markedArray )[frame->x*mImage.height()+frame->y] || mImage.pixel( frame->x, frame->y ) != color ) {
             delete frame;
             continue;
         }
-        (*markedArray)[frame->x*mImage.height()+frame->y] = 1;
+        ( *markedArray )[frame->x*mImage.height()+frame->y] = 1;
         stack->push( new Frame( frame->x + 1, frame->y ) );
         stack->push( new Frame( frame->x - 1, frame->y ) );
         stack->push( new Frame( frame->x, frame->y + 1 ) );

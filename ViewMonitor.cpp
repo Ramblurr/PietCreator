@@ -59,7 +59,7 @@ ViewMonitor::ViewMonitor( QObject* parent ): QObject( parent )
     mColors.insert( 18, QColor( "#FFFFFF" ) );
     mColors.insert( 19, QColor( "#000000" ) );
 
-    Command first( "", "", mColors.at(0), 0 );
+    Command first( "", "", mColors.at( 0 ), 0 );
     setCurrentCommand( first );
 }
 
@@ -70,31 +70,31 @@ QColor ViewMonitor::currentColor() const
 
 void ViewMonitor::setCurrentColor( int index, const QColor& color )
 {
-  if( mStack.top().index != index ) {
-      mStack.top().color = color;
-      mStack.top().index = index;
-      emit currentColorChanged( color );
-  }
+    if( mStack.top().index != index ) {
+        mStack.top().color = color;
+        mStack.top().index = index;
+        emit currentColorChanged( color );
+    }
 }
 
 void ViewMonitor::setCurrentColor( const QColor& color )
 {
-  int index = mColors.indexOf( color );
-  if( index > 0 && mStack.top().index != index ) {
-      mStack.top().color = color;
-      mStack.top().index = index;
-      emit currentColorChanged( color );
-  }
+    int index = mColors.indexOf( color );
+    if( index > 0 && mStack.top().index != index ) {
+        mStack.top().color = color;
+        mStack.top().index = index;
+        emit currentColorChanged( color );
+    }
 }
 
 void ViewMonitor::setCurrentColor( int index )
 {
-  if( mStack.top().index != index ) {
-      Q_ASSERT( index < mColors.size() );
-      mStack.top().color = mColors.at( index );
-      mStack.top().index = index;
-      emit currentColorChanged( mStack.top().color );
-  }
+    if( mStack.top().index != index ) {
+        Q_ASSERT( index < mColors.size() );
+        mStack.top().color = mColors.at( index );
+        mStack.top().index = index;
+        emit currentColorChanged( mStack.top().color );
+    }
 }
 
 int ViewMonitor::pixelSize() const
@@ -131,8 +131,9 @@ Command ViewMonitor::currentCommand() const
 }
 
 
-static inline int secondToLastIndex( int size ) {
-  return (size > 1) ? size - 2 : size - 1;
+static inline int secondToLastIndex( int size )
+{
+    return ( size > 1 ) ? size - 2 : size - 1;
 }
 
 
@@ -150,7 +151,7 @@ void ViewMonitor::setCurrentCommand( const Command& command )
     mStack.push( command );
     emit currentCommandChanged( mStack.top(), mStack.at( secondToLastIndex( mStack.size() ) ) );
     if( mStack.last().color != command.color )
-      emit currentColorChanged( command.color );
+        emit currentColorChanged( command.color );
 }
 
 

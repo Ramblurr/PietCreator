@@ -44,12 +44,12 @@ CommandWidget::CommandWidget( ViewMonitor* monitor, QWidget* parent ): QWidget( 
     QHBoxLayout *hlayout = new QHBoxLayout( colorsWidget );
     mPalette = new KColorCells( colorsWidget, 6, 3 );
     mPalette->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
-    mPalette->setFixedSize( 25*3, 25*6 );
+    mPalette->setFixedSize( 25 * 3, 25 * 6 );
     mMonitor->populateCells( mPalette );
 
     KColorCells* mBWPalette = new KColorCells( colorsWidget, 2, 1 );
     mBWPalette->setSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed );
-    mBWPalette->setFixedSize( 25, 25*6 );
+    mBWPalette->setFixedSize( 25, 25 * 6 );
     mBWPalette->setColor( 0, Qt::black );
     mBWPalette->setColor( 1, Qt::white );
 
@@ -158,13 +158,13 @@ void CommandWidget::slotSetViewWidth()
     // if this changes we have bigger worries
     mCommandsView->resizeColumnsToContents();
     int width = 0;
-    width += mCommandsView->columnWidth(0);
-    width += mCommandsView->columnWidth(1);
-    width += mCommandsView->columnWidth(2);
+    width += mCommandsView->columnWidth( 0 );
+    width += mCommandsView->columnWidth( 1 );
+    width += mCommandsView->columnWidth( 2 );
     width += mCommandsView->frameWidth();
     width += 3;
 
-    mCommandsView->setMinimumWidth(width);
+    mCommandsView->setMinimumWidth( width );
     mCommandsView->adjustSize();
     adjustSize();
 }

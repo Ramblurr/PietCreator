@@ -46,11 +46,11 @@
 static const int INITIAL_CODEL_SIZE = 12;
 
 MainWindow::MainWindow( QWidget *parent ) :
-        QMainWindow( parent ),
-        ui( new Ui::MainWindow ),
-        mModified( false ),
-        mWaitInt( false ),
-        mWaitChar( false )
+    QMainWindow( parent ),
+    ui( new Ui::MainWindow ),
+    mModified( false ),
+    mWaitInt( false ),
+    mWaitChar( false )
 {
     ui->setupUi( this );
     setWindowIcon( QIcon( ":/piet-16x16.png" ) );
@@ -103,23 +103,23 @@ MainWindow::MainWindow( QWidget *parent ) :
     mOutputModel = new OutputModel( this );
     ui->mOutputView->setModel( mOutputModel );
 
-    connect( ui->mInputEdit, SIGNAL(returnPressed()), this, SLOT(slotReturnPressed()) );
+    connect( ui->mInputEdit, SIGNAL( returnPressed() ), this, SLOT( slotReturnPressed() ) );
 
     mRunController = new RunController;
     connect( mRunController, SIGNAL( newOutput( QString ) ), mOutputModel, SLOT( appendString( QString ) ) );
     connect( this, SIGNAL( executeSource( QImage ) ), mRunController, SLOT( runSource( QImage ) ) );
     connect( this, SIGNAL( debugSource( QImage ) ), mRunController, SLOT( debugSource( QImage ) ) );
     connect( this, SIGNAL( debugStep() ), mRunController, SLOT( step() ) );
-    connect( this, SIGNAL( debugStop() ), this, SLOT(slotStopController()) );
+    connect( this, SIGNAL( debugStop() ), this, SLOT( slotStopController() ) );
 
     connect( mRunController, SIGNAL( stepped( trace_step* ) ), mDebugWidget, SLOT( slotStepped( trace_step* ) ) );
     connect( mRunController, SIGNAL( actionChanged( trace_action* ) ), mDebugWidget, SLOT( slotActionChanged( trace_action* ) ) );
-    connect( mRunController, SIGNAL(stopped()), this, SLOT( slotControllerStopped() ) );
-    connect( mRunController, SIGNAL(debugStarted()), this, SLOT(slotControllerStarted()) );
-    connect( mRunController, SIGNAL(stopped()), mDebugWidget, SLOT(slotDebugStopped()) );
-    connect( mRunController, SIGNAL(debugStarted()), mDebugWidget, SLOT(slotDebugStarted()) );
-    connect( mRunController, SIGNAL(waitingForInt()), this, SLOT( slotGetInt()) );
-    connect( mRunController, SIGNAL(waitingForChar()), this, SLOT( slotGetChar() ) );
+    connect( mRunController, SIGNAL( stopped() ), this, SLOT( slotControllerStopped() ) );
+    connect( mRunController, SIGNAL( debugStarted() ), this, SLOT( slotControllerStarted() ) );
+    connect( mRunController, SIGNAL( stopped() ), mDebugWidget, SLOT( slotDebugStopped() ) );
+    connect( mRunController, SIGNAL( debugStarted() ), mDebugWidget, SLOT( slotDebugStarted() ) );
+    connect( mRunController, SIGNAL( waitingForInt() ), this, SLOT( slotGetInt() ) );
+    connect( mRunController, SIGNAL( waitingForChar() ), this, SLOT( slotGetChar() ) );
 
     connect( &mRunThread, SIGNAL( started() ), mRunController, SLOT( slotThreadStarted() ) );
     mRunController->moveToThread( &mRunThread );
@@ -135,9 +135,9 @@ MainWindow::~MainWindow()
 
     //FIXME this is very hacky. a better way to force wakeup
     if( mWaitChar )
-        mRunController->putChar('a');
+        mRunController->putChar( 'a' );
     if( mWaitInt )
-        mRunController->putInt(1);
+        mRunController->putInt( 1 );
 
     mRunThread.quit();
     mRunThread.wait();
@@ -215,7 +215,7 @@ void MainWindow::setupToolbar()
     progMenu->addAction( debugAct );
     ui->mToolBar->addSeparator();
     progMenu->addSeparator();
-    QAction* stepAct = ui->mToolBar->addAction( QIcon(":/icons/debug-step.png"), tr( "&Step" ), this, SIGNAL( debugStep() ) );
+    QAction* stepAct = ui->mToolBar->addAction( QIcon( ":/icons/debug-step.png" ), tr( "&Step" ), this, SIGNAL( debugStep() ) );
     stepAct->setDisabled( true );
     connect( this, SIGNAL( debugStarted( bool ) ), stepAct, SLOT( setEnabled( bool ) ) );
     progMenu->addAction( stepAct );
@@ -367,7 +367,7 @@ void MainWindow::slotActionToggleHeaders()
         ui->mView->verticalHeader()->setDefaultSectionSize( mMonitor->pixelSize() );
         ui->mZoomSlider->setMinimum( 4 );
         mModel->slotPixelSizeChange( 1 );
-    }  else { //show
+    } else {  //show
         ui->mView->horizontalHeader()->show();
         ui->mView->verticalHeader()->show();
         ui->mView->verticalHeader()->setResizeMode( QHeaderView::Fixed );
@@ -474,7 +474,7 @@ void MainWindow::slotControllerStopped()
 {
     mWaitChar = false;
     mWaitInt = false;
-    ui->mInputEdit->setDisabled(true);
+    ui->mInputEdit->setDisabled( true );
     ui->mInputEdit->clear();
     emit debugStarted( false );
     emit setStopEnabled( false );
@@ -510,7 +510,7 @@ void MainWindow::slotReturnPressed()
     QString text = ui->mInputEdit->text();
     if( mWaitChar ) {
         if( text.length() > 0 ) {
-            mRunController->putChar( text.at(0) );
+            mRunController->putChar( text.at( 0 ) );
             mWaitChar = false;
             ui->mInputEdit->setEnabled( false );
         }

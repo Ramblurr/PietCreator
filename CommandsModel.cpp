@@ -77,26 +77,26 @@ QVariant CommandsModel::data( const QModelIndex& index, int role ) const
     case CommandsModel::ColorIndexRole:
         return colorIndex( index );
     case CommandsModel::CommandRole: {
-          Command command = mCommands.at( index.row() + index.column() * 6 );
-          command.index = colorIndex( index );
-          command.color = mMonitor->colorForIndex( colorIndex( index ) );
-          return QVariant::fromValue<Command>(command);
-        }
+        Command command = mCommands.at( index.row() + index.column() * 6 );
+        command.index = colorIndex( index );
+        command.color = mMonitor->colorForIndex( colorIndex( index ) );
+        return QVariant::fromValue<Command>( command );
+    }
     default:
         return QVariant();
     }
 }
 
-int CommandsModel::colorIndex(const QModelIndex& index) const
+int CommandsModel::colorIndex( const QModelIndex& index ) const
 {
     int cmdIdx = index.row() + index.column() * 6;
     int cmdHue = cmdIdx % 6;
     int cmdLight = ( ( cmdIdx / 6 ) + 3 ) % 3;
 
     int curColorIdx = mMonitor->currentColorIndex();
-    int newColorY = (( curColorIdx / 3 ) + cmdHue) %6;
-    int newColorX = ( ( curColorIdx % 3 ) + cmdLight )%3;
-    int newColorIdx = (newColorX) + (newColorY*3 );
+    int newColorY = ( ( curColorIdx / 3 ) + cmdHue ) % 6;
+    int newColorX = ( ( curColorIdx % 3 ) + cmdLight ) % 3;
+    int newColorIdx = ( newColorX ) + ( newColorY * 3 );
 //     if( mCommands.at( index.row() + index.column() * 6 ).name == "add" ) {
 //          qDebug()  << curColorIdx<< "(" << newColorX << "," << newColorY << ")" << newColorIdx;
 //     }

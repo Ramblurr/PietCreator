@@ -28,17 +28,17 @@
 class KColorPatch::KColorPatchPrivate
 {
 public:
-    KColorPatchPrivate(KColorPatch *q): q(q) {}
+    KColorPatchPrivate( KColorPatch *q ): q( q ) {}
 
     KColorPatch *q;
     QColor color;
 };
 
-KColorPatch::KColorPatch(QWidget *parent) : QFrame(parent), d(new KColorPatchPrivate(this))
+KColorPatch::KColorPatch( QWidget *parent ) : QFrame( parent ), d( new KColorPatchPrivate( this ) )
 {
-    setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    setAcceptDrops(true);
-    setMinimumSize(12, 12);
+    setFrameStyle( QFrame::StyledPanel | QFrame::Sunken );
+    setAcceptDrops( true );
+    setMinimumSize( 12, 12 );
 }
 
 KColorPatch::~KColorPatch()
@@ -51,7 +51,7 @@ QColor KColorPatch::color() const
     return d->color;
 }
 
-void KColorPatch::setColor(const QColor &col)
+void KColorPatch::setColor( const QColor &col )
 {
     QColor old = d->color;
     d->color = col.toRgb();
@@ -60,33 +60,33 @@ void KColorPatch::setColor(const QColor &col)
     emit colorChanged( d->color, old );
 }
 
-void KColorPatch::paintEvent(QPaintEvent* pe)
+void KColorPatch::paintEvent( QPaintEvent* pe )
 {
-    QFrame::paintEvent(pe);
-    QPainter painter(this);
+    QFrame::paintEvent( pe );
+    QPainter painter( this );
 
     painter.fillRect( contentsRect(), d->color );
 }
 
-void KColorPatch::mouseMoveEvent(QMouseEvent *e)
+void KColorPatch::mouseMoveEvent( QMouseEvent *e )
 {
     // Drag color object
-    if (!(e->buttons() & Qt::LeftButton))
+    if ( !( e->buttons() & Qt::LeftButton ) )
         return;
-    KColorMimeData::createDrag(d->color, this)->start();
+    KColorMimeData::createDrag( d->color, this )->start();
 }
 
-void KColorPatch::dragEnterEvent(QDragEnterEvent *event)
+void KColorPatch::dragEnterEvent( QDragEnterEvent *event )
 {
-    event->setAccepted(KColorMimeData::canDecode(event->mimeData()));
+    event->setAccepted( KColorMimeData::canDecode( event->mimeData() ) );
 }
 
-void KColorPatch::dropEvent(QDropEvent *event)
+void KColorPatch::dropEvent( QDropEvent *event )
 {
-    QColor c = KColorMimeData::fromMimeData(event->mimeData());
-    if (c.isValid()) {
+    QColor c = KColorMimeData::fromMimeData( event->mimeData() );
+    if ( c.isValid() ) {
         QColor old = d->color;
-        setColor(c);
+        setColor( c );
         emit colorChanged( c, old );
     }
 }

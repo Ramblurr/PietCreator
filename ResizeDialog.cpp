@@ -3,7 +3,7 @@
 #include <QtGui>
 
 ResizeDialog::ResizeDialog( const QSize &size, QWidget *parent ) :
-        QDialog( parent )
+    QDialog( parent )
 {
     QVBoxLayout* mainLayout = new QVBoxLayout( this );
     QWidget* formWidget = new QWidget( this );

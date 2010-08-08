@@ -149,7 +149,7 @@ bool RunController::runSource( const QImage& source )
     return false;
 }
 
-void RunController::debugSource(const QImage& source)
+void RunController::debugSource( const QImage& source )
 {
     mMutex.lock();
     stop();
@@ -198,7 +198,7 @@ bool RunController::prepare()
             int r = qRed( lineptr[j] );
             int g = qGreen( lineptr[j] );
             int b = qBlue( lineptr[j] );
-            int col = (( r * 256 + g ) * 256 ) + b;
+            int col = ( ( r * 256 + g ) * 256 ) + b;
             int col_idx = get_color_idx( col );
             if ( col_idx < 0 ) {
                 /* set to black or white: */
@@ -216,11 +216,11 @@ void RunController::stdoutReadyRead()
     emit newOutput( mStdOut->readAll() );
 }
 
-void RunController::slotAction(trace_action* )
+void RunController::slotAction( trace_action* )
 {
 }
 
-void RunController::slotStepped(trace_step* )
+void RunController::slotStepped( trace_step* )
 {
 
 }
@@ -240,7 +240,7 @@ int RunController::getInt()
 //     qDebug() << "getInt()" << "got lock";
     emit waitingForInt();
 //     qDebug() << "getInt()" << "waiting";
-    bool timer_running = mTimer.isActive(); 
+    bool timer_running = mTimer.isActive();
     if( timer_running )
         mTimer.stop();
     mWaitCond.wait( &mMutex );
@@ -284,11 +284,11 @@ void RunController::captureStdout()
     7. Pass the FILE* to qtextstream
     8. Create a QSocketNotifier on the pipe's read end to monitor for new data
     */
-    #ifdef Q_WS_WIN
+#ifdef Q_WS_WIN
     int rc = ::_pipe( mPipeFd, 1024, _O_TEXT );
-    #else
+#else
     int rc = ::pipe( mPipeFd );
-    #endif
+#endif
     Q_ASSERT( rc >= 0 );
 
     mOrigFd = STDOUT_FILENO;
@@ -300,12 +300,12 @@ void RunController::captureStdout()
     Q_ASSERT( rc >= 0 );
     ::close( mPipeFd[1] );
 
-    #ifndef Q_WS_WIN
+#ifndef Q_WS_WIN
     rc = ::fcntl( mPipeFd[0], F_GETFL );
     Q_ASSERT( rc != -1 );
     rc = ::fcntl( mPipeFd[0], F_SETFL, rc | O_NONBLOCK );
     Q_ASSERT( rc != -1 );
-    #endif
+#endif
     FILE * f = fdopen( mPipeFd[0], "r" );
     Q_ASSERT( f != 0 );
 
