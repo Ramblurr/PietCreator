@@ -48,6 +48,13 @@ void DebugWidget::slotStepped( trace_step* step )
 {
     mCoordinate->setText( QString("%1,%2").arg(step->p_xpos).arg( step->p_ypos) );
     mImageModel->setDebuggedPixel( step->p_xpos, step->p_ypos );
+
+    quint64 connected = mImageModel->data( mImageModel->index( step->p_ypos, step->p_xpos ), ImageModel::ContiguousBlocksRole ).toInt();
+    QString character;
+    if ( connected >= 32 && connected <= 126 )
+        character = QString( "(char: '%1')" ).arg(( char ) connected );
+    QString value = QString( "%1 %2" ).arg( connected ).arg( character );
+    mValueLabel->setText( value );
 }
 
 Command DebugWidget::command( int light_change, int hue_change )

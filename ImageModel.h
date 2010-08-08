@@ -28,7 +28,8 @@ class ImageModel : public QAbstractTableModel
 public:
 
     enum ImageRoles {
-        IsCurrentDebugRole = Qt::UserRole
+        IsCurrentDebugRole = Qt::UserRole,
+        ContiguousBlocksRole
     };
 
     explicit ImageModel( QObject *parent = 0 );

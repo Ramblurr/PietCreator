@@ -27,7 +27,7 @@ extern "C"
 #include <QDebug>
 
 ImageModel::ImageModel( QObject *parent ) :
-        QAbstractTableModel( parent ), mPixelSize( 1 )
+        QAbstractTableModel( parent ), mPixelSize( 1 ), mDebugPixel( -1, -1 )
 {
 }
 
@@ -143,8 +143,9 @@ QVariant ImageModel::data( const QModelIndex& index, int role ) const
     }
     case Qt::StatusTipRole:
         return statusString( index );
+    case ImageModel::ContiguousBlocksRole:
+        return contiguousBlocks( index.column(), index.row() );
     case ImageModel::IsCurrentDebugRole:
-//         qDebug() << mDebugPixel;
         return mDebugPixel.x() == index.column() && mDebugPixel.y() == index.row();
     default:
         return QVariant();
