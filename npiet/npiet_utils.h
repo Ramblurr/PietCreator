@@ -58,3 +58,13 @@ typedef void (*action_callback_t)( void* object, struct trace_action* );
 
 void register_step_callback( step_callback_t callable, void* obj );
 void register_action_callback( action_callback_t callable, void* obj );
+
+
+int read_int();
+char read_char();
+
+typedef int (*readint_callback_t)( void* object );
+typedef char (*readchar_callback_t)( void* object );
+
+void register_readint_callback( readint_callback_t callable, void* obj );
+void register_readchar_callback( readchar_callback_t callable, void* obj );

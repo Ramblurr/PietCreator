@@ -20,6 +20,7 @@
 #ifndef NPIETOBSERVER_H
 #define NPIETOBSERVER_H
 
+#include "RunController.h"
 #include <QObject>
 
 struct trace_step;
@@ -29,17 +30,26 @@ class NPietObserver : public QObject
 {
     Q_OBJECT
 public:
-    NPietObserver( QObject* parent = 0 );
+    NPietObserver( RunController* controller = 0 );
 
     void step( struct trace_step * );
     void action( struct trace_action * );
 
+    int get_int();
+    char get_char();
+
     static void call_step( void* object, struct trace_step * );
     static void call_action( void* object, struct trace_action * );
+
+    static int call_readint( void* object );
+    static char call_readchar( void* object );
 
 signals:
     void stepped( trace_step* );
     void actionChanged( trace_action* );
+
+private:
+    RunController* mRunController;
 };
 
 #endif // NPIETOBSERVER_H

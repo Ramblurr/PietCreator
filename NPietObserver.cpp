@@ -18,16 +18,18 @@
 */
 
 #include "NPietObserver.h"
-
+#include <QDebug>
 extern "C"
 {
     #include "npiet/npiet_utils.h"
 }
 
-NPietObserver::NPietObserver( QObject* parent ): QObject( parent )
+NPietObserver::NPietObserver( RunController* controller ): QObject( controller ), mRunController( controller )
 {
     register_step_callback( call_step, this );
     register_action_callback( call_action, this );
+    register_readchar_callback( call_readchar, this );
+    register_readint_callback( call_readint, this );
 }
 
 void NPietObserver::action( trace_action* act )
@@ -38,6 +40,18 @@ void NPietObserver::action( trace_action* act )
 void NPietObserver::step( trace_step* ste )
 {
     emit stepped( ste );
+}
+
+char NPietObserver::get_char()
+{
+    return mRunController->getChar();
+}
+
+int NPietObserver::get_int()
+{
+    qDebug() << "HAI";
+    qDebug() << thread();
+    return mRunController->getInt();
 }
 
 void NPietObserver::call_action( void* object, trace_action* act )
@@ -51,5 +65,18 @@ void NPietObserver::call_step( void* object, trace_step* ste )
     NPietObserver* me = (NPietObserver*) object;
     me->step( ste );
 }
+
+char NPietObserver::call_readchar( void* object )
+{
+    NPietObserver* me = (NPietObserver*) object;
+    return me->get_char();
+}
+
+int NPietObserver::call_readint( void* object )
+{
+    NPietObserver* me = (NPietObserver*) object;
+    return me->get_int();
+}
+
 
 #include "NPietObserver.moc"

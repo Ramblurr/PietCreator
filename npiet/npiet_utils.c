@@ -27,6 +27,13 @@ step_callback_t step_callback = 0;
 void* action_object = 0;
 action_callback_t action_callback = 0;
 
+void* readint_object = 0;
+readint_callback_t readint_callback = 0;
+
+void* readchar_object = 0;
+readchar_callback_t readchar_callback = 0;
+
+
 void notify_step( int step, int px, int py, int pdp, int pcc, int pcol,
                   int nx, int ny, int ndp, int ncc, int ncol )
 {
@@ -78,3 +85,26 @@ void register_action_callback( action_callback_t callable, void* obj )
     action_object = obj;
     action_callback = callable;
 }
+
+int read_int()
+{
+    return readint_callback( readint_callback );
+}
+
+char read_char()
+{
+    return readchar_callback( readchar_callback );
+}
+
+void register_readchar_callback(readchar_callback_t callable, void* obj)
+{
+    readchar_object = obj;
+    readchar_callback = callable;
+}
+
+void register_readint_callback(readint_callback_t callable, void* obj)
+{
+    readint_callback = obj;
+    readint_callback = callable;
+}
+

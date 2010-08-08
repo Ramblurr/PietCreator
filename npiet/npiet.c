@@ -2077,14 +2077,14 @@ piet_action (int c_col, int a_col, int num_cells, char *msg)
 	/* show a prompt: */
 	printf ("? "); fflush (stdout);
       }
-
-      if (1 != fscanf (stdin, "%d", &c)) {
-          notify_msg = "cannot read int from stdin";
-	tprintf ("info: cannot read int from stdin; reason: %s\n",
-		 strerror (errno));
-      } else {
+      c = read_int();
+//       if (1 != scanf (stdin, "%d", &c)) {
+//           notify_msg = "cannot read int from stdin";
+// 	tprintf ("info: cannot read int from stdin; reason: %s\n",
+// 		 strerror (errno));
+//       } else {
 	stack [num_stack++] = c;
-      }
+//       }
       tdump_stack ();
     }
     
@@ -2113,7 +2113,7 @@ piet_action (int c_col, int a_col, int num_cells, char *msg)
 	/* show a prompt: */
 	printf ("? "); fflush (stdout);
       }
-      if ((c = getchar ()) < 0) {
+      if ((c = /*getchar*/ read_char()) < 0) {
           notify_msg = "cannot read char from stdin";
 	tprintf ("info: cannot read char from stdin; reason: %s\n",
 		 strerror (errno));
