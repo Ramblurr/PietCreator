@@ -1692,6 +1692,7 @@ piet_init ()
 int
 piet_action (int c_col, int a_col, int num_cells, char *msg)
 {
+  notify_stack_before( stack, num_stack );
   int hue_change, light_change; 
   
   hue_change = ((get_hue (a_col) - get_hue (c_col)) + n_hue) % n_hue;
@@ -2176,6 +2177,7 @@ piet_action (int c_col, int a_col, int num_cells, char *msg)
 
     break;
   }
+  notify_stack_after( stack, num_stack );
   notify_action( hue_change, light_change, notify_value, notify_msg );
   return 0;
 }

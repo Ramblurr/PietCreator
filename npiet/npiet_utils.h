@@ -35,6 +35,12 @@ struct trace_action {
     int light_change;
     int value;
 
+    int before_num;
+    long *before_stack;
+
+    int after_num;
+    long* after_stack;
+
     char* msg;
 };
 
@@ -51,7 +57,10 @@ struct trace_action {
 void notify_step( int step, int px, int py, int pdp, int pcc, int pcol,
                   int nx, int ny, int ndp, int ncc, int ncol );
 
-void notify_action( int hue_change, int light_change, int value, char* msg);
+void notify_action( int hue_change, int light_change, int value, char* msg );
+
+void notify_stack_before( long* stack, int num_stack );
+void notify_stack_after( long* stack, int num_stack );
 
 typedef void (*step_callback_t)( void* object, struct trace_step* );
 typedef void (*action_callback_t)( void* object, struct trace_action* );

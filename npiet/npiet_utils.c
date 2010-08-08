@@ -33,6 +33,11 @@ readint_callback_t readint_callback = 0;
 void* readchar_object = 0;
 readchar_callback_t readchar_callback = 0;
 
+long *before_stack = 0;
+long *after_stack = 0;
+int before_num = 0;
+int after_num = 0;
+
 
 void notify_step( int step, int px, int py, int pdp, int pcc, int pcol,
                   int nx, int ny, int ndp, int ncc, int ncol )
@@ -59,7 +64,7 @@ void notify_step( int step, int px, int py, int pdp, int pcc, int pcol,
     }
 }
 
-void notify_action( int hue_change, int light_change, int value, char* msg)
+void notify_action( int hue_change, int light_change, int value, char* msg )
 {
     if( step_callback ) {
         struct trace_action *a;
@@ -70,7 +75,33 @@ void notify_action( int hue_change, int light_change, int value, char* msg)
         a->value = value;
         a->msg = strdup( msg );
 
+        a->after_stack = after_stack;
+        a->after_num = after_num;
+
+        a->before_stack = before_stack;
+        a->before_num = before_num;
+
         action_callback(action_object, a );
+    }
+}
+
+void notify_stack_before(long int* stack, int num_stack)
+{
+    before_stack = malloc( sizeof( long ) * num_stack );
+    before_num = num_stack;
+    int i;
+    for ( i = 0; i < num_stack; i++ ) {
+        before_stack[i] = stack[i];
+    }
+}
+
+void notify_stack_after(long int* stack, int num_stack)
+{
+    after_stack = malloc( sizeof( long ) * num_stack );
+    after_num = num_stack;
+    int i;
+    for ( i = 0; i < num_stack; i++ ) {
+        after_stack[i] = stack[i];
     }
 }
 

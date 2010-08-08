@@ -65,6 +65,31 @@ void DebugWidget::changeCurrent( int idx )
 void DebugWidget::slotActionChanged( trace_action* action )
 {
     mActionLabel->setText( command( action->light_change, action->hue_change ).name );
+
+    
+    mAfterStack->clear();
+    for ( int i = 0; i < action->after_num; i++ ) {
+        QListWidgetItem *item = new QListWidgetItem( mAfterStack );
+        int val = action->after_stack[action->after_num - i - 1];
+        QString character;
+        if ( val >= 32 && val <= 126 )
+            character = QString( "(char: '%1')" ).arg( ( char ) val );
+        QString value = QString( "%1 %2" ).arg( val ).arg( character );
+        item->setText( value );
+        mAfterStack->addItem( item );
+    }
+
+    mBeforeStack->clear();
+    for ( int i = 0; i < action->before_num; i++ ) {
+        QListWidgetItem *item = new QListWidgetItem( mBeforeStack );
+        int val = action->before_stack[action->before_num - i - 1];
+        QString character;
+        if ( val >= 32 && val <= 126 )
+            character = QString( "(char: '%1')" ).arg( ( char ) val );
+        QString value = QString( "%1 %2" ).arg( val ).arg( character );
+        item->setText( value );
+        mBeforeStack->addItem( item );
+    }
 }
 
 void DebugWidget::slotStepped( trace_step* step )
