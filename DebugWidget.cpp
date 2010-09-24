@@ -43,6 +43,10 @@ void DebugWidget::slotDebugStopped()
 {
     mImageModel->setDebuggedPixel( -1, -1 );
     changeCurrent( 1 );
+    mBeforeStack->clear();
+    mAfterStack->clear();
+    mValueLabel->setText( "" );
+    mActionLabel->setText( "" );
 }
 
 void DebugWidget::slotDebugStarted()
@@ -66,7 +70,6 @@ void DebugWidget::slotActionChanged( trace_action* action )
 {
     mActionLabel->setText( command( action->light_change, action->hue_change ).name );
 
-    
     mAfterStack->clear();
     for ( int i = 0; i < action->after_num; i++ ) {
         QListWidgetItem *item = new QListWidgetItem( mAfterStack );

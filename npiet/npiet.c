@@ -1669,6 +1669,13 @@ piet_init ()
 
   /* init anyway: */
   exec_step = 0;
+
+  /* reset stack */
+  if( stack )
+      free( stack );
+  stack = 0;
+  num_stack = 0;
+  max_stack = 0;
 }
 
 
