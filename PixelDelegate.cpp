@@ -51,7 +51,7 @@ void PixelDelegate::paint( QPainter* painter, const QStyleOptionViewItem& option
     painter->save();
     QPen pen = painter->pen();
     if( index.data( ImageModel::IsCurrentDebugRole ).toBool() ) {
-        pen.setColor( Qt::gray );
+        pen.setColor( Qt::black );
         pen.setWidth( 2 );
         painter->setPen( pen );
         painter->drawRect( shortRect );

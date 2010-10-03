@@ -32,6 +32,8 @@ extern "C"
 DebugWidget::DebugWidget( ImageModel* model, QWidget* parent, Qt::WindowFlags f ): QWidget( parent, f ), mImageModel( model )
 {
     setupUi( this );
+    mFlowCompass = new FlowCompass( this->mCompassBox );
+    mCompassBox->layout()->addWidget( mFlowCompass );
 }
 
 DebugWidget::~DebugWidget()
@@ -106,6 +108,20 @@ void DebugWidget::slotStepped( trace_step* step )
         character = QString( "(char: '%1')" ).arg( ( char ) connected );
     QString value = QString( "%1 %2" ).arg( connected ).arg( character );
     mValueLabel->setText( value );
+
+    if( step->n_dp == 'l' )
+        mFlowCompass->setDPDirection( FlowCompass::Left );
+    else if( step->n_dp == 'r' )
+        mFlowCompass->setDPDirection( FlowCompass::Right );
+    else if( step->n_dp == 'u' )
+        mFlowCompass->setDPDirection( FlowCompass::Up );
+    else if( step->n_dp == 'd' )
+        mFlowCompass->setDPDirection( FlowCompass::Down);
+
+    if( step->n_cc == 'l' )
+        mFlowCompass->setCCDirection( FlowCompass::Left );
+    else if( step->n_cc == 'r' )
+        mFlowCompass->setCCDirection( FlowCompass::Right );
 }
 
 Command DebugWidget::command( int light_change, int hue_change )
