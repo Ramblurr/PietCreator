@@ -28,7 +28,8 @@ set( pietcreator_SRCS
     NPietObserver.cpp
     CommandWidget.cpp
     DebugWidget.cpp
-    CommandImpl.cpp )
+    CommandImpl.cpp
+    FlowCompass.cpp )
 
 set( pietcreator_RCS
     pietcreator.qrc )

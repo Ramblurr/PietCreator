@@ -102,6 +102,7 @@ MainWindow::MainWindow( QWidget *parent ) :
 
     mOutputModel = new OutputModel( this );
     ui->mOutputView->setModel( mOutputModel );
+    connect( ui->mClearOutput, SIGNAL( clicked() ), this, SLOT( slotClearOutputView() ) );
 
     connect( ui->mInputEdit, SIGNAL( returnPressed() ), this, SLOT( slotReturnPressed() ) );
 
@@ -532,6 +533,11 @@ void MainWindow::slotReturnPressed()
 void MainWindow::slotStopController()
 {
     mRunController->abort();
+}
+
+void MainWindow::slotClearOutputView()
+{
+    mOutputModel->clear();
 }
 
 

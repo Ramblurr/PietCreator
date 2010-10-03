@@ -1669,6 +1669,13 @@ piet_init ()
 
   /* init anyway: */
   exec_step = 0;
+
+  /* reset stack */
+  if( stack )
+      free( stack );
+  stack = 0;
+  num_stack = 0;
+  max_stack = 0;
 }
 
 
@@ -2112,7 +2119,7 @@ piet_action (int c_col, int a_col, int num_cells, char *msg)
 
       if (! quiet) {
 	/* show a prompt: */
-	printf ("? "); fflush (stdout);
+// 	printf ("? "); fflush (stdout);
       }
       if ((c = /*getchar*/ read_char()) < 0) {
           notify_msg = "cannot read char from stdin";

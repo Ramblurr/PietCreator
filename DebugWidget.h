@@ -22,6 +22,7 @@
 
 #include "ui_DebugWidget.h"
 #include "Command.h"
+#include "FlowCompass.h"
 
 #include <QWidget>
 
@@ -45,6 +46,7 @@ private:
     void changeCurrent( int idx );
     Command command( int light_change, int hue_change );
     ImageModel* mImageModel;
+    FlowCompass *mFlowCompass;
 };
 
 #endif // DEBUGWIDGET_H
