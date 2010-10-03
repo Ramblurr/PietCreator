@@ -22,7 +22,7 @@
 
 #include <QStringList>
 #include <QTextStream>
-
+#include <QDebug>
 OutputModel::OutputModel( QObject* parent )
     : QStandardItemModel( parent )
 {
@@ -41,7 +41,9 @@ void OutputModel::appendString( const QString& text )
     while( !s.atEnd() ) {
         QChar c;
         s >> c;
-        if( c.category() == QChar::Separator_Line ) {
+        char ascii_char = c.toAscii();
+        //TODO make sure this works on windows
+        if( ascii_char == 10 ) {
             appendLine( buffer );
             buffer.clear();
         } else {

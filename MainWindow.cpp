@@ -424,6 +424,8 @@ void MainWindow::slotActionDebug()
 void MainWindow::slotActionRun()
 {
     ui->mOutputView->setVisible( true );
+    ui->dockWidget_2->show();
+    mOutputModel->appendLine("");
     emit setStopEnabled( true );
     emit executeSource( mModel->image() );
 }
@@ -466,6 +468,7 @@ void MainWindow::slotToggleOutput()
 
 void MainWindow::slotStartDebug()
 {
+    mOutputModel->appendLine("");
     emit debugStarted( true );
     emit setStopEnabled( true );
     emit debugSource( mModel->image() );
