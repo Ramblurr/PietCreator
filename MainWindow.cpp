@@ -25,7 +25,6 @@
 #include "ViewMonitor.h"
 #include "ResizeDialog.h"
 #include "RunController.h"
-#include "OutputModel.h"
 #include "CommandWidget.h"
 #include "DebugWidget.h"
 
@@ -100,14 +99,11 @@ MainWindow::MainWindow( QWidget *parent ) :
     connect( ui->mZoomSlider, SIGNAL( valueChanged( int ) ), mMonitor, SLOT( setPixelSize( int ) ) );
     connect( mMonitor, SIGNAL( pixelSizeChanged( int ) ), SLOT( slotUpdateView( int ) ) );
 
-    mOutputModel = new OutputModel( this );
-    ui->mOutputView->setModel( mOutputModel );
     connect( ui->mClearOutput, SIGNAL( clicked() ), this, SLOT( slotClearOutputView() ) );
 
     connect( ui->mInputEdit, SIGNAL( returnPressed() ), this, SLOT( slotReturnPressed() ) );
 
     mRunController = new RunController;
-    connect( mRunController, SIGNAL( newOutput( QString ) ), mOutputModel, SLOT( appendString( QString ) ) );
     connect( this, SIGNAL( executeSource( QImage ) ), mRunController, SLOT( runSource( QImage ) ) );
     connect( this, SIGNAL( debugSource( QImage ) ), mRunController, SLOT( debugSource( QImage ) ) );
     connect( this, SIGNAL( debugStep() ), mRunController, SLOT( step() ) );
@@ -121,6 +117,7 @@ MainWindow::MainWindow( QWidget *parent ) :
     connect( mRunController, SIGNAL( debugStarted() ), mDebugWidget, SLOT( slotDebugStarted() ) );
     connect( mRunController, SIGNAL( waitingForInt() ), this, SLOT( slotGetInt() ) );
     connect( mRunController, SIGNAL( waitingForChar() ), this, SLOT( slotGetChar() ) );
+    connect( mRunController, SIGNAL( newOutput( QString ) ), this, SLOT( slotNewOutput( QString ) ) );
 
     connect( &mRunThread, SIGNAL( started() ), mRunController, SLOT( slotThreadStarted() ) );
     mRunController->moveToThread( &mRunThread );
@@ -423,9 +420,7 @@ void MainWindow::slotActionDebug()
 
 void MainWindow::slotActionRun()
 {
-    ui->mOutputView->setVisible( true );
     ui->dockWidget_2->show();
-    mOutputModel->appendLine("");
     emit setStopEnabled( true );
     emit executeSource( mModel->image() );
 }
@@ -468,7 +463,6 @@ void MainWindow::slotToggleOutput()
 
 void MainWindow::slotStartDebug()
 {
-    mOutputModel->appendLine("");
     emit debugStarted( true );
     emit setStopEnabled( true );
     emit debugSource( mModel->image() );
@@ -537,8 +531,14 @@ void MainWindow::slotStopController()
 
 void MainWindow::slotClearOutputView()
 {
-    mOutputModel->clear();
+    ui->mTextEdit->clear();
 }
+
+void MainWindow::slotNewOutput( QString str )
+{
+    ui->mTextEdit->append( str );
+}
+
 
 
 #include "MainWindow.moc"

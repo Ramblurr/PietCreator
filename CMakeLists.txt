@@ -23,7 +23,6 @@ set( pietcreator_SRCS
     CommandsModel.cpp
     CommandDelegate.cpp
     ResizeDialog.cpp
-    OutputModel.cpp
     RunController.cpp
     NPietObserver.cpp
     CommandWidget.cpp

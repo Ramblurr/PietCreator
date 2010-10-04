@@ -85,6 +85,8 @@ private slots:
 
     void slotStopController();
 
+    void slotNewOutput( QString );
+
 private:
     void setupToolbar();
     void setModified( bool flag );

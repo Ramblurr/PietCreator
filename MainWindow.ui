@@ -146,7 +146,22 @@
       </widget>
      </item>
      <item>
-      <widget class="QListView" name="mOutputView"/>
+      <widget class="QTextEdit" name="mTextEdit">
+       <property name="font">
+        <font>
+         <family>Monospace</family>
+        </font>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="acceptRichText">
+        <bool>false</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLineEdit" name="mInputEdit">
