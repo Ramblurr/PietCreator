@@ -22,6 +22,7 @@
 
 #include <QWidget>
 
+class QPainter;
 
 class FlowCompass : public QWidget
 {
@@ -47,8 +48,19 @@ protected:
     virtual void paintEvent(QPaintEvent* );
 
 private:
+    void paintDPArrow( QPainter &p );
+    void paintCCArrow( QPainter &p );
+
+    QVector< QPoint > calculateArrowHead( QLine line, QRect bounds, qreal arrowSize, Direction direction );
+
     Direction mCCDirection;
     Direction mDPDirection;
+
+    QColor mCCColor;
+    QColor mDPColor;
+
+    int mPadding;
+    int mArrowSize;
 };
 
 #endif // FLOWCOMPASS_H
