@@ -71,7 +71,6 @@ void DebugWidget::changeCurrent( int idx )
 void DebugWidget::slotActionChanged( trace_action* action )
 {
     mActionLabel->setText( command( action->light_change, action->hue_change ).name );
-
     mAfterStack->clear();
     for ( int i = 0; i < action->after_num; i++ ) {
         QListWidgetItem *item = new QListWidgetItem( mAfterStack );
@@ -99,10 +98,9 @@ void DebugWidget::slotActionChanged( trace_action* action )
 
 void DebugWidget::slotStepped( trace_step* step )
 {
-    mCoordinate->setText( QString( "%1,%2" ).arg( step->p_xpos ).arg( step->p_ypos ) );
-    mImageModel->setDebuggedPixel( step->p_xpos, step->p_ypos );
-
-    quint64 connected = mImageModel->data( mImageModel->index( step->p_ypos, step->p_xpos ), ImageModel::ContiguousBlocksRole ).toInt();
+    mCoordinate->setText( QString( "%1,%2" ).arg( step->n_xpos ).arg( step->n_ypos ) );
+    mImageModel->setDebuggedPixel( step->n_xpos, step->n_ypos );
+    quint64 connected = mImageModel->data( mImageModel->index( step->n_ypos, step->n_xpos ), ImageModel::ContiguousBlocksRole ).toInt();
     QString character;
     if ( connected >= 32 && connected <= 126 )
         character = QString( "(char: '%1')" ).arg( ( char ) connected );
