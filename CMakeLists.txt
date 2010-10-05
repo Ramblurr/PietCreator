@@ -31,6 +31,7 @@ set( pietcreator_SRCS
     FlowCompass.cpp )
 
 set( pietcreator_RCS
+    fallback.qrc
     pietcreator.qrc )
 
 QT4_ADD_RESOURCES( pietcreator_SRCS ${pietcreator_RCS} )

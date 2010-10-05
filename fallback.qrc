@@ -1,0 +1,46 @@
+<RCC>
+    <qresource prefix="icons/fallback">
+        <file alias="index.theme">icons/fallback/index.theme</file>
+        <file alias="16x16/application-exit.png">icons/fallback/16x16/actions/application-exit.png</file>
+        <file alias="16x16/debug-step.png">icons/fallback/16x16/actions/debug-step.png</file>
+        <file alias="16x16/document-new.png">icons/fallback/16x16/actions/document-new.png</file>
+        <file alias="16x16/document-open.png">icons/fallback/16x16/actions/document-open.png</file>
+        <file alias="16x16/document-save-as.png">icons/fallback/16x16/actions/document-save-as.png</file>
+        <file alias="16x16/document-save.png">icons/fallback/16x16/actions/document-save.png</file>
+        <file alias="16x16/process-stop.png">icons/fallback/16x16/actions/process-stop.png</file>
+        <file alias="16x16/run-build.png">icons/fallback/16x16/actions/run-build.png</file>
+        <file alias="16x16/system-run.png">icons/fallback/16x16/actions/system-run.png</file>
+        <file alias="16x16/transform-scale.png">icons/fallback/16x16/actions/transform-scale.png</file>
+        <file alias="16x16/view-form-table.png">icons/fallback/16x16/actions/view-form-table.png</file>
+        <file alias="16x16/zoom-in.png">icons/fallback/16x16/actions/zoom-in.png</file>
+        <file alias="16x16/zoom-out.png">icons/fallback/16x16/actions/zoom-out.png</file>
+        <file alias="16x16/utilities-terminal.png">icons/fallback/16x16/apps/utilities-terminal.png</file>
+        <file alias="22x22/application-exit.png">icons/fallback/22x22/actions/application-exit.png</file>
+        <file alias="22x22/document-new.png">icons/fallback/22x22/actions/document-new.png</file>
+        <file alias="22x22/document-open.png">icons/fallback/22x22/actions/document-open.png</file>
+        <file alias="22x22/document-save-as.png">icons/fallback/22x22/actions/document-save-as.png</file>
+        <file alias="22x22/document-save.png">icons/fallback/22x22/actions/document-save.png</file>
+        <file alias="22x22/process-stop.png">icons/fallback/22x22/actions/process-stop.png</file>
+        <file alias="22x22/run-build.png">icons/fallback/22x22/actions/run-build.png</file>
+        <file alias="22x22/system-run.png">icons/fallback/22x22/actions/system-run.png</file>
+        <file alias="22x22/transform-scale.png">icons/fallback/22x22/actions/transform-scale.png</file>
+        <file alias="22x22/view-form-table.png">icons/fallback/22x22/actions/view-form-table.png</file>
+        <file alias="22x22/zoom-in.png">icons/fallback/22x22/actions/zoom-in.png</file>
+        <file alias="22x22/zoom-out.png">icons/fallback/22x22/actions/zoom-out.png</file>
+        <file alias="22x22/utilities-terminal.png">icons/fallback/22x22/apps/utilities-terminal.png</file>
+        <file alias="32x32/application-exit.png">icons/fallback/32x32/actions/application-exit.png</file>
+        <file alias="32x32/debug-step.png">icons/fallback/32x32/actions/debug-step.png</file>
+        <file alias="32x32/document-new.png">icons/fallback/32x32/actions/document-new.png</file>
+        <file alias="32x32/document-open.png">icons/fallback/32x32/actions/document-open.png</file>
+        <file alias="32x32/document-save-as.png">icons/fallback/32x32/actions/document-save-as.png</file>
+        <file alias="32x32/document-save.png">icons/fallback/32x32/actions/document-save.png</file>
+        <file alias="32x32/process-stop.png">icons/fallback/32x32/actions/process-stop.png</file>
+        <file alias="32x32/run-build.png">icons/fallback/32x32/actions/run-build.png</file>
+        <file alias="32x32/system-run.png">icons/fallback/32x32/actions/system-run.png</file>
+        <file alias="32x32/transform-scale.png">icons/fallback/32x32/actions/transform-scale.png</file>
+        <file alias="32x32/view-form-table.png">icons/fallback/32x32/actions/view-form-table.png</file>
+        <file alias="32x32/zoom-in.png">icons/fallback/32x32/actions/zoom-in.png</file>
+        <file alias="32x32/zoom-out.png">icons/fallback/32x32/actions/zoom-out.png</file>
+        <file alias="32x32/utilities-terminal.png">icons/fallback/32x32/apps/utilities-terminal.png</file>
+    </qresource>
+</RCC>
