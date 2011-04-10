@@ -26,6 +26,7 @@
 int main( int argc, char** argv )
 {
     qRegisterMetaType<Command>( "Command" );
+    qRegisterMetaType<QRgb>("QRgb");
     QIcon::setThemeName( "fallback" );
     QApplication app( argc, argv );
     MainWindow foo;

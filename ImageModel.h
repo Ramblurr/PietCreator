@@ -54,6 +54,8 @@ public:
     QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 
     bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
+signals:
+    void pixelChanged( int x, int y, QRgb color );
 
 public slots:
     /*! This is a very bad hack.

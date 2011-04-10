@@ -124,6 +124,7 @@ void RunController::stop()
     qDebug() << "stop!";
     if( mExecuting ) {
         mAbort = true;
+        mPrepared = false;
         mWaitCond.wakeOne();
     } else if( mDebugging ) {
         // TODO reset npiets internal state?
@@ -160,12 +161,28 @@ void RunController::debugSource( const QImage& source )
     emit debugStarted();
 }
 
+void RunController::pixelChanged(int x, int y, QRgb color)
+{
+    qDebug() << "pixel changed!";
+    mSource.setPixel( x, y, color );
+    if(mPrepared) {
+        qDebug() << "set pixel " << x << y;
+            int col = ( ( qRed(color) * 256 + qGreen(color) ) * 256 ) + qBlue(color);
+            int col_idx = get_color_idx( col );
+            if ( col_idx < 0 ) {
+                /* set to black or white: */
+                col_idx = ( /*unknown_color*/1 == 0 ? c_black : c_white );
+            }
+            set_cell( x, y, col_idx );
+    }        
+}
 
 void RunController::finish()
 {
     mTimer.stop();
     mExecuting = false;
     mDebugging = false;
+    mPrepared = false;
 
     if ( mNotifier == 0 ) return;
 

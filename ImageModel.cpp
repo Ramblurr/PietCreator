@@ -174,6 +174,7 @@ bool ImageModel::setData( const QModelIndex& index, const QVariant& value, int r
     QColor c = value.value<QColor>();
     mImage.setPixel( index.column(), index.row(), c.rgb() );
     emit dataChanged( index, index );
+    emit pixelChanged( index.column(), index.row(), c.rgb() );
     return true;
 }
 

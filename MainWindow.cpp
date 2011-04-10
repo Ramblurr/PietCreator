@@ -110,6 +110,7 @@ MainWindow::MainWindow( QWidget *parent ) :
     connect( this, SIGNAL( debugSource( QImage ) ), mRunController, SLOT( debugSource( QImage ) ) );
     connect( this, SIGNAL( debugStep() ), mRunController, SLOT( step() ) );
     connect( this, SIGNAL( debugStop() ), this, SLOT( slotStopController() ) );
+    connect( mModel, SIGNAL( pixelChanged( int, int, QRgb ) ), mRunController, SLOT( pixelChanged( int, int, QRgb ) ) );
 
     connect( mRunController, SIGNAL( stepped( trace_step* ) ), mDebugWidget, SLOT( slotStepped( trace_step* ) ) );
     connect( mRunController, SIGNAL( actionChanged( trace_action* ) ), mDebugWidget, SLOT( slotActionChanged( trace_action* ) ) );

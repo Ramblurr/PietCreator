@@ -60,6 +60,7 @@ public slots:
 
     void debugSource( const QImage &source );
     bool runSource( const QImage &source );
+    void pixelChanged( int x, int y, QRgb color );
 
     void step();
     void abort();
