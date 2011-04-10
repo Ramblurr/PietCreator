@@ -538,7 +538,7 @@ void MainWindow::slotClearOutputView()
 
 void MainWindow::slotNewOutput( QString str )
 {
-    ui->mTextEdit->append( str );
+    ui->mTextEdit->insertPlainText( str );
 }
 
 
