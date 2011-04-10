@@ -74,7 +74,9 @@ MainWindow::MainWindow( QWidget *parent ) :
     mMonitor->setPixelSize( INITIAL_CODEL_SIZE );
     ui->mZoomSlider->setValue( INITIAL_CODEL_SIZE );
 
-    mDelegate = new PixelDelegate( mMonitor, this );
+    QMenu * contextMenu = new QMenu(this);
+    contextMenu->addAction(new QAction("Set &Breakpoint", contextMenu));
+    mDelegate = new PixelDelegate( mMonitor, contextMenu, this );
     ui->mView->setItemDelegate( mDelegate );
 
     mCommandWidget = new CommandWidget( mMonitor, ui->mCommandsPage );

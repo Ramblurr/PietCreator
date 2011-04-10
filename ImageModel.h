@@ -45,6 +45,7 @@ public:
     QSize imageSize() const;
 
     void setDebuggedPixel( int x, int y );
+    void setBreakpoint( int x, int y );
 
     int rowCount( const QModelIndex &parent = QModelIndex() ) const;
     int columnCount( const QModelIndex &parent = QModelIndex() ) const;

@@ -25,8 +25,10 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QDebug>
+#include <QMenu>
+#include <QAction>
 
-PixelDelegate::PixelDelegate( ViewMonitor* monitor, QObject *parent ) : QAbstractItemDelegate( parent ), mMonitor( monitor )
+PixelDelegate::PixelDelegate( ViewMonitor* monitor, QMenu* menu, QObject *parent ) : QAbstractItemDelegate( parent ), mMonitor( monitor ), mContextMenu( menu )
 {
 }
 
@@ -71,7 +73,10 @@ bool PixelDelegate::editorEvent( QEvent* event, QAbstractItemModel* model, const
             model->setData( index, mMonitor->currentColor(), Qt::DisplayRole );
             emit imageEdited();
             return true;
-        } else if ( mev->buttons() & Qt::RightButton ) {
+        } else if ( (mev->modifiers() == Qt::NoModifier ) && (mev->button() == Qt::RightButton ) ) {
+            mContextMenu->popup(mev->globalPos());
+            return false;
+        } else if ( (mev->modifiers() == Qt::ControlModifier ) && ( mev->button() == Qt::RightButton) ) {
             mMonitor->setCurrentColor(  index.model()->data( index, Qt::DisplayRole ).value<QColor>() );
             return false;
         }
