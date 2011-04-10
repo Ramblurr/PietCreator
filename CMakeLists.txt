@@ -28,7 +28,9 @@ set( pietcreator_SRCS
     CommandWidget.cpp
     DebugWidget.cpp
     CommandImpl.cpp
-    FlowCompass.cpp )
+    FlowCompass.cpp
+    UndoCommands.cpp
+    UndoHandler.cpp )
 
 set( pietcreator_RCS
     fallback.qrc

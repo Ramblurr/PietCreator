@@ -23,6 +23,7 @@
 #include <QAbstractItemDelegate>
 
 class ViewMonitor;
+class UndoHandler;
 class QMenu;
 
 class PixelDelegate : public QAbstractItemDelegate
@@ -30,7 +31,7 @@ class PixelDelegate : public QAbstractItemDelegate
     Q_OBJECT
 
 public:
-    PixelDelegate( ViewMonitor* monitor, QMenu* menu, QObject *parent = 0 );
+    PixelDelegate( ViewMonitor* monitor,UndoHandler* handler, QMenu* menu, QObject *parent = 0 );
     virtual ~PixelDelegate() {}
 
     void paint( QPainter *painter, const QStyleOptionViewItem &option,
@@ -46,6 +47,7 @@ signals:
 
 private:
     ViewMonitor* mMonitor;
+    UndoHandler* mUndoHandler;
     QMenu* mContextMenu;
 };
 

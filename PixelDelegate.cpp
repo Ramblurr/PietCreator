@@ -21,6 +21,7 @@
 
 #include "ImageModel.h"
 #include "ViewMonitor.h"
+#include "UndoHandler.h"
 
 #include <QPainter>
 #include <QMouseEvent>
@@ -28,7 +29,7 @@
 #include <QMenu>
 #include <QAction>
 
-PixelDelegate::PixelDelegate( ViewMonitor* monitor, QMenu* menu, QObject *parent ) : QAbstractItemDelegate( parent ), mMonitor( monitor ), mContextMenu( menu )
+PixelDelegate::PixelDelegate( ViewMonitor* monitor, UndoHandler* handler, QMenu* menu, QObject* parent ) : QAbstractItemDelegate( parent ), mMonitor( monitor ), mUndoHandler(handler), mContextMenu( menu )
 {
 }
 
@@ -70,7 +71,7 @@ bool PixelDelegate::editorEvent( QEvent* event, QAbstractItemModel* model, const
     case QEvent::MouseMove: {
         QMouseEvent *mev = static_cast<QMouseEvent*>( event );
         if ( mev->buttons() & Qt::LeftButton ) {
-            model->setData( index, mMonitor->currentColor(), Qt::DisplayRole );
+            mUndoHandler->createEditPixel(index.column(), index.row(), mMonitor->currentColor() );
             emit imageEdited();
             return true;
         } else if ( (mev->modifiers() == Qt::NoModifier ) && (mev->button() == Qt::RightButton ) ) {

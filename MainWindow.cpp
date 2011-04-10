@@ -27,6 +27,7 @@
 #include "RunController.h"
 #include "CommandWidget.h"
 #include "DebugWidget.h"
+#include "UndoHandler.h"
 
 #include <QHBoxLayout>
 #include <QTableView>
@@ -41,6 +42,7 @@
 #include <QListView>
 #include <QKeySequence>
 #include <QThread>
+#include <QUndoStack>
 
 static const int INITIAL_CODEL_SIZE = 12;
 
@@ -70,13 +72,16 @@ MainWindow::MainWindow( QWidget *parent ) :
     ui->mView->viewport()->installEventFilter( this );
     ui->mView->setShowGrid( false );
 
+    mUndoStack = new QUndoStack(this);
+    mUndoHandler = new UndoHandler(mUndoStack, mModel);
+
     mMonitor = new ViewMonitor( this );
     mMonitor->setPixelSize( INITIAL_CODEL_SIZE );
     ui->mZoomSlider->setValue( INITIAL_CODEL_SIZE );
 
     QMenu * contextMenu = new QMenu(this);
     contextMenu->addAction(new QAction("Set &Breakpoint", contextMenu));
-    mDelegate = new PixelDelegate( mMonitor, contextMenu, this );
+    mDelegate = new PixelDelegate( mMonitor, mUndoHandler, contextMenu, this );
     ui->mView->setItemDelegate( mDelegate );
 
     mCommandWidget = new CommandWidget( mMonitor, ui->mCommandsPage );
@@ -165,7 +170,20 @@ void MainWindow::setupToolbar()
     connect( this, SIGNAL( validImageDocument( bool ) ), saveAsAct, SLOT( setEnabled( bool ) ) );
     fileMenu->addAction( saveAsAct );
 
-    fileMenu->addSeparator();
+    ui->mToolBar->addSeparator();
+    QMenu* editMenu = ui->mMenubar->addMenu( tr( "&Edit" ) );
+
+    QAction* undoAction = mUndoStack->createUndoAction(this, tr("&Undo"));
+    undoAction->setIcon(QIcon::fromTheme( "edit-undo" ));
+    undoAction->setShortcuts(QKeySequence::Undo);
+    editMenu->addAction( undoAction );
+    ui->mToolBar->addAction(undoAction);
+
+    QAction* resizeAct = ui->mToolBar->addAction( QIcon::fromTheme( "transform-scale" ), tr( "&Resize Image" ), this, SLOT( slotActionResize() ) );
+    resizeAct->setDisabled( true );
+    connect( this, SIGNAL( validImageDocument( bool ) ), resizeAct, SLOT( setEnabled( bool ) ) );
+    editMenu->addAction( resizeAct );
+
 
     fileMenu->addAction( QIcon::fromTheme( "application-exit" ), tr( "&Quit" ), this, SLOT( slotActionExit() ) )->setShortcut( QKeySequence::Quit );
 
@@ -196,13 +214,6 @@ void MainWindow::setupToolbar()
     viewMenu->addSeparator();
     QAction* debugViewAct = ui->mToolBar->addAction( QIcon::fromTheme( "utilities-terminal" ), tr( "Toggle Output View" ), this, SLOT( slotToggleOutput() ) );
     viewMenu->addAction( debugViewAct );
-    ui->mToolBar->addSeparator();
-
-    QMenu* editMenu = ui->mMenubar->addMenu( tr( "&Edit" ) );
-    QAction* resizeAct = ui->mToolBar->addAction( QIcon::fromTheme( "transform-scale" ), tr( "&Resize Image" ), this, SLOT( slotActionResize() ) );
-    resizeAct->setDisabled( true );
-    connect( this, SIGNAL( validImageDocument( bool ) ), resizeAct, SLOT( setEnabled( bool ) ) );
-    editMenu->addAction( resizeAct );
     ui->mToolBar->addSeparator();
 
     QMenu* progMenu = ui->mMenubar->addMenu( tr( "&Program" ) );

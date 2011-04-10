@@ -38,6 +38,8 @@ class OutputModel;
 class RunController;
 class CommandWidget;
 class DebugWidget;
+class UndoHandler;
+class QUndoStack;
 
 class MainWindow : public QMainWindow
 {
@@ -97,6 +99,8 @@ private:
     QString mSaveMessage;
     QHash<QString, QString> mExtensions;
 
+    QUndoStack* mUndoStack;
+    UndoHandler* mUndoHandler;
     ImageModel* mModel;
     PixelDelegate* mDelegate;
     ViewMonitor* mMonitor;
