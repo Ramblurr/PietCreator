@@ -36,31 +36,20 @@ void PixelDelegate::paint( QPainter* painter, const QStyleOptionViewItem& option
 //     if ( option.state & QStyle::State_Selected )
 //         painter->fillRect( option.rect, option.palette.highlight() );
 
-    int size = qMin( option.rect.width(), option.rect.height() );
     QColor c = index.model()->data( index, Qt::DisplayRole ).value<QColor>();
 
     painter->save();
-    painter->setPen( Qt::NoPen );
     painter->setBrush( QBrush( c ) );
 
     // shorten the rectangle a little to provide some spacing
     QRect shortRect = option.rect.adjusted( 1, 1, -1, -1 );
-    painter->drawRect( shortRect );
-    painter->restore();
-
-    painter->save();
     QPen pen = painter->pen();
     if( index.data( ImageModel::IsCurrentDebugRole ).toBool() ) {
         pen.setColor( Qt::black );
         pen.setWidth( 2 );
         painter->setPen( pen );
-        painter->drawRect( shortRect );
-    } else {
-        pen.setColor( Qt::gray );
-        pen.setWidth( 1 );
-        painter->setPen( pen );
-        painter->drawRect( shortRect );
     }
+    painter->drawRect( shortRect );
     painter->restore();
 }
 
