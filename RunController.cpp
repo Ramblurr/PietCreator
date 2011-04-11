@@ -163,15 +163,15 @@ void RunController::debugSource( const QImage& source )
 
 void RunController::pixelChanged(int x, int y, QRgb color)
 {
-    mSource.setPixel( x, y, color );
     if(mPrepared) {
-            int col = ( ( qRed(color) * 256 + qGreen(color) ) * 256 ) + qBlue(color);
-            int col_idx = get_color_idx( col );
-            if ( col_idx < 0 ) {
-                /* set to black or white: */
-                col_idx = ( /*unknown_color*/1 == 0 ? c_black : c_white );
-            }
-            set_cell( x, y, col_idx );
+        mSource.setPixel( x, y, color );
+        int col = ( ( qRed(color) * 256 + qGreen(color) ) * 256 ) + qBlue(color);
+        int col_idx = get_color_idx( col );
+        if ( col_idx < 0 ) {
+            /* set to black or white: */
+            col_idx = ( /*unknown_color*/1 == 0 ? c_black : c_white );
+        }
+        set_cell( x, y, col_idx );
     }        
 }
 
