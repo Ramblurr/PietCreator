@@ -68,6 +68,7 @@ private slots:
     void slotActionToggleHeaders();
     void slotActionNew();
     void slotActionResize();
+    void slotActionInsert();
     void slotActionZoom();
     void slotActionDebug();
     void slotActionRun();
@@ -114,6 +115,8 @@ private:
     bool mModified;
     bool mWaitInt;
     bool mWaitChar;
+    bool mWaitingForCoordSelection;
+    QImage mInsertImage;
 };
 
 #endif // MAINWINDOW_H

@@ -51,7 +51,8 @@ MainWindow::MainWindow( QWidget *parent ) :
     ui( new Ui::MainWindow ),
     mModified( false ),
     mWaitInt( false ),
-    mWaitChar( false )
+    mWaitChar( false ),
+    mWaitingForCoordSelection( false )
 {
     ui->setupUi( this );
     setWindowIcon( QIcon( ":/piet-16x16.png" ) );
@@ -169,6 +170,7 @@ void MainWindow::setupToolbar()
     saveAsAct->setDisabled( true );
     connect( this, SIGNAL( validImageDocument( bool ) ), saveAsAct, SLOT( setEnabled( bool ) ) );
     fileMenu->addAction( saveAsAct );
+    fileMenu->addAction( QIcon::fromTheme( "application-exit" ), tr( "&Quit" ), this, SLOT( slotActionExit() ) )->setShortcut( QKeySequence::Quit );
 
     ui->mToolBar->addSeparator();
     QMenu* editMenu = ui->mMenubar->addMenu( tr( "&Edit" ) );
@@ -184,8 +186,10 @@ void MainWindow::setupToolbar()
     connect( this, SIGNAL( validImageDocument( bool ) ), resizeAct, SLOT( setEnabled( bool ) ) );
     editMenu->addAction( resizeAct );
 
-
-    fileMenu->addAction( QIcon::fromTheme( "application-exit" ), tr( "&Quit" ), this, SLOT( slotActionExit() ) )->setShortcut( QKeySequence::Quit );
+    QAction* insertAct = ui->mToolBar->addAction( QIcon::fromTheme( "insert-image" ), tr( "&Insert Source" ), this, SLOT( slotActionInsert() ) );
+    insertAct->setDisabled( true );
+    connect( this, SIGNAL( validImageDocument( bool ) ), insertAct, SLOT( setEnabled( bool ) ) );
+    editMenu->addAction( insertAct );
 
     ui->mToolBar->addSeparator();
 
@@ -256,7 +260,17 @@ bool MainWindow::eventFilter( QObject* obj, QEvent* event )
             }
             return true;
         }
+    } else if (event->type() == QEvent::MouseButtonPress ) {
+        QMouseEvent * mevent = static_cast<QMouseEvent*>( event );
+        if ( obj == ui->mView->viewport() && mWaitingForCoordSelection && mevent->button() == Qt::LeftButton ) {
+            QModelIndex i = ui->mView->indexAt(mevent->pos());
+            setCursor(Qt::ArrowCursor);
+            mWaitingForCoordSelection = false;
+            mModel->insertImage(mInsertImage, i.column(), i.row());
+            return true;
+        }
     }
+    return false;
 }
 
 void MainWindow::slotActionToggleGrid()
@@ -349,7 +363,7 @@ void MainWindow::slotActionNew()
 {
     if ( !promptSave() )
         return;
-    QImage image( 50, 50, QImage::Format_RGB32 );
+    QImage image( 50, 50, QImage::Format_ARGB32_Premultiplied );
     image.fill( QColor( Qt::white ).rgb() );
     mModel->setImage( image, 1 );
     setWindowTitle( "Piet Creator - new source [*]" );
@@ -420,6 +434,19 @@ void MainWindow::slotActionResize()
         }
     }
 }
+
+void MainWindow::slotActionInsert()
+{
+    QString file_name = QFileDialog::getOpenFileName( this, tr( "Open Image File" ),
+                        QDesktopServices::storageLocation( QDesktopServices::HomeLocation ),
+                        tr( "Images (*.png *.bmp *.ppm *.gif)" ) );
+    mInsertImage = QImage(file_name);
+    if ( !mInsertImage.isNull() ) {
+        setCursor(Qt::CrossCursor);
+        mWaitingForCoordSelection = true;
+    }
+}
+
 
 void MainWindow::slotActionZoom()
 {
