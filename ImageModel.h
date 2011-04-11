@@ -35,11 +35,17 @@ public:
     explicit ImageModel( QObject *parent = 0 );
     virtual ~ImageModel();
 
-    /** Sets the image to expose via the model
-        If codel size is not specified, then the model
+    /**
+     * Sets the image to expose via the model
+     * If codel size is not specified, then the model guesses.
     */
     void setImage( const QImage &image, int codel_size = -1 );
     QImage image() const;
+
+    /**
+     * Insert the image at the specified x,y coord
+     */
+    void insertImage( const QImage &image, int x, int y);
 
     void scaleImage( const QSize & size );
     QSize imageSize() const;
@@ -69,6 +75,7 @@ private:
     void emitNeighborsChanged( int row, int col );
     QString statusString( QModelIndex index ) const;
     quint64 contiguousBlocks( int x, int y ) const;
+    QImage autoScale(const QImage& _image, int codel_size);
     QImage mImage;
     int mPixelSize;
 

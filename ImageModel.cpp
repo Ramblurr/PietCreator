@@ -53,9 +53,15 @@ cc_check( int i, QRgb c, QRgb *last_c, int *last_p, int *min_w )
     }
 }
 
-void ImageModel::setImage( const QImage& _image, int codel_size )
+QImage ImageModel::autoScale(const QImage& _image, int codel_size)
 {
-    QImage image = _image.convertToFormat( QImage::Format_ARGB32 );
+    QImage image;
+    if( _image.format() != QImage::Format_ARGB32_Premultiplied ) {
+        image = _image.convertToFormat( QImage::Format_ARGB32_Premultiplied );
+    } else {
+        image = _image;
+    }
+    qDebug() << image.width() << image.height();
     if ( codel_size < 0 ) {
         /* Begin: modified part taken from npiet.c, cleanup_input () */
         // (C) 2010 Erik Schoenfelder <schoenfr@web.de>
@@ -91,9 +97,17 @@ void ImageModel::setImage( const QImage& _image, int codel_size )
     if ( codel_size > 1 ) {
         int width = image.width() / codel_size;
         int height = image.height() / codel_size;
-        mImage = image.scaled( width, height );
-    } else
-        mImage = image;
+        return image.scaled( width, height );
+    } else {
+        return image;
+    }
+}
+
+
+void ImageModel::setImage( const QImage& image, int codel_size )
+{
+    mImage = autoScale(image, codel_size);
+    qDebug() << mImage.width() << mImage.height();
     reset();
 }
 
@@ -101,6 +115,14 @@ QImage ImageModel::image() const
 {
     return mImage;
 }
+
+void ImageModel::insertImage(const QImage& _image, int x, int y)
+{
+    QPainter p(&mImage);
+    p.drawImage(x,y,autoScale(_image, -1));
+    reset();
+}
+
 
 void ImageModel::setDebuggedPixel( int x, int y )
 {
