@@ -435,7 +435,7 @@ void MainWindow::slotActionResize()
                 if ( but == QMessageBox::Abort )
                     return;
             }
-            mModel->scaleImage( size );
+            mUndoHandler->scaleImage( size );
         }
     }
 }

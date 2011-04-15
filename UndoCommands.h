@@ -50,3 +50,14 @@ private:
     QImage mBefore,mImageToInsert;
     ImageModel *mModel;
 };
+
+class ScaleImageCommand : public QUndoCommand
+{
+public:
+    ScaleImageCommand(QSize before, QSize after,  ImageModel* model, QUndoCommand* parent = 0);
+    void undo();
+    void redo();
+private:
+    QSize mBefore, mAfter;
+    ImageModel *mModel;
+};

@@ -51,7 +51,7 @@ bool EditPixelCommand::mergeWith(const QUndoCommand* command)
 }
 
 InsertImageCommand::InsertImageCommand(int x, int y, QImage before, QImage imageToInsert, ImageModel* model, QUndoCommand* parent)
- : QUndoCommand(parent)
+    : QUndoCommand(parent)
     , mX(x)
     , mY(y)
     , mBefore(before)
@@ -68,6 +68,25 @@ void InsertImageCommand::redo()
 void InsertImageCommand::undo()
 {
     mModel->setImage(mBefore, 1);
+}
+
+ScaleImageCommand::ScaleImageCommand(QSize before, QSize after, ImageModel* model, QUndoCommand* parent)
+    : QUndoCommand(parent)
+    , mBefore(before)
+    , mAfter(after)
+    , mModel(model)
+{
+
+}
+
+void ScaleImageCommand::redo()
+{
+    mModel->scaleImage(mAfter);
+}
+
+void ScaleImageCommand::undo()
+{
+    mModel->scaleImage(mBefore);
 }
 
 

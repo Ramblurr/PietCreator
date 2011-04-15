@@ -25,4 +25,12 @@ void UndoHandler::insertImage(int x, int y, QImage imageToInsert)
     mUndoStack->push(cmd);
 }
 
+void UndoHandler::scaleImage(QSize newSize)
+{
+    QSize before = mModel->imageSize();
+    ScaleImageCommand *cmd = new ScaleImageCommand(before, newSize, mModel);
+    mUndoStack->push(cmd);
+}
+
+
 

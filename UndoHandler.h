@@ -15,6 +15,7 @@ public:
 
     void createEditPixel(int x, int y, QColor new_color);
     void insertImage(int x, int y, QImage imageToInsert);
+    void scaleImage(QSize newSize);
 
 private:
     ImageModel* mModel;
