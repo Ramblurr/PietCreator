@@ -78,7 +78,6 @@ MainWindow::MainWindow( QWidget *parent ) :
 
     mStatusLabel = new QLabel( ui->mStatusbar );
     mStatusLabel->setObjectName( QString::fromUtf8( "statusLabel " ) );
-    //   statusLabel->setFrameStyle( QFrame::StyledPanel | QFrame::Sunken );
     ui->mStatusbar->addPermanentWidget( mStatusLabel );
 
     mMonitor = new ViewMonitor( this );
