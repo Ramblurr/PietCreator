@@ -87,9 +87,9 @@ void notify_action( int hue_change, int light_change, int value, char* msg )
 
 void notify_stack_before(long int* stack, int num_stack)
 {
+	int i;
     before_stack = malloc( sizeof( long ) * num_stack );
     before_num = num_stack;
-    int i;
     for ( i = 0; i < num_stack; i++ ) {
         before_stack[i] = stack[i];
     }
@@ -97,9 +97,9 @@ void notify_stack_before(long int* stack, int num_stack)
 
 void notify_stack_after(long int* stack, int num_stack)
 {
+	int i;
     after_stack = malloc( sizeof( long ) * num_stack );
     after_num = num_stack;
-    int i;
     for ( i = 0; i < num_stack; i++ ) {
         after_stack[i] = stack[i];
     }
