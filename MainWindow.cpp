@@ -270,7 +270,9 @@ bool MainWindow::eventFilter( QObject* obj, QEvent* event )
             QModelIndex i = ui->mView->indexAt(mevent->pos());
             setCursor(Qt::ArrowCursor);
             mWaitingForCoordSelection = false;
-            mUndoHandler->insertImage(i.column(), i.row(), mInsertImage);
+            int x = i.column();
+            int y = i.row();
+            mUndoHandler->insertImage(x, y, mInsertImage);
             mStatusLabel->clear();
             return true;
         }
