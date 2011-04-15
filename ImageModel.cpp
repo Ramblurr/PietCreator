@@ -264,8 +264,11 @@ quint64 ImageModel::contiguousBlocks( int x, int y ) const
 
 void ImageModel::scaleImage( const QSize& size )
 {
-    mImage = mImage.scaled( size, Qt::IgnoreAspectRatio, Qt::FastTransformation );
-    reset();
+    QImage newImage(size, QImage::Format_ARGB32_Premultiplied);
+    newImage.fill( QColor( Qt::white ).rgb() );
+    QImage oldImage(mImage);
+    mImage = newImage;
+    insertImage(oldImage, 0,0);
 }
 
 QSize ImageModel::imageSize() const
