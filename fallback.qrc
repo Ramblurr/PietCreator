@@ -14,6 +14,8 @@
         <file alias="16x16/view-form-table.png">icons/fallback/16x16/actions/view-form-table.png</file>
         <file alias="16x16/zoom-in.png">icons/fallback/16x16/actions/zoom-in.png</file>
         <file alias="16x16/zoom-out.png">icons/fallback/16x16/actions/zoom-out.png</file>
+	<file alias="16x16/edit-undo.png">icons/fallback/16x16/actions/edit-undo.png</file>
+	<file alias="16x16/insert-image.png">icons/fallback/16x16/actions/insert-image.png</file>
         <file alias="16x16/utilities-terminal.png">icons/fallback/16x16/apps/utilities-terminal.png</file>
         <file alias="22x22/application-exit.png">icons/fallback/22x22/actions/application-exit.png</file>
         <file alias="22x22/document-new.png">icons/fallback/22x22/actions/document-new.png</file>
@@ -28,6 +30,8 @@
         <file alias="22x22/zoom-in.png">icons/fallback/22x22/actions/zoom-in.png</file>
         <file alias="22x22/zoom-out.png">icons/fallback/22x22/actions/zoom-out.png</file>
         <file alias="22x22/utilities-terminal.png">icons/fallback/22x22/apps/utilities-terminal.png</file>
+	<file alias="22x22/edit-undo.png">icons/fallback/22x22/actions/edit-undo.png</file>
+	<file alias="22x22/insert-image.png">icons/fallback/22x22/actions/insert-image.png</file>
         <file alias="32x32/application-exit.png">icons/fallback/32x32/actions/application-exit.png</file>
         <file alias="32x32/debug-step.png">icons/fallback/32x32/actions/debug-step.png</file>
         <file alias="32x32/document-new.png">icons/fallback/32x32/actions/document-new.png</file>
@@ -42,5 +46,7 @@
         <file alias="32x32/zoom-in.png">icons/fallback/32x32/actions/zoom-in.png</file>
         <file alias="32x32/zoom-out.png">icons/fallback/32x32/actions/zoom-out.png</file>
         <file alias="32x32/utilities-terminal.png">icons/fallback/32x32/apps/utilities-terminal.png</file>
+	<file alias="32x32/edit-undo.png">icons/fallback/32x32/actions/edit-undo.png</file>
+	<file alias="32x32/insert-image.png">icons/fallback/32x32/actions/insert-image.png</file>
     </qresource>
 </RCC>
