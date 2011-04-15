@@ -184,7 +184,7 @@ void FlowCompass::paintDPArrow( QPainter &painter )
 
 QVector<QPoint>  FlowCompass::calculateArrowHead( QLine line, QRect bounds, qreal arrowSize, Direction direction )
 {
-    double angle = ::acos( line.dx() / bounds.width() );
+    double angle = ::acos( (double)( line.dx() / bounds.width() ) );
     if ( line.p2().x() < line.p1().x() || line.p2().y() < line.p1().y() )
         angle = ( Pi * 2 ) - angle;
 
