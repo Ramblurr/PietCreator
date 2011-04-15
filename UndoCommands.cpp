@@ -48,7 +48,9 @@ void EditPixelCommand::undo()
 bool EditPixelCommand::mergeWith(const QUndoCommand* command)
 {
     const EditPixelCommand *editPixelCommand = static_cast<const EditPixelCommand *>(command);
-    return mAfter == editPixelCommand->mAfter;
+    if( editPixelCommand->mX == mX && editPixelCommand->mY == mY )
+        return mAfter == editPixelCommand->mAfter;
+    return false;
 }
 
 InsertImageCommand::InsertImageCommand(int x, int y, QImage before, QImage imageToInsert, ImageModel* model, QUndoCommand* parent)
