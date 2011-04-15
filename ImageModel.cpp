@@ -111,6 +111,13 @@ void ImageModel::setImage( const QImage& image, int codel_size )
     reset();
 }
 
+void ImageModel::newImage(int w, int h)
+{
+    QImage image( w, h, QImage::Format_ARGB32_Premultiplied );
+    image.fill( QColor( Qt::white ).rgb() );
+    setImage( image, 1 );
+}
+
 QImage ImageModel::image() const
 {
     return mImage;

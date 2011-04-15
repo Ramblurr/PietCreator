@@ -368,9 +368,7 @@ void MainWindow::slotActionNew()
 {
     if ( !promptSave() )
         return;
-    QImage image( 50, 50, QImage::Format_ARGB32_Premultiplied );
-    image.fill( QColor( Qt::white ).rgb() );
-    mModel->setImage( image, 1 );
+    mModel->newImage(50,50);
     setWindowTitle( "Piet Creator - new source [*]" );
     setModified( false );
     mCurrentFile.clear();

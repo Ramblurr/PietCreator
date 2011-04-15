@@ -40,6 +40,14 @@ public:
      * If codel size is not specified, then the model guesses.
     */
     void setImage( const QImage &image, int codel_size = -1 );
+
+    /**
+     * Sets the current image to a new image.
+     * All pixels are filled white.
+     * @param w width of the new image
+     * @param h height of the new image
+     */
+    void newImage( int w, int h );
     QImage image() const;
 
     /**
