@@ -40,6 +40,7 @@ class CommandWidget;
 class DebugWidget;
 class UndoHandler;
 class QUndoStack;
+class QLabel;
 
 class MainWindow : public QMainWindow
 {
@@ -109,6 +110,7 @@ private:
     RunController* mRunController;
     CommandWidget* mCommandWidget;
     DebugWidget* mDebugWidget;
+    QLabel* mStatusLabel;
 
     QThread mRunThread;
     QUrl mCurrentFile;

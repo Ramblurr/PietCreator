@@ -76,6 +76,11 @@ MainWindow::MainWindow( QWidget *parent ) :
     mUndoStack = new QUndoStack(this);
     mUndoHandler = new UndoHandler(mUndoStack, mModel);
 
+    mStatusLabel = new QLabel( ui->mStatusbar );
+    mStatusLabel->setObjectName( QString::fromUtf8( "statusLabel " ) );
+    //   statusLabel->setFrameStyle( QFrame::StyledPanel | QFrame::Sunken );
+    ui->mStatusbar->addPermanentWidget( mStatusLabel );
+
     mMonitor = new ViewMonitor( this );
     mMonitor->setPixelSize( INITIAL_CODEL_SIZE );
     ui->mZoomSlider->setValue( INITIAL_CODEL_SIZE );
@@ -267,6 +272,7 @@ bool MainWindow::eventFilter( QObject* obj, QEvent* event )
             setCursor(Qt::ArrowCursor);
             mWaitingForCoordSelection = false;
             mUndoHandler->insertImage(i.column(), i.row(), mInsertImage);
+            mStatusLabel->clear();
             return true;
         }
     }
@@ -444,6 +450,7 @@ void MainWindow::slotActionInsert()
     if ( !mInsertImage.isNull() ) {
         setCursor(Qt::CrossCursor);
         mWaitingForCoordSelection = true;
+        mStatusLabel->setText( tr("Click upper left coordinate to insert image") );
     }
 }
 
