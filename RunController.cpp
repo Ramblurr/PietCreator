@@ -26,15 +26,14 @@
 #include <QTemporaryFile>
 #include <QThread>
 
-#include <unistd.h>
 #include <stdio.h>
 #include <iostream>
 #include <fcntl.h>
 
 #ifdef Q_WS_WIN
-# include <io.h>
+#include <io.h>
 #else
-# include <unistd.h>
+#include <unistd.h>
 #endif
 
 
@@ -56,7 +55,7 @@ RunController::~RunController()
     qDebug() << "waking";
     mWaitCond.wakeOne();
     mMutex.unlock();
-    wait();
+    thread()->wait();
 }
 
 void RunController::slotThreadStarted()
@@ -306,7 +305,11 @@ void RunController::captureStdout()
 #endif
     Q_ASSERT( rc >= 0 );
 
+#ifdef Q_WS_WIN
+	mOrigFd = _fileno( stdout );
+#else
     mOrigFd = STDOUT_FILENO;
+#endif
 
     mOrigFdCopy = ::dup( mOrigFd );
     Q_ASSERT( mOrigFdCopy >= 0 );
