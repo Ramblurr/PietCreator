@@ -41,13 +41,14 @@ void EditPixelCommand::redo()
 
 void EditPixelCommand::undo()
 {
+    qDebug() << "me undo: " << mBefore << mAfter;
     mModel->setData( mModel->index(mY, mX), mBefore, Qt::DisplayRole );
 }
 
 bool EditPixelCommand::mergeWith(const QUndoCommand* command)
 {
     const EditPixelCommand *editPixelCommand = static_cast<const EditPixelCommand *>(command);
-    return editPixelCommand->mAfter == mAfter && editPixelCommand->mBefore == mBefore;
+    return mAfter == editPixelCommand->mAfter;
 }
 
 InsertImageCommand::InsertImageCommand(int x, int y, QImage before, QImage imageToInsert, ImageModel* model, QUndoCommand* parent)
