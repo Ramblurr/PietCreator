@@ -130,7 +130,6 @@ void ImageModel::insertImage(const QImage& _image, int x, int y)
     reset();
 }
 
-
 void ImageModel::setDebuggedPixel( int x, int y )
 {
     emitNeighborsChanged( mDebugPixel.y(), mDebugPixel.x() );

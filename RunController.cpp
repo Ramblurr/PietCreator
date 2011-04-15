@@ -61,8 +61,8 @@ RunController::~RunController()
 void RunController::slotThreadStarted()
 {
     mObserver = new NPietObserver( this );
-    connect( mObserver, SIGNAL( stepped( trace_step* ) ), this, SIGNAL( stepped( trace_step* ) ) );
-    connect( mObserver, SIGNAL( actionChanged( trace_action* ) ), this, SIGNAL( actionChanged( trace_action* ) ) );
+    connect( mObserver, SIGNAL( stepped( trace_step* ) ), this,SLOT( slotStepped(trace_step* ) ) );
+    connect( mObserver, SIGNAL( actionChanged( trace_action* ) ), this, SLOT( slotAction( trace_action* ) ) );
     connect( &mTimer, SIGNAL( timeout() ), this, SLOT( tick() ) );
 }
 
@@ -230,13 +230,16 @@ void RunController::stdoutReadyRead()
     emit newOutput( mStdOut->readAll() );
 }
 
-void RunController::slotAction( trace_action* )
+void RunController::slotAction( trace_action* act )
 {
+    if( mDebugging )
+        emit actionChanged( act );
 }
 
-void RunController::slotStepped( trace_step* )
+void RunController::slotStepped( trace_step* step )
 {
-
+if( mDebugging )
+        emit stepped( step );
 }
 
 char RunController::getChar()
