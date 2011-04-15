@@ -1,5 +1,10 @@
-The icons for this project (piet.ico, and piet-*.png) are based off the "Mondrian lookalike" image by "Husky"
+The application icon for this project (piet.ico, and piet-*.png) are based off the "Mondrian lookalike" image by "Husky"
 
 Source: http://commons.wikimedia.org/wiki/File:Mondrian_lookalike.svg
 License:   Creative Commons Attribution ShareAlike 3.0
 URL: http://creativecommons.org/licenses/by-sa/3.0/
+
+
+If an icon theme is not found on your system (windows and mac), then the fallback icon set is used, which comes from the Oxygen icon library. 
+License: LGPL 3
+URL: http://www.oxygen-icons.org/
