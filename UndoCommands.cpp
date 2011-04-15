@@ -50,3 +50,24 @@ bool EditPixelCommand::mergeWith(const QUndoCommand* command)
     return editPixelCommand->mAfter == mAfter && editPixelCommand->mBefore == mBefore;
 }
 
+InsertImageCommand::InsertImageCommand(int x, int y, QImage before, QImage imageToInsert, ImageModel* model, QUndoCommand* parent)
+ : QUndoCommand(parent)
+    , mX(x)
+    , mY(y)
+    , mBefore(before)
+    , mImageToInsert(imageToInsert)
+    , mModel(model)
+{
+}
+
+void InsertImageCommand::redo()
+{
+    mModel->insertImage(mImageToInsert, mX, mY);
+}
+
+void InsertImageCommand::undo()
+{
+    mModel->setImage(mBefore, 1);
+}
+
+

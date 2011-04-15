@@ -38,3 +38,15 @@ private:
     ImageModel *mModel;
     
 };
+
+class InsertImageCommand : public QUndoCommand
+{
+public:
+    InsertImageCommand(int x, int y, QImage before, QImage imageToInsert, ImageModel* model, QUndoCommand* parent = 0 );
+    void undo();
+    void redo();
+private:
+    int mX, mY;
+    QImage mBefore,mImageToInsert;
+    ImageModel *mModel;
+};

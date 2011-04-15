@@ -18,4 +18,11 @@ void UndoHandler::createEditPixel(int x, int y, QColor new_color)
     mUndoStack->push(cmd);
 }
 
+void UndoHandler::insertImage(int x, int y, QImage imageToInsert)
+{
+    QImage before = mModel->image();
+    InsertImageCommand *cmd = new InsertImageCommand(x,y,before, imageToInsert, mModel);
+    mUndoStack->push(cmd);
+}
+
 
