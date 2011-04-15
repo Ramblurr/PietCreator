@@ -44,6 +44,8 @@ public:
     void setCCDirection( const Direction &direction );
     void setDPDirection( const Direction &direction );
 
+    void reset();
+
 protected:
     virtual void paintEvent(QPaintEvent* );
 

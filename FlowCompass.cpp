@@ -39,6 +39,12 @@ FlowCompass::FlowCompass( QWidget* parent ) :
     setMinimumSize( 100, 100 );
 }
 
+void FlowCompass::reset()
+{
+    mCCDirection = FlowCompass::Left;
+    mDPDirection = FlowCompass::Right;
+}
+
 FlowCompass::~FlowCompass()
 {
 

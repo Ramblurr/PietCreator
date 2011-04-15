@@ -56,6 +56,7 @@ void DebugWidget::slotDebugStarted()
     mActionLabel->setText( "" );
     mValueLabel->setText( "" );
     mCoordinate->setText( "Before first instruction" );
+    mFlowCompass->reset();
     changeCurrent( 0 );
 }
 
