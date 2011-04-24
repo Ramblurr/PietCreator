@@ -554,11 +554,12 @@ void MainWindow::slotReturnPressed()
 {
     QString text = ui->mInputEdit->text();
     if( mWaitChar ) {
-        if( text.length() > 0 ) {
-            mRunController->putChar( text.at( 0 ) );
-            mWaitChar = false;
-            ui->mInputEdit->setEnabled( false );
+        if( text.length()  == 0 ) {
+            text = '\n';
         }
+        mRunController->putChar( text.at( 0 ) );
+        mWaitChar = false;
+        ui->mInputEdit->setEnabled( false );
     } else if( mWaitInt ) {
         bool ok = false;
         int i = text.toInt( &ok );
