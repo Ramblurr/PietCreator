@@ -28,16 +28,17 @@
 #include <QDebug>
 #include <QMenu>
 #include <QAction>
+#include <QApplication>
 
-PixelDelegate::PixelDelegate( ViewMonitor* monitor, UndoHandler* handler, QMenu* menu, QObject* parent ) : QAbstractItemDelegate( parent ), mMonitor( monitor ), mUndoHandler(handler), mContextMenu( menu )
+PixelDelegate::PixelDelegate( ViewMonitor* monitor, UndoHandler* handler, QMenu* menu, QObject* parent ) : QStyledItemDelegate( parent ), mMonitor( monitor ), mUndoHandler(handler), mContextMenu( menu )
 {
 }
 
 void PixelDelegate::paint( QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index ) const
 {
 
-//     if ( option.state & QStyle::State_Selected )
-//         painter->fillRect( option.rect, option.palette.highlight() );
+    if ( option.state & QStyle::State_Selected )
+        painter->fillRect( option.rect, option.palette.highlight() );
 
     QColor c = index.model()->data( index, Qt::DisplayRole ).value<QColor>();
 
@@ -54,6 +55,11 @@ void PixelDelegate::paint( QPainter* painter, const QStyleOptionViewItem& option
     }
     painter->drawRect( shortRect );
     painter->restore();
+
+    QStyleOptionViewItemV4 opt = option;
+    initStyleOption(&opt, index);
+    opt.text = "";
+    QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter);
 }
 
 QSize PixelDelegate::sizeHint( const QStyleOptionViewItem & /* option */,
@@ -64,6 +70,7 @@ QSize PixelDelegate::sizeHint( const QStyleOptionViewItem & /* option */,
 
 bool PixelDelegate::editorEvent( QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& index )
 {
+
     if ( !index.isValid() )
         return false;
     switch ( event->type() ) {
@@ -71,20 +78,23 @@ bool PixelDelegate::editorEvent( QEvent* event, QAbstractItemModel* model, const
     case QEvent::MouseMove: {
         QMouseEvent *mev = static_cast<QMouseEvent*>( event );
         if ( mev->buttons() & Qt::LeftButton ) {
-            mUndoHandler->createEditPixel(index.column(), index.row(), mMonitor->currentColor() );
+            mUndoHandler->createEditPixel(index.column(), index.row(), mMonitor->currentColor(), mev->type() == QEvent::MouseMove );
             emit imageEdited();
-            return true;
+//             return true;
         } else if ( (mev->modifiers() == Qt::NoModifier ) && (mev->button() == Qt::RightButton ) ) {
             mContextMenu->popup(mev->globalPos());
-            return false;
+//             return false;
         } else if ( (mev->modifiers() == Qt::ControlModifier ) && ( mev->button() == Qt::RightButton) ) {
             mMonitor->setCurrentColor(  index.model()->data( index, Qt::DisplayRole ).value<QColor>() );
-            return false;
+//             return false;
         }
+        break;
     }
     default:
-        return false;
+        break;
+//         return false;
     }
+    return QStyledItemDelegate::editorEvent(event, model, option, index);
 }
 
 #include "PixelDelegate.moc"

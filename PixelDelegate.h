@@ -20,13 +20,13 @@
 #ifndef PIXELDELEGATE_H
 #define PIXELDELEGATE_H
 
-#include <QAbstractItemDelegate>
+#include <QStyledItemDelegate>
 
 class ViewMonitor;
 class UndoHandler;
 class QMenu;
 
-class PixelDelegate : public QAbstractItemDelegate
+class PixelDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 

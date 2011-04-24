@@ -60,7 +60,7 @@ MainWindow::MainWindow( QWidget *parent ) :
     mModel = new ImageModel;
     ui->mView->setModel( mModel );
 
-    ui->mView->setSelectionMode( QAbstractItemView::SingleSelection );
+    ui->mView->setSelectionMode( QAbstractItemView::NoSelection );
     ui->mView->horizontalHeader()->hide();
     ui->mView->verticalHeader()->hide();
     ui->mView->horizontalHeader()->setMinimumSectionSize( 1 );
