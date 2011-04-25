@@ -9,12 +9,13 @@ debugger.
 paintings. The language is named after Piet Mondrian, who pioneered the
 field of geometric abstract art. " - David Morgan-Mar. dmm@dangermouse.net (Piet Author)
 
+Piet Creator's primary author is Casey Link <unnamedrambler@gmail.com>.
+
 The interpreter backend is provided by npiet, a piet interpreter written in C by
 Erik Schoenfelder.
 
 piet, the language: http://www.dangermouse.net/esoteric/piet.html
 npiet: http://www.bertnase.de/npiet/
-
 
 Piet Creator is licensed under the GPL v3, and is written in C++ with Qt.
 
