@@ -42,12 +42,12 @@ extern "C"
 #include "npiet/npiet_utils.h"
 }
 
-RunController::RunController(): QObject( 0 ), mPrepared( false ), mStdOut( 0 ), mObserver( 0 ), mAbort( false ), mExecuting( false ), mDebugging( false ), mTimer(0)
+RunController::RunController(): QObject( 0 ), mPrepared( false ), mStdOut( 0 ), mObserver( 0 ), mAbort( false ), mExecuting( false ), mDebugging( false ), mTimer( 0 )
 {
 #ifndef Q_WS_WIN
-	mNotifier = 0;
+    mNotifier = 0;
 #else
-	mOutputTimer = 0;
+    mOutputTimer = 0;
 #endif
 }
 
@@ -65,22 +65,25 @@ RunController::~RunController()
 void RunController::slotThreadStarted()
 {
     mObserver = new NPietObserver( this );
-    connect( mObserver, SIGNAL( stepped( trace_step* ) ), this,SLOT( slotStepped(trace_step* ) ) );
+    connect( mObserver, SIGNAL( stepped( trace_step* ) ), this, SLOT( slotStepped( trace_step* ) ) );
     connect( mObserver, SIGNAL( actionChanged( trace_action* ) ), this, SLOT( slotAction( trace_action* ) ) );
 }
 
 
 bool RunController::initialize( const QImage &source )
 {
-	if( !mTimer )
-		mTimer = new QTimer(this);
-	if( !mOutputTimer)
-		mOutputTimer = new QTimer(this);
-	connect( mTimer, SIGNAL( timeout() ), this, SLOT( tick() ) );
-	connect( mOutputTimer, SIGNAL( timeout() ), this, SLOT( win32OutputTimeout() ) );
+    if ( !mTimer )
+        mTimer = new QTimer( this );
+    connect( mTimer, SIGNAL( timeout() ), this, SLOT( tick() ) );
+#ifdef Q_WS_WIN
+    if ( !mOutputTimer )
+        mOutputTimer = new QTimer( this );
+
+    connect( mOutputTimer, SIGNAL( timeout() ), this, SLOT( win32OutputTimeout() ) );
+#endif
     mSource = source;
     captureStdout();
-    if( prepare() ) {
+    if ( prepare() ) {
         piet_init();
         return true;
     }
@@ -101,9 +104,9 @@ void RunController::tick()
 //     if( mAbort ) {
 //         abort = true;
 //     }
-    if( !mAbort && piet_step() < 0 )
+    if ( !mAbort && piet_step() < 0 )
         mAbort = true;
-    if( mAbort ) {
+    if ( mAbort ) {
         mTimer->stop();
         finish();
         mAbort = false;
@@ -129,11 +132,11 @@ void RunController::abort()
 void RunController::stop()
 {
     qDebug() << "stop!";
-    if( mExecuting ) {
+    if ( mExecuting ) {
         mAbort = true;
         mPrepared = false;
         mWaitCond.wakeOne();
-    } else if( mDebugging ) {
+    } else if ( mDebugging ) {
         // TODO reset npiets internal state?
         finish();
         emit stopped();
@@ -163,23 +166,23 @@ void RunController::debugSource( const QImage& source )
     stop();
     mDebugging = true;
     mMutex.unlock();
-    if( !initialize( source ) )
+    if ( !initialize( source ) )
         abort();
     emit debugStarted();
 }
 
-void RunController::pixelChanged(int x, int y, QRgb color)
+void RunController::pixelChanged( int x, int y, QRgb color )
 {
-    if(mPrepared) {
+    if ( mPrepared ) {
         mSource.setPixel( x, y, color );
-        int col = ( ( qRed(color) * 256 + qGreen(color) ) * 256 ) + qBlue(color);
+        int col = (( qRed( color ) * 256 + qGreen( color ) ) * 256 ) + qBlue( color );
         int col_idx = get_color_idx( col );
         if ( col_idx < 0 ) {
             /* set to black or white: */
             col_idx = ( /*unknown_color*/1 == 0 ? c_black : c_white );
         }
         set_cell( x, y, col_idx );
-    }        
+    }
 }
 
 void RunController::finish()
@@ -190,7 +193,7 @@ void RunController::finish()
     mPrepared = false;
 
 #ifndef Q_WS_WIN
-	if ( mNotifier == 0 ) return;
+    if ( mNotifier == 0 ) return;
 
     std::cout.flush(); // flush standard output cout file descriptor
     ::fflush( NULL );  // flush all file buffers
@@ -208,12 +211,12 @@ void RunController::finish()
     ::close( mOrigFdCopy ); // close the copy as it's redundant now
     ::close( mPipeFd[0] );  // close the reading end of the pipe
 #else
-	win32OutputTimeout();
-	mOutputTimer->stop();
-	::SetStdHandle(STD_OUTPUT_HANDLE, mOldStdoutHandle);
-    ::CloseHandle(mPipeRead);
-    ::CloseHandle(mPipeWrite);
-    ::CloseHandle(mOldStdoutHandle);
+    win32OutputTimeout();
+    mOutputTimer->stop();
+    ::SetStdHandle( STD_OUTPUT_HANDLE, mOldStdoutHandle );
+    ::CloseHandle( mPipeRead );
+    ::CloseHandle( mPipeWrite );
+    ::CloseHandle( mOldStdoutHandle );
 #endif
 }
 
@@ -228,7 +231,7 @@ bool RunController::prepare()
             int r = qRed( lineptr[j] );
             int g = qGreen( lineptr[j] );
             int b = qBlue( lineptr[j] );
-            int col = ( ( r * 256 + g ) * 256 ) + b;
+            int col = (( r * 256 + g ) * 256 ) + b;
             int col_idx = get_color_idx( col );
             if ( col_idx < 0 ) {
                 /* set to black or white: */
@@ -243,19 +246,18 @@ bool RunController::prepare()
 
 void RunController::stdoutReadyRead()
 {
-	qDebug() << " READY READ!";
     emit newOutput( mStdOut->readAll() );
 }
 
 void RunController::slotAction( trace_action* act )
 {
-    if( mDebugging )
+    if ( mDebugging )
         emit actionChanged( act );
 }
 
 void RunController::slotStepped( trace_step* step )
 {
-if( mDebugging )
+    if ( mDebugging )
         emit stepped( step );
 }
 
@@ -275,11 +277,11 @@ int RunController::getInt()
     emit waitingForInt();
 //     qDebug() << "getInt()" << "waiting";
     bool timer_running = mTimer->isActive();
-    if( timer_running )
+    if ( timer_running )
         mTimer->stop();
     mWaitCond.wait( &mMutex );
     qDebug() << "getInt()" << "woke up!" << mInt;
-    if( timer_running )
+    if ( timer_running )
         mTimer->start();
     return mInt;
 }
@@ -300,31 +302,32 @@ void RunController::putInt( int i )
     mWaitCond.wakeOne();
 }
 
-void RunController::win32OutputTimeout() {
+void RunController::win32OutputTimeout()
+{
 #ifdef Q_WS_WIN
-	//qDebug() << "win32OutputTimeout ";
-	DWORD dwAvail = 0;
-	if (!::PeekNamedPipe(mPipeRead, NULL, 0, NULL,&dwAvail, NULL)) {
-		//qDebug() << "error";
-		return; // error
-	}
-	if (!dwAvail) {
-		//qDebug() << "no data avail";
-		return; // no data available
-	}
-	char szOutput[256];
-	DWORD dwRead = 0;
-	if (!::ReadFile(mPipeRead, szOutput, min(255, dwAvail),&dwRead, NULL) || !dwRead) {
-		//qDebug() << "child dead?";
-		return; // error, the child might ended
-	}
-	szOutput[dwRead] = 0;
-	QString out(szOutput);
-	if( out.length() > 0 ) {
-		emit newOutput( out );
-		qDebug()  << out;
-	}
-	
+    //qDebug() << "win32OutputTimeout ";
+    DWORD dwAvail = 0;
+    if ( !::PeekNamedPipe( mPipeRead, NULL, 0, NULL, &dwAvail, NULL ) ) {
+        //qDebug() << "error";
+        return; // error
+    }
+    if ( !dwAvail ) {
+        //qDebug() << "no data avail";
+        return; // no data available
+    }
+    char szOutput[256];
+    DWORD dwRead = 0;
+    if ( !::ReadFile( mPipeRead, szOutput, min( 255, dwAvail ), &dwRead, NULL ) || !dwRead ) {
+        //qDebug() << "child dead?";
+        return; // error, the child might ended
+    }
+    szOutput[dwRead] = 0;
+    QString out( szOutput );
+    if ( out.length() > 0 ) {
+        emit newOutput( out );
+        qDebug()  << out;
+    }
+
 #endif
 }
 
@@ -378,43 +381,43 @@ void RunController::captureStdout()
     mNotifier = new QSocketNotifier( mPipeFd[0], QSocketNotifier::Read );
     QObject::connect( mNotifier, SIGNAL( activated( int ) ), SLOT( stdoutReadyRead() ) );
 #else
-	 // save stdout
-	mOldStdoutHandle = ::GetStdHandle (STD_OUTPUT_HANDLE);
+    // save stdout
+    mOldStdoutHandle = ::GetStdHandle( STD_OUTPUT_HANDLE );
 
-	if (INVALID_HANDLE_VALUE == mOldStdoutHandle)
-		return;
+    if ( INVALID_HANDLE_VALUE == mOldStdoutHandle )
+        return;
 
-	if (0 == ::CreatePipe(&mPipeRead, &mPipeWrite, NULL, 0))
-		return;
+    if ( 0 == ::CreatePipe( &mPipeRead, &mPipeWrite, NULL, 0 ) )
+        return;
 
-	// redirect stdout, stdout now writes into the pipe
-	if (0 == ::SetStdHandle(STD_OUTPUT_HANDLE, mPipeWrite))
-		return;
+    // redirect stdout, stdout now writes into the pipe
+    if ( 0 == ::SetStdHandle( STD_OUTPUT_HANDLE, mPipeWrite ) )
+        return;
 
-	// new stdout handle
-	HANDLE lStdHandle = ::GetStdHandle(STD_OUTPUT_HANDLE);
+    // new stdout handle
+    HANDLE lStdHandle = ::GetStdHandle( STD_OUTPUT_HANDLE );
 
-	if (INVALID_HANDLE_VALUE == lStdHandle)
-		return;
+    if ( INVALID_HANDLE_VALUE == lStdHandle )
+        return;
 
-	int hConHandle = ::_open_osfhandle((intptr_t)lStdHandle, _O_TEXT);
-	FILE *fp = ::_fdopen(hConHandle, "w");
+    int hConHandle = ::_open_osfhandle(( intptr_t )lStdHandle, _O_TEXT );
+    FILE *fp = ::_fdopen( hConHandle, "w" );
 
-	if (!fp)
-		return;
+    if ( !fp )
+        return;
 
-	// replace stdout with pipe file handle
-	*stdout = *fp;
+    // replace stdout with pipe file handle
+    *stdout = *fp;
 
-	// unbuffered stdout
-	::setvbuf(stdout, NULL, _IONBF, 0);
+    // unbuffered stdout
+    ::setvbuf( stdout, NULL, _IONBF, 0 );
 
-	hConHandle = ::_open_osfhandle((intptr_t)mPipeRead, _O_TEXT);
+    hConHandle = ::_open_osfhandle(( intptr_t )mPipeRead, _O_TEXT );
 
-	if (-1 == hConHandle)
-		return;
+    if ( -1 == hConHandle )
+        return;
 
-	mOutputTimer->start(50);
+    mOutputTimer->start( 50 );
 #endif
 }
 #include "RunController.moc"
