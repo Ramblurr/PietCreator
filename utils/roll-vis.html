@@ -1,0 +1,334 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<head>
+<!--- This is very, very ugly code written by a JS noob. --->
+<title>
+Piet 'roll' command visualizer
+</title>
+<style type="text/css">
+h1 {
+        font-family: 'Arvo', Georgia, Times, serif;
+        font-size: 49px;
+}
+
+h2 {
+        font-family: 'Arvo', Georgia, Times, serif;
+        font-size: 29px;
+}
+
+h3 {
+        font-family: 'Arvo', Georgia, Times, serif;
+        font-size: 19px;
+}
+p, input, textarea,ol {
+        font-family: 'PT Sans', Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        line-height: 25px;
+}
+.box p, .box2 p {
+
+    font-size: 25px;
+    padding:0;
+    margin: 0;
+    display: table-cell; vertical-align: middle; text-align: center;
+}
+
+#error {
+    color: red;
+}
+.box2 {
+position:absolute;
+display:table;
+width: 50px;
+height: 50px;
+padding: 2px;
+margin: 2px;
+text-align: center;
+font-size: 30px;
+}
+.box {
+position:absolute;
+display:table;
+background: #ccc;
+border: 1px solid black;
+width: 50px;
+height: 50px;
+padding: 2px;
+margin: 2px;
+text-align: center;
+font-size: 30px;
+box-shadow: 3px 3px 5px #888;
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    right bottom,
+    color-stop(0.02, rgb(255,255,255)),
+    color-stop(0.63, rgb(204,204,204)) );
+}
+body {
+margin:0;
+    padding:0;
+    z-index:0;
+}
+#header{
+width: 500px;
+}
+#instructions
+{
+float: right;
+}
+#inputcontainer
+{float: left;
+}
+#container{
+position: relative;
+float: right;
+}
+#labels {
+position: relative;
+float: left;
+}
+#stack {
+position: relative;
+width: 50px;
+}
+#footer {
+    bottom:0;
+    height:55px;
+    padding:5px;
+    position:fixed;
+    width:100%;
+    z-index:1000;
+}
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.6/dojo/dojo.xd.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+dojo.require("dojo.fx");
+
+// holds the stack values
+the_stack = [];
+// holds the dom nodes 
+the_stack_html = [];
+
+// creates the animation for a positive roll
+function splice_anim(prev_stack, depth_index) {
+    var tmp = prev_stack;
+    var top = tmp[tmp.length-1];
+    var anims = [];
+    console.log("rolling: depth=" + depth_index + " top=" + top.innerHTML);
+    for(var i=depth_index; i <= tmp.length-2; ++i) {
+        var new_pos = ((tmp.length-1)*55) - (55*(i+1));
+        console.log(" new_pos: " + new_pos );
+        anims.push(dojo.fx.slideTo({
+            node: tmp[i],
+            onPlay: function() { dojo.style(tmp[i], "z-index", i+1); },
+            onEnd: function() { dojo.style(tmp[i], "z-index", 1); },
+            top: new_pos,
+            duration:1000
+        }));
+        
+    }
+    var new_pos = (tmp.length-1)*55 -55*depth_index;
+    anims.push(
+        dojo.fx.combine([
+            dojo.fx.slideTo({
+                node: top,
+                top: new_pos,
+                duration:1000,
+                onPlay: function() { dojo.style(top, "z-index", 999); },
+                onEnd: function() { dojo.style(top, "z-index", 1); }
+            }),
+            dojo.animateProperty({
+                node: top,
+                duration:2500,
+                properties: {
+                    color: {
+                        start: "red",
+                        end: "black"
+                    }
+                }
+        })])
+    );
+    for(var i=tmp.length-2;i >= depth_index; --i) {
+        var new_pos = dojo.coords(tmp[i+1]).t;
+        tmp[i+1] = tmp[i];
+    }
+    // last case - special
+    tmp[depth_index] = top;
+
+    var anim =  dojo.fx.combine(anims)
+    return { stack: tmp, animation: anim };
+}
+
+// creates the animation for a negative roll
+// lots of copy+pasted code here.. too lazy to consolidate it
+function splice_anim_neg(prev_stack, depth_index) {
+    var tmp = prev_stack;
+    var top = tmp[depth_index];
+    var anims = [];
+    console.log("rolling: depth=" + depth_index + " top=" + top.innerHTML);
+    for(var i=depth_index; i <= tmp.length-1; ++i) {
+        var new_pos = ((tmp.length-1)*55) - (55*(i-1));
+        console.log(" new_pos: " + new_pos );
+        anims.push(dojo.fx.slideTo({
+            node: tmp[i],
+            top: new_pos,
+            duration:1000,
+            onPlay: function() { dojo.style(tmp[i], "z-index", i-1); },
+            onEnd: function() { dojo.style(tmp[i], "z-index", 1); },
+        }));
+        tmp[i] = tmp[i+1];
+    }
+    var new_pos = (tmp.length-1)*55 -55*(tmp.length-1);
+    anims.push(
+        dojo.fx.combine([
+            dojo.fx.slideTo({
+                node: top,
+                top: new_pos,
+                duration:1000,
+                onPlay: function() { dojo.style(top, "z-index", 999); },
+                onEnd: function() { dojo.style(top, "z-index", 1); },
+            }),
+            dojo.animateProperty({
+                node: top,
+                duration:2500,
+                properties: {
+                    color: {
+                        start: "red",
+                        end: "black"
+                    }
+                }
+        })])
+    );
+    // last case - special
+    tmp[tmp.length-1] = top;
+
+    var anim =  dojo.fx.combine(anims)
+    return { stack: tmp, animation: anim };
+}
+
+// show an error
+function do_error(msg) {
+    error = dojo.byId("error");
+    dojo.empty(error);
+    dojo.create("p", { innerHTML: msg }, dojo.byId("error"));
+}
+
+
+// perform the roll
+// original code from QuickPiet
+//   https://github.com/benjaminplee/QuickPiet
+// Thanks Benjamin!
+function roll(stack, depth, turns) {
+
+    if( stack.length < 2 ) {
+        do_error("Stack must have at least 2 elements");
+        return;
+    } else if( depth < 1 ) {
+        do_error("'depth' must be at least 1");
+        return;
+    } else if( stack.length < depth ) {
+        do_error("Stack must have at least 'depth' elements");
+        return;
+    }
+    do_error("");
+
+    var depth_index = stack.length - depth;
+    var animations = [];
+    var prev_stack = the_stack_html;
+    if(turns >= 0) {
+        for(var turn = 0; turn < turns; turn++) {
+            stack.splice(depth_index, 0, stack.pop());
+            var new_anim = splice_anim(prev_stack, depth_index);
+            animations.push( new_anim.animation );
+            prev_stack = new_anim.stack;
+        }
+        dojo.fx.chain(animations).play()
+    } else {
+        turns = turns * -1
+        for(var turn = 0; turn < turns; turn++) {
+            stack.push(stack.splice(depth_index, 1)[0]);
+            var new_anim = splice_anim_neg(prev_stack, depth_index);
+            animations.push( new_anim.animation );
+            prev_stack = new_anim.stack;
+        }
+        dojo.fx.chain(animations).play()
+    }
+    return stack;
+}
+
+// update the dom nodes for the stack
+function set_stack_html() {
+    dojo.empty(dojo.byId("container"));
+    dojo.empty(dojo.byId("labels"));
+    the_stack_html = [];
+    var i = 0;
+    dojo.forEach(the_stack, function(data){
+        var t = ((the_stack.length-1)*55) - (i *55);
+        var div = dojo.create("div", { style: "top:"+t+"px", className: "box"}, dojo.byId("container"), "first");
+        dojo.create("p", { innerHTML: data }, div);
+        the_stack_html.push(div);
+
+        var div1 = dojo.create("div", { style: "top:"+t+"px", className: "box2"}, dojo.byId("labels"), "first");
+        dojo.create("p", { innerHTML: i + ":" }, div1);
+        i++;
+    });
+}
+
+function set_stack_from_input(e) {
+    input = dojo.query("#input");
+    the_stack = input.attr("value")[0].split(" ");
+    set_stack_html();
+}
+
+function do_roll(e) {
+    depth = parseInt(dojo.query("#depth").attr("value")[0]);
+    turns = parseInt(dojo.query("#turns").attr("value")[0]);
+    roll(the_stack, depth, turns);
+}
+
+dojo.ready(function(){
+    dojo.connect(dojo.byId("roll"), "onclick", do_roll);
+    dojo.connect(dojo.byId("set"), "onclick", set_stack_from_input);
+
+});
+</script>
+<link href='http://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'> 
+</head>
+<body>
+<div id="header">
+<h1> <a href="http://www.dangermouse.net/esoteric/piet.html" title="Piet">Piet</a> '<tt>roll</tt>' visualizer</h1>
+<div id="instructions">
+<p>
+Instructions:</p>
+<ol>
+<li>Input stack data (space separated)</li>
+<li>Input roll depth</li>
+<li>Input number of turns</li>
+<li>Click "set stack"</li>
+<li>Click "roll" </li>
+</ol>
+<div id="inputcontainer">
+<p>
+Input Stack: <input name="input" id="input" value="1 2 3 4 5 6" /> <br />
+Roll Depth: <input name="depth" id="depth" value="3" /> <br />
+Num Turns: <input name="turns" id="turns" value="1" /> <br />
+<input type="button" id="set" name="set" value="set stack" /> <input type="button" id="roll" name="roll" value="roll" />
+</p>
+</div>
+</div>
+<div id="error">
+</div>
+<h3>Top of Stack</h3>
+<div id="stack">
+<div id="labels">
+</div>
+<div id="container">
+</div>
+</div>
+<div id="footer">
+<p>By <a href="http://www.binaryelysium.com">Binary Elysium</a> | Last Updated: <em>24 Apr 2011</em></p>
+</div>
+</body>
+</html>
