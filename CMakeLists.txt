@@ -42,19 +42,11 @@ qt4_automoc(${pietcreator_SRCS})
 
 qt4_wrap_ui( pietcreator_SRCS MainWindow.ui DebugWidget.ui )
 
-
-
-if(MINGW)
-   ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/piet_ico.obj
-                        COMMAND /opt/mingw32/bin/i586-pc-mingw32-windres
-                            -I${CMAKE_CURRENT_SOURCE_DIR}
-                            -o ${CMAKE_CURRENT_BINARY_DIR}/piet_ico.obj
-                            -i${CMAKE_CURRENT_SOURCE_DIR}/pietcreator.rc
-                        )
-    set(snass_SRCS ${snass_SRCS} sn_ico.obj)
-endif(MINGW)
-
+IF(WIN32) 
+add_executable(pietcreator ${pietcreator_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/pietcreator.rc)
+else()
 add_executable(pietcreator ${pietcreator_SRCS})
+endif(WIN32)
 
 target_link_libraries( pietcreator
                        ${QT_QTCORE_LIBRARY}
