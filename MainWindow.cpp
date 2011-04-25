@@ -208,12 +208,14 @@ void MainWindow::setupToolbar()
     connect( this, SIGNAL( validImageDocument( bool ) ), headersAct, SLOT( setEnabled( bool ) ) );
     viewMenu->addAction( headersAct );
     QAction* zoomInAct = ui->mToolBar->addAction( QIcon::fromTheme( "zoom-in" ), tr( "Zoom &In" ), this, SLOT( slotActionZoom() ) );
+    zoomInAct->setShortcuts(QKeySequence::ZoomIn);
     zoomInAct->setDisabled( true );
     zoomInAct->setData( 1 );
     viewMenu->addAction( zoomInAct );
     connect( this, SIGNAL( validImageDocument( bool ) ), zoomInAct, SLOT( setEnabled( bool ) ) );
     QAction* zoomOutAct = ui->mToolBar->addAction( QIcon::fromTheme( "zoom-out" ), tr( "Zoom &Out" ), this, SLOT( slotActionZoom() ) );
     zoomOutAct->setDisabled( true );
+    zoomOutAct->setShortcuts(QKeySequence::ZoomOut);
     zoomOutAct->setData( -1 );
     viewMenu->addAction( zoomOutAct );
     connect( this, SIGNAL( validImageDocument( bool ) ), zoomOutAct, SLOT( setEnabled( bool ) ) );
