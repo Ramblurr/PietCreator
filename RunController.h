@@ -27,6 +27,12 @@
 #include <QWaitCondition>
 #include <QTimer>
 
+#ifdef Q_WS_WIN
+#include <io.h>
+#include <fcntl.h>
+#include <windows.h>
+#endif
+
 class QSocketNotifier;
 class NPietObserver;
 
@@ -66,6 +72,7 @@ public slots:
     void abort();
 private slots:
     void stdoutReadyRead();
+	void win32OutputTimeout();
 
     bool initialize( const QImage &source );
     void execute();
@@ -85,10 +92,16 @@ private:
 
     //Capturing program output
     QTextStream* mStdOut;
+#ifndef Q_WS_WIN
     QSocketNotifier* mNotifier;
     int mPipeFd[2]; /**< [0] is read end, [1] is write end */
     int mOrigFd;
     int mOrigFdCopy;
+#else
+	HANDLE mPipeRead;
+	HANDLE mPipeWrite;
+	HANDLE mOldStdoutHandle;
+#endif
 
     // Reacting to notifications from npiet
     NPietObserver* mObserver;
@@ -102,7 +115,8 @@ private:
     bool mAbort;
     bool mExecuting;
     bool mDebugging;
-    QTimer mTimer;
+    QTimer* mTimer;
+	QTimer* mOutputTimer;
 
     char mChar;
     int mInt;
