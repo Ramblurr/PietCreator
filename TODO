@@ -1,0 +1,18 @@
+TODO
+----
+
+Oh so much...
+
+* Redo
+* Breakpoints
+* Selection and movement of blocks
+* Sub programs (like layers in a normal graphics editor)
+* Given a program refactor it to change its colors but not its functionality
+* Per-codel comments
+* Mouse over information (command, value, etc)
+* Given several subprograms automatically connect them
+
+TODOs related to Piet but not Piet Creator specifically:
+* Implement a "standard library" of programs
+    * and, or, xor, complement, read string, out string, reverse string, etc.
+* Create roll visualizer -- DONE -- http://binaryelysium.com/code/roll-vis.html
