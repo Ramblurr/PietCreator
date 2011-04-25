@@ -205,7 +205,6 @@ void MainWindow::setupToolbar()
 //     viewMenu->addAction( gridAct );
     QAction* headersAct = ui->mToolBar->addAction( QIcon::fromTheme( "view-form-table" ), tr( "Toggle &Headers" ), this, SLOT( slotActionToggleHeaders() ) );
     headersAct->setDisabled( true );
-    headersAct->setShortcut( QKeySequence::New );
     connect( this, SIGNAL( validImageDocument( bool ) ), headersAct, SLOT( setEnabled( bool ) ) );
     viewMenu->addAction( headersAct );
     QAction* zoomInAct = ui->mToolBar->addAction( QIcon::fromTheme( "zoom-in" ), tr( "Zoom &In" ), this, SLOT( slotActionZoom() ) );
