@@ -20,6 +20,8 @@
 #ifndef NPIET_H
 #define NPIET_H
 
+#define BUF_LEN 300
+
 /*
  * color and hue values:
  *
