@@ -1111,9 +1111,9 @@ read_png (char *fname)
 
   row_pointers = png_get_rows (png_ptr, info_ptr);
 
-  width = info_ptr->width;
-  height = info_ptr->height;
-  ncol = 2 << (info_ptr->bit_depth - 1);
+  width = png_get_image_width(png_ptr, info_ptr);
+  height = png_get_image_height(png_ptr, info_ptr);
+  ncol = 2 << (png_get_bit_depth(png_ptr, info_ptr) - 1);
 
   vprintf ("info: got %d x %d pixel with %d cols\n", width, height, ncol);
 
