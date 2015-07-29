@@ -404,11 +404,10 @@ void MainWindow::slotActionToggleHeaders()
         ui->mView->verticalHeader()->show();
         ui->mView->verticalHeader()->setResizeMode( QHeaderView::Fixed );
         ui->mView->horizontalHeader()->setResizeMode( QHeaderView::Fixed );
-
         int rows = mModel->rowCount();
         if ( rows == 0 )
             return;
-        int num_digits;
+        int num_digits = 0;
         while ( rows > 0 ) {
             ++num_digits;
             rows /= 10;

@@ -59,7 +59,7 @@ void PixelDelegate::paint( QPainter* painter, const QStyleOptionViewItem& option
     QStyleOptionViewItemV4 opt = option;
     initStyleOption(&opt, index);
     opt.text = "";
-    QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter);
+    //QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter);
 }
 
 QSize PixelDelegate::sizeHint( const QStyleOptionViewItem & /* option */,

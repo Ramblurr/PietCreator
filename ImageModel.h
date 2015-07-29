@@ -53,7 +53,7 @@ public:
     /**
      * Insert the image at the specified x,y coord
      */
-    void insertImage( const QImage &image, int x, int y);
+    void insertImage( const QImage &image, int x, int y, bool force = false);
 
     void scaleImage( const QSize & size );
     QSize imageSize() const;

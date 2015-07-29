@@ -32,7 +32,7 @@ void CommandDelegate::paint( QPainter* painter, const QStyleOptionViewItem& opti
 {
     Q_ASSERT( index.isValid() );
     QBrush backBrush = index.data( Qt::BackgroundRole ).value<QColor>();
-    QColor foreColor = option.palette.color( QPalette::Text );
+    //QColor foreColor = option.palette.color( QPalette::Text );
     painter->save();
     QStyleOptionViewItemV4 opt( option );
     opt.displayAlignment = Qt::AlignHCenter;
@@ -40,6 +40,10 @@ void CommandDelegate::paint( QPainter* painter, const QStyleOptionViewItem& opti
     const QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
     style->drawPrimitive( QStyle::PE_PanelItemViewItem, &opt, painter, 0 );
 
+    QColor foreColor(0,0,0);
+    if (backBrush.color().red() + backBrush.color().green() < 250) {
+        foreColor.setRgb(255,255,255);
+    }
     QString label = index.data().toString();
     painter->setPen( foreColor );
     painter->drawText( opt.rect, Qt::AlignCenter, label );

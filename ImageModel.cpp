@@ -124,13 +124,13 @@ QImage ImageModel::image() const
     return mImage;
 }
 
-void ImageModel::insertImage(const QImage& _image, int x, int y)
+void ImageModel::insertImage(const QImage& _image, int x, int y, bool force)
 {
     QImage newImage = autoScale(_image, -1);
     bool too_wide = ( x + newImage.size().width() ) >  imageSize().width();
-    bool too_tall = ( y + newImage.size().width() ) >  imageSize().height();
+    bool too_tall = ( y + newImage.size().height() ) >  imageSize().height();
     bool expand = false;
-    if( too_tall || too_wide ) {
+    if( !force && (too_tall || too_wide) ) {
         int but = QMessageBox::question( 0,
                                         tr( "Insert Image" ),
                                         tr( "This image will not fit inside the current source. Expand the current source?" ),
@@ -301,7 +301,7 @@ void ImageModel::scaleImage( const QSize& size )
     newImage.fill( QColor( Qt::white ).rgb() );
     QImage oldImage(mImage);
     mImage = newImage;
-    insertImage(oldImage, 0,0);
+    insertImage(oldImage, 0,0, true);
 }
 
 QSize ImageModel::imageSize() const
