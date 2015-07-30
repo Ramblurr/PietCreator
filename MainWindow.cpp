@@ -526,8 +526,8 @@ bool MainWindow::promptSave()
                                         QMessageBox::Discard  | QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save );
         switch ( but ) {
         case QMessageBox::Save:
-            slotActionSaveAs();
-            return true;
+            slotActionSave();
+            return !mModified;
         case QMessageBox::Cancel:
             return false;
         case QMessageBox::Discard:
