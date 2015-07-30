@@ -137,13 +137,15 @@ static inline int secondToLastIndex( int size )
 }
 
 
-Command ViewMonitor::takeCommand()
+void ViewMonitor::takeCommand()
 {
+    if (mStack.size()<2)
+        return;
     Command c = mStack.pop();
     emit currentCommandChanged( mStack.top(), mStack.at( secondToLastIndex( mStack.size() ) ) );
     if( mStack.last().color != c.color )
-        emit currentColorChanged( c.color );
-    return c;
+        emit currentColorChanged( mStack.last().color );
+    return;
 }
 
 void ViewMonitor::setCurrentCommand( const Command& command )
