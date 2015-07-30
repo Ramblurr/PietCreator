@@ -99,7 +99,7 @@ KColorCells::KColorCells( QWidget *parent, int rows, int cols )
     verticalHeader()->hide();
     horizontalHeader()->hide();
 
-    d->selected = 0;
+    d->selected = -1;
     d->inMouse = false;
 
     // Drag'n'Drop
@@ -122,7 +122,9 @@ KColorCells::~KColorCells()
 
 QColor KColorCells::color( int index ) const
 {
-    QTableWidgetItem * tmpItem = item( index / columnCount(), index % columnCount() );
+    QTableWidgetItem * tmpItem = 0;
+    if (index >= 0 && columnCount() > 0)
+        tmpItem = item( index / columnCount(), index % columnCount() );
 
     if ( tmpItem != 0 )
         return tmpItem->data( Qt::BackgroundRole ).value<QColor>();
@@ -291,17 +293,21 @@ void KColorCells::dropEvent( QDropEvent *event )
     }
 }
 
-void KColorCells::selectionChanged(const QItemSelection & selected, const QItemSelection & deselected) {
-QModelIndexList indexList = selected.indexes();
-foreach (QModelIndex index, indexList) {
-    int row = index.row();
-    int column = index.column();
-    int cell = row * columnCount() + column;
-    emit colorSelected( cell , color( cell ) );
-    break;
-}
+void KColorCells::selectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
+{
+    QModelIndexList indexList = selected.indexes();
+    d->selected = -1;
+    foreach (QModelIndex index, indexList)
+    {
+        int row = index.row();
+        int column = index.column();
+        int cell = row * columnCount() + column;
+        d->selected = cell;
+        emit colorSelected( cell , color( cell ) );
+        break;
+    }
 
-    QTableView::selectionChanged(selected, deselected);
+    QTableView::selectionChanged( selected, deselected );
 }
 
 void KColorCells::mouseReleaseEvent( QMouseEvent *e )

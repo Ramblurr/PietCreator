@@ -67,7 +67,7 @@ Q_SIGNALS:
 
 public slots:
   /** Sets the currently selected cell to @p index */
-  void setSelected( int index );  
+  void setSelected( int index );
 
 protected:
   // the three methods below are used to ensure equal column widths and row heights

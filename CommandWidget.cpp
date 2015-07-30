@@ -113,6 +113,8 @@ CommandWidget::CommandWidget( ViewMonitor* monitor, QWidget* parent ): QWidget( 
     connect( mMonitor, SIGNAL( currentCommandChanged( Command, Command ) ), mCommandsView, SLOT( reset() ) );
     connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), mCommandsView, SLOT( reset() ) );
     connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), mPrimaryPatch, SLOT( setColor( QColor ) ) );
+    connect( mMonitor, SIGNAL( currentCommandChanged( Command, Command ) ), mPalette, SLOT( clearSelection( ) ) );
+    connect( mMonitor, SIGNAL( currentCommandChanged( Command, Command ) ), mBWPalette, SLOT( clearSelection( ) ) );
     connect( mMonitor, SIGNAL( currentCommandChanged( Command, Command ) ), this, SLOT( slotCurrentCommandChanged( Command, Command ) ) );
     connect( mCommandsView, SIGNAL( clicked( QModelIndex ) ), this, SLOT( slotCommandClicked( QModelIndex ) ) );
     connect( mCommandsView->horizontalHeader(), SIGNAL( geometriesChanged() ), this, SLOT( slotSetViewWidth() ) );
