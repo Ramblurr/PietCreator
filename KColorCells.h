@@ -83,6 +83,7 @@ protected:
   virtual void dragMoveEvent( QDragMoveEvent * );
   virtual void dropEvent( QDropEvent *);
   virtual void mouseDoubleClickEvent( QMouseEvent * );
+  virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
 
   int positionToCell(const QPoint &pos, bool ignoreBorders=false) const;
 

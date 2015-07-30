@@ -291,32 +291,22 @@ void KColorCells::dropEvent( QDropEvent *event )
     }
 }
 
+void KColorCells::selectionChanged(const QItemSelection & selected, const QItemSelection & deselected) {
+QModelIndexList indexList = selected.indexes();
+foreach (QModelIndex index, indexList) {
+    int row = index.row();
+    int column = index.column();
+    int cell = row * columnCount() + column;
+    emit colorSelected( cell , color( cell ) );
+    break;
+}
+
+    QTableView::selectionChanged(selected, deselected);
+}
+
 void KColorCells::mouseReleaseEvent( QMouseEvent *e )
 {
-    if ( selectionMode() != QAbstractItemView::NoSelection ) {
-        int cell = positionToCell( d->mousePos );
-        int currentCell = positionToCell( e->pos() );
-
-        // If we release the mouse in another cell and we don't have
-        // a drag we should ignore this event.
-        if ( currentCell != cell )
-            cell = -1;
-
-        if ( ( cell != -1 ) && ( d->selected != cell ) ) {
-            d->selected = cell;
-
-            const int newRow = cell / columnCount();
-            const int newColumn = cell % columnCount();
-
-            clearSelection(); // we do not want old violet selected cells
-
-            item( newRow, newColumn )->setSelected( true );
-        }
-
-        d->inMouse = false;
-        if ( cell != -1 )
-            emit colorSelected( cell , color( cell ) );
-    }
+    d->inMouse = false;
 
     QTableWidget::mouseReleaseEvent( e );
 }

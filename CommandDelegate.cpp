@@ -21,6 +21,8 @@
 
 #include "ViewMonitor.h"
 
+#include "ColorUtils.h"
+
 #include <QtGui>
 
 CommandDelegate::CommandDelegate( ViewMonitor* monitor, QObject* parent ): QStyledItemDelegate( parent ), mMonitor( monitor )
@@ -41,7 +43,7 @@ void CommandDelegate::paint( QPainter* painter, const QStyleOptionViewItem& opti
     style->drawPrimitive( QStyle::PE_PanelItemViewItem, &opt, painter, 0 );
 
     QColor foreColor(0,0,0);
-    if (backBrush.color().red() + backBrush.color().green() < 250) {
+    if ( ColorUtils::contrastRatio( foreColor, backBrush.color() ) < 5 ) {
         foreColor.setRgb(255,255,255);
     }
     QString label = index.data().toString();

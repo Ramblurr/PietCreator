@@ -107,7 +107,9 @@ CommandWidget::CommandWidget( ViewMonitor* monitor, QWidget* parent ): QWidget( 
     mainLayout->addStretch();
 
     connect( mPalette, SIGNAL( colorSelected( int, QColor ) ), mMonitor, SLOT( setCurrentColor( int, QColor ) ) );
+    connect( mPalette, SIGNAL( colorSelected( int, QColor ) ), mBWPalette, SLOT( clearSelection( ) ) );
     connect( mBWPalette, SIGNAL( colorSelected( int, QColor ) ), mMonitor, SLOT( setCurrentColor( int, QColor ) ) );
+    connect( mBWPalette, SIGNAL( colorSelected( int, QColor ) ), mPalette, SLOT( clearSelection( ) ) );
     connect( mMonitor, SIGNAL( currentCommandChanged( Command, Command ) ), mCommandsView, SLOT( reset() ) );
     connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), mCommandsView, SLOT( reset() ) );
     connect( mMonitor, SIGNAL( currentColorChanged( QColor ) ), mPrimaryPatch, SLOT( setColor( QColor ) ) );
