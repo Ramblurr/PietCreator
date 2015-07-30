@@ -279,7 +279,37 @@ bool MainWindow::eventFilter( QObject* obj, QEvent* event )
             mWaitingForCoordSelection = false;
             int x = i.column();
             int y = i.row();
-            mUndoHandler->insertImage(x, y, mInsertImage);
+            
+            
+            QImage newImage = mModel->autoScale(mInsertImage, -1);
+            QSize after = mModel->imageSize();
+            bool too_wide = ( x + newImage.size().width() ) >  mModel->imageSize().width();
+            bool too_tall = ( y + newImage.size().height() ) >  mModel->imageSize().height();
+            bool expand = false;
+            if( too_tall || too_wide ) {
+                int but = QMessageBox::question( 0,
+                                                tr( "Insert Image" ),
+                                                tr( "This image will not fit inside the current source. Expand the current source?" ),
+                                                QMessageBox::Yes | QMessageBox::No  | QMessageBox::Cancel, QMessageBox::Yes );
+                if ( but == QMessageBox::Cancel ) {
+                    return true;
+                } else {
+                    expand = (but == QMessageBox::Yes); // we do want to expand if they click yes
+                }
+            }
+            if( expand ) {
+                int new_width = mModel->imageSize().width();
+                int new_height = mModel->imageSize().height();
+                if( too_wide ) {
+                    new_width = x + newImage.size().width();
+                }
+                if( too_tall ) {
+                    new_height = y + newImage.size().height();
+                }
+                after = QSize( new_width, new_height );
+            }
+            
+            mUndoHandler->insertImage(x, y, newImage, after);
             mStatusLabel->clear();
             return true;
         }

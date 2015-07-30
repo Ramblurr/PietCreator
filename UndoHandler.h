@@ -14,7 +14,7 @@ public:
     UndoHandler(QUndoStack * undostack, ImageModel* model);
 
     void createEditPixel(int x, int y, QColor new_color, bool dragging = false);
-    void insertImage(int x, int y, QImage imageToInsert);
+    void insertImage(int x, int y, QImage imageToInsert, QSize scaleAfter);
     void scaleImage(QSize newSize);
 
 private:
