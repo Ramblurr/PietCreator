@@ -184,6 +184,12 @@ void MainWindow::setupToolbar()
     undoAction->setShortcuts(QKeySequence::Undo);
     editMenu->addAction( undoAction );
     ui->mToolBar->addAction(undoAction);
+    
+    QAction* redoAction = mUndoStack->createRedoAction(this, tr("&Redo"));
+    redoAction->setIcon(QIcon::fromTheme( "edit-redo" ));
+    redoAction->setShortcuts(QKeySequence::Redo);
+    editMenu->addAction( redoAction );
+    ui->mToolBar->addAction(redoAction);
 
     QAction* resizeAct = ui->mToolBar->addAction( QIcon::fromTheme( "transform-scale" ), tr( "&Resize Image" ), this, SLOT( slotActionResize() ) );
     resizeAct->setDisabled( true );
@@ -302,13 +308,15 @@ void MainWindow::slotActionOpen()
                         QDesktopServices::storageLocation( QDesktopServices::HomeLocation ),
                         tr( "Images (*.png *.bmp *.ppm *.gif)" ) );
     QImage image( file_name );
-    if ( !image.isNull() )
+    if ( !image.isNull() ) {
         mModel->setImage( image );
 
-    setWindowTitle( QString( "Piet Creator - %1 [*]" ).arg( file_name ) );
-    setModified( false );
-    mCurrentFile = file_name;
-    emit validImageDocument( true );
+        setWindowTitle( QString( "Piet Creator - %1 [*]" ).arg( file_name ) );
+        setModified( false );
+        mCurrentFile = file_name;
+        mUndoStack->clear();
+        emit validImageDocument( true );
+    }
 }
 
 void MainWindow::slotActionSaveAs()
@@ -375,6 +383,7 @@ void MainWindow::slotActionNew()
     setWindowTitle( "Piet Creator - new source [*]" );
     setModified( false );
     mCurrentFile.clear();
+    mUndoStack->clear();
     emit validImageDocument( true );
 }
 
