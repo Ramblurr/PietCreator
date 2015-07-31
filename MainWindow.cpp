@@ -138,6 +138,7 @@ MainWindow::MainWindow( QWidget *parent ) :
 
     setupToolbar();
     ui->dockWidget_2->hide();
+    slotActionNew();
 }
 
 MainWindow::~MainWindow()
@@ -404,6 +405,14 @@ void MainWindow::slotActionSave()
     }
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (promptSave(true)) {
+        event->accept();
+    } else {
+        event->ignore();
+    }
+}
 
 void MainWindow::slotActionNew()
 {
@@ -517,13 +526,21 @@ void MainWindow::slotImageEdited()
         setModified( true );
 }
 
-bool MainWindow::promptSave()
+bool MainWindow::promptSave(bool close)
 {
     if ( mModified ) {
-        int but = QMessageBox::warning( this,
-                                        tr( "Modifed" ),
-                                        tr( "The current source image has been modified. Opening a new image will discard the current changes." ),
-                                        QMessageBox::Discard  | QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save );
+        int but;
+        if (close) {
+            but = QMessageBox::warning( this,
+                                            tr( "Modifed" ),
+                                            tr( "The current source image has been modified. Closing PietCreator will discard the current changes." ),
+                                            QMessageBox::Discard  | QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save );
+        }else{
+            but = QMessageBox::warning( this,
+                                            tr( "Modifed" ),
+                                            tr( "The current source image has been modified. Opening a new image will discard the current changes." ),
+                                            QMessageBox::Discard  | QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save );
+        }
         switch ( but ) {
         case QMessageBox::Save:
             slotActionSave();
