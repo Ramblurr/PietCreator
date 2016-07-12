@@ -1,7 +1,7 @@
 Piet Creator
 -------------------------------------------------------------------------------
 
-[![Build Status](https://travis-ci.org/richelbilderbeek/PietCreator.svg?branch=master)](https://travis-ci.org/richelbilderbeek/PietCreator)
+[![Build Status](https://travis-ci.org/Ramblurr/PietCreator.svg?branch=master)](https://travis-ci.org/Ramblurr/PietCreator)
 
 Piet Creator is a cross platform GUI IDE for the Piet esoteric programming
 language. It includes a graphical editor, embedded interpreter, and integrated
