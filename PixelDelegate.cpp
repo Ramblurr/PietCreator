@@ -56,10 +56,12 @@ void PixelDelegate::paint( QPainter* painter, const QStyleOptionViewItem& option
     painter->drawRect( shortRect );
     painter->restore();
 
-    QStyleOptionViewItemV4 opt = option;
+    // This seems to break using QT 4.8.7, it draws over everything this method has 
+    // just done
+    /*QStyleOptionViewItemV4 opt = option;
     initStyleOption(&opt, index);
     opt.text = "";
-    QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter);
+    QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter);*/
 }
 
 QSize PixelDelegate::sizeHint( const QStyleOptionViewItem & /* option */,
