@@ -1,0 +1,9 @@
+sudo: true
+language: cpp
+compiler: gcc
+
+install: 
+  - sudo ./install_dependencies.sh
+
+script: 
+  - ./build.sh

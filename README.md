@@ -1,6 +1,8 @@
 Piet Creator
 -------------------------------------------------------------------------------
 
+[![Build Status](https://travis-ci.org/Ramblurr/PietCreator.svg?branch=master)](https://travis-ci.org/Ramblurr/PietCreator)
+
 Piet Creator is a cross platform GUI IDE for the Piet esoteric programming
 language. It includes a graphical editor, embedded interpreter, and integrated
 debugger.
@@ -47,13 +49,13 @@ $ ./pietcreator
 
 On Windows (With VS 2008)
 
-Create the build directory as shown above
-Run the same cmake command "cmake ../" or "cmake path_to_sources"
-Open the resulting .sln in Visual Studio
-Execute the pietcreator.exe binary in Debug/
+* Create the build directory as shown above
+* Run the same cmake command "cmake ../" or "cmake path_to_sources"
+* Open the resulting .sln in Visual Studio
+* Execute the pietcreator.exe binary in Debug/
 
 On Windows (With mingw)
 
-Unknown. Anyone care to contribute?
-You will need the Qt SDK for windows that includes mingw from:
-http://qt.nokia.com/downloads/sdk-windows-cpp
+* Unknown. Anyone care to contribute?
+* You will need the Qt SDK for windows that includes mingw from:
+  http://qt.nokia.com/downloads/sdk-windows-cpp
