@@ -138,6 +138,7 @@ MainWindow::MainWindow( QWidget *parent ) :
 
     setupToolbar();
     ui->dockWidget_2->hide();
+    slotActionNew();
 }
 
 MainWindow::~MainWindow()
@@ -184,6 +185,12 @@ void MainWindow::setupToolbar()
     undoAction->setShortcuts(QKeySequence::Undo);
     editMenu->addAction( undoAction );
     ui->mToolBar->addAction(undoAction);
+    
+    QAction* redoAction = mUndoStack->createRedoAction(this, tr("&Redo"));
+    redoAction->setIcon(QIcon::fromTheme( "edit-redo" ));
+    redoAction->setShortcuts(QKeySequence::Redo);
+    editMenu->addAction( redoAction );
+    ui->mToolBar->addAction(redoAction);
 
     QAction* resizeAct = ui->mToolBar->addAction( QIcon::fromTheme( "transform-scale" ), tr( "&Resize Image" ), this, SLOT( slotActionResize() ) );
     resizeAct->setDisabled( true );
@@ -273,7 +280,37 @@ bool MainWindow::eventFilter( QObject* obj, QEvent* event )
             mWaitingForCoordSelection = false;
             int x = i.column();
             int y = i.row();
-            mUndoHandler->insertImage(x, y, mInsertImage);
+            
+            
+            QImage newImage = mModel->autoScale(mInsertImage, -1);
+            QSize after = mModel->imageSize();
+            bool too_wide = ( x + newImage.size().width() ) >  mModel->imageSize().width();
+            bool too_tall = ( y + newImage.size().height() ) >  mModel->imageSize().height();
+            bool expand = false;
+            if( too_tall || too_wide ) {
+                int but = QMessageBox::question( 0,
+                                                tr( "Insert Image" ),
+                                                tr( "This image will not fit inside the current source. Expand the current source?" ),
+                                                QMessageBox::Yes | QMessageBox::No  | QMessageBox::Cancel, QMessageBox::Yes );
+                if ( but == QMessageBox::Cancel ) {
+                    return true;
+                } else {
+                    expand = (but == QMessageBox::Yes); // we do want to expand if they click yes
+                }
+            }
+            if( expand ) {
+                int new_width = mModel->imageSize().width();
+                int new_height = mModel->imageSize().height();
+                if( too_wide ) {
+                    new_width = x + newImage.size().width();
+                }
+                if( too_tall ) {
+                    new_height = y + newImage.size().height();
+                }
+                after = QSize( new_width, new_height );
+            }
+            
+            mUndoHandler->insertImage(x, y, newImage, after);
             mStatusLabel->clear();
             return true;
         }
@@ -302,13 +339,15 @@ void MainWindow::slotActionOpen()
                         QDesktopServices::storageLocation( QDesktopServices::HomeLocation ),
                         tr( "Images (*.png *.bmp *.ppm *.gif)" ) );
     QImage image( file_name );
-    if ( !image.isNull() )
+    if ( !image.isNull() ) {
         mModel->setImage( image );
 
-    setWindowTitle( QString( "Piet Creator - %1 [*]" ).arg( file_name ) );
-    setModified( false );
-    mCurrentFile = file_name;
-    emit validImageDocument( true );
+        setWindowTitle( QString( "Piet Creator - %1 [*]" ).arg( file_name ) );
+        setModified( false );
+        mCurrentFile = file_name;
+        mUndoStack->clear();
+        emit validImageDocument( true );
+    }
 }
 
 void MainWindow::slotActionSaveAs()
@@ -366,6 +405,14 @@ void MainWindow::slotActionSave()
     }
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (promptSave(true)) {
+        event->accept();
+    } else {
+        event->ignore();
+    }
+}
 
 void MainWindow::slotActionNew()
 {
@@ -375,6 +422,7 @@ void MainWindow::slotActionNew()
     setWindowTitle( "Piet Creator - new source [*]" );
     setModified( false );
     mCurrentFile.clear();
+    mUndoStack->clear();
     emit validImageDocument( true );
 }
 
@@ -404,11 +452,10 @@ void MainWindow::slotActionToggleHeaders()
         ui->mView->verticalHeader()->show();
         ui->mView->verticalHeader()->setResizeMode( QHeaderView::Fixed );
         ui->mView->horizontalHeader()->setResizeMode( QHeaderView::Fixed );
-
         int rows = mModel->rowCount();
         if ( rows == 0 )
             return;
-        int num_digits;
+        int num_digits = 0;
         while ( rows > 0 ) {
             ++num_digits;
             rows /= 10;
@@ -479,17 +526,25 @@ void MainWindow::slotImageEdited()
         setModified( true );
 }
 
-bool MainWindow::promptSave()
+bool MainWindow::promptSave(bool close)
 {
     if ( mModified ) {
-        int but = QMessageBox::warning( this,
-                                        tr( "Modifed" ),
-                                        tr( "The current source image has been modified. Opening a new image will discard the current changes." ),
-                                        QMessageBox::Discard  | QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save );
+        int but;
+        if (close) {
+            but = QMessageBox::warning( this,
+                                            tr( "Modifed" ),
+                                            tr( "The current source image has been modified. Closing PietCreator will discard the current changes." ),
+                                            QMessageBox::Discard  | QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save );
+        }else{
+            but = QMessageBox::warning( this,
+                                            tr( "Modifed" ),
+                                            tr( "The current source image has been modified. Opening a new image will discard the current changes." ),
+                                            QMessageBox::Discard  | QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save );
+        }
         switch ( but ) {
         case QMessageBox::Save:
-            slotActionSaveAs();
-            return true;
+            slotActionSave();
+            return !mModified;
         case QMessageBox::Cancel:
             return false;
         case QMessageBox::Discard:

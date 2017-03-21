@@ -51,6 +51,10 @@ public:
     ~MainWindow();
 
     virtual bool eventFilter( QObject* , QEvent* );
+    
+protected:
+    void closeEvent(QCloseEvent *event);
+
 signals:
     void validImageDocument( bool );
     void executeSource( const QImage & );
@@ -94,7 +98,7 @@ private slots:
 private:
     void setupToolbar();
     void setModified( bool flag );
-    bool promptSave();
+    bool promptSave(bool close=false);
 
     Ui::MainWindow *ui;
 

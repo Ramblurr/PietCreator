@@ -39,7 +39,7 @@ public:
     int currentColorIndex() const;
     QString currentCommandLabel() const;
     Command currentCommand() const;
-    Command takeCommand();
+    void takeCommand();
 
     int pixelSize() const;
     QColor colorForIndex( int index ) const;

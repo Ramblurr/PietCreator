@@ -68,6 +68,8 @@ public:
     QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 
     bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
+    static QImage autoScale(const QImage& _image, int codel_size);
+    
 signals:
     void pixelChanged( int x, int y, QRgb color );
 
@@ -83,7 +85,6 @@ private:
     void emitNeighborsChanged( int row, int col );
     QString statusString( QModelIndex index ) const;
     quint64 contiguousBlocks( int x, int y ) const;
-    QImage autoScale(const QImage& _image, int codel_size);
     QImage mImage;
     int mPixelSize;
 

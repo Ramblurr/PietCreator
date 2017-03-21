@@ -67,7 +67,7 @@ Q_SIGNALS:
 
 public slots:
   /** Sets the currently selected cell to @p index */
-  void setSelected( int index );  
+  void setSelected( int index );
 
 protected:
   // the three methods below are used to ensure equal column widths and row heights
@@ -83,6 +83,7 @@ protected:
   virtual void dragMoveEvent( QDragMoveEvent * );
   virtual void dropEvent( QDropEvent *);
   virtual void mouseDoubleClickEvent( QMouseEvent * );
+  virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
 
   int positionToCell(const QPoint &pos, bool ignoreBorders=false) const;
 

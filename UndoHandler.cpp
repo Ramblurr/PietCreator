@@ -27,16 +27,16 @@ void UndoHandler::createEditPixel(int x, int y, QColor new_color, bool dragging)
     mUndoStack->push(cmd);
 }
 
-void UndoHandler::insertImage(int x, int y, QImage imageToInsert)
+void UndoHandler::insertImage(int x, int y, QImage imageToInsert, QSize scaleAfter)
 {
     QImage before = mModel->image();
-    InsertImageCommand *cmd = new InsertImageCommand(x,y,before, imageToInsert, mModel);
+    InsertImageCommand *cmd = new InsertImageCommand(x,y,before, imageToInsert, scaleAfter, mModel);
     mUndoStack->push(cmd);
 }
 
 void UndoHandler::scaleImage(QSize newSize)
 {
-    QSize before = mModel->imageSize();
+    QImage before = mModel->image();
     ScaleImageCommand *cmd = new ScaleImageCommand(before, newSize, mModel);
     mUndoStack->push(cmd);
 }

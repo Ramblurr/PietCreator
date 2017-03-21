@@ -42,22 +42,24 @@ private:
 class InsertImageCommand : public QUndoCommand
 {
 public:
-    InsertImageCommand(int x, int y, QImage before, QImage imageToInsert, ImageModel* model, QUndoCommand* parent = 0 );
+    InsertImageCommand(int x, int y, QImage before, QImage imageToInsert, QSize after, ImageModel* model, QUndoCommand* parent = 0 );
     void undo();
     void redo();
 private:
     int mX, mY;
     QImage mBefore,mImageToInsert;
+    QSize mAfter;
     ImageModel *mModel;
 };
 
 class ScaleImageCommand : public QUndoCommand
 {
 public:
-    ScaleImageCommand(QSize before, QSize after,  ImageModel* model, QUndoCommand* parent = 0);
+    ScaleImageCommand(QImage before, QSize after,  ImageModel* model, QUndoCommand* parent = 0);
     void undo();
     void redo();
 private:
-    QSize mBefore, mAfter;
+    QImage mBefore;
+    QSize mAfter;
     ImageModel *mModel;
 };

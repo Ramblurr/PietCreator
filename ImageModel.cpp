@@ -126,34 +126,8 @@ QImage ImageModel::image() const
 
 void ImageModel::insertImage(const QImage& _image, int x, int y)
 {
-    QImage newImage = autoScale(_image, -1);
-    bool too_wide = ( x + newImage.size().width() ) >  imageSize().width();
-    bool too_tall = ( y + newImage.size().width() ) >  imageSize().height();
-    bool expand = false;
-    if( too_tall || too_wide ) {
-        int but = QMessageBox::question( 0,
-                                        tr( "Insert Image" ),
-                                        tr( "This image will not fit inside the current source. Expand the current source?" ),
-                                        QMessageBox::Yes | QMessageBox::No  | QMessageBox::Cancel, QMessageBox::Yes );
-        if ( but == QMessageBox::Cancel ) {
-            return;
-        } else {
-            expand = (but == QMessageBox::Yes); // we do want to expand if they click yes
-        }
-    }
-    if( expand ) {
-        int new_width = imageSize().width();
-        int new_height = imageSize().height();
-        if( too_wide ) {
-            new_width = x + newImage.size().width();
-        }
-        if( too_tall ) {
-            new_height = y + newImage.size().height();
-        }
-        scaleImage( QSize( new_width, new_height ) );
-    }
     QPainter p( &mImage );
-    p.drawImage( x, y, newImage );
+    p.drawImage( x, y, _image );
     reset();
 }
 
